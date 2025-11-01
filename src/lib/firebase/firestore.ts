@@ -248,7 +248,7 @@ export const deactivateReviewLink = async (linkId: string): Promise<void> => {
 export const createReview = async (
     reviewData: Omit<Review, 'id' | 'createdAt' | 'updatedAt'>,
     reviewToken?: string
-): Promise<{ createdAt: Date; isPublic: boolean; id: any; updatedAt: Date }> => {
+): Promise<Review> => {
     try {
         // Проверяем лимит отзывов пользователя
         const user = await getUserProfile(reviewData.storeOwnerId);
