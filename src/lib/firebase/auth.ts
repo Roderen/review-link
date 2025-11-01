@@ -1,7 +1,6 @@
 import { signInWithPopup } from 'firebase/auth';
 import { auth, provider, db } from '@/lib/firebase/firebase-config.ts';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
-import {boolean} from "zod";
 
 export const signInWithGoogle = async () => {
     const result = await signInWithPopup(auth, provider);
