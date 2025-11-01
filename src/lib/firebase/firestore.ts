@@ -17,14 +17,12 @@ import {
     Timestamp,
     setDoc,
 } from 'firebase/firestore';
-import { db } from './firebase-config';
-import type { User, Review, Store, SubscriptionPlan } from './types';
+import {db} from './firebase-config';
+import type {User, Review} from './types';
 
 // Collections
 const USERS_COLLECTION = 'users';
 const REVIEWS_COLLECTION = 'reviews';
-const STORES_COLLECTION = 'stores';
-const PLANS_COLLECTION = 'subscription_plans';
 const REVIEW_LINKS_COLLECTION = 'review_links';
 
 /**
@@ -218,7 +216,7 @@ export const updateReviewLink = async (
 ): Promise<void> => {
     try {
         const linkDoc = doc(db, REVIEW_LINKS_COLLECTION, linkId);
-        const updateData = { ...updates };
+        const updateData = {...updates};
 
         // Конвертируем Date в Timestamp если есть expiresAt
         if (updateData.expiresAt) {
@@ -237,7 +235,7 @@ export const updateReviewLink = async (
 
 export const deactivateReviewLink = async (linkId: string): Promise<void> => {
     try {
-        await updateReviewLink(linkId, { isActive: false });
+        await updateReviewLink(linkId, {isActive: false});
     } catch (error) {
         console.error('Error deactivating review link:', error);
         throw new Error('Failed to deactivate review link');
@@ -532,7 +530,7 @@ export const getReviewStats = async (storeOwnerId: string) => {
 
         // Средний рейтинг и распределение по звездам
         let totalRating = 0;
-        const ratingDistribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+        const ratingDistribution = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
 
         totalSnapshot.forEach((doc) => {
             const data = doc.data();

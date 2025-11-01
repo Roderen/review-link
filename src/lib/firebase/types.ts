@@ -77,9 +77,6 @@ export interface ReviewLink {
     expiresAt?: Date;
 }
 
-// Убираем интерфейс Store так как все хранится в User
-// export interface Store - удален
-
 export interface StoreSettings {
     allowPhotos: boolean;
     requireEmail: boolean;
