@@ -14,7 +14,7 @@ import {
     DocumentSnapshot
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase/firebase-config.ts';
-import { PLANS } from './plans.js';
+import { PLANS } from './plans';
 
 interface ReviewQueryOptions {
     limit?: number;
@@ -35,13 +35,21 @@ interface ReviewStats {
     }>;
 }
 
+interface SubmitReviewParams {
+    shopOwnerId: string;
+    customerName: string;
+    rating: number;
+    text: string;
+    media?: string[];
+}
+
 export const submitReview = async ({
                                        shopOwnerId,
                                        customerName,
                                        rating,
                                        text,
                                        media = []
-                                   }) => {
+                                   }: SubmitReviewParams) => {
     await addDoc(collection(db, 'reviews'), {
         shopOwnerId,
         name: customerName,
@@ -190,7 +198,7 @@ export const getReviewsForShop = async (
     };
 };
 
-export const canSubmitReview = async (shopOwnerId) => {
+export const canSubmitReview = async (shopOwnerId: string) => {
     const shopRef = doc(db, 'users', shopOwnerId);
     const shopSnap = await getDoc(shopRef);
     const plan = shopSnap.data().plan || 'free';
