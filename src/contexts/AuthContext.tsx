@@ -16,6 +16,9 @@ interface User {
   avatar: string;
   username: string;
   plan: 'free' | 'starter' | 'business' | 'pro';
+  description?: string;
+  averageRating?: number;
+  totalReviews?: number;
 }
 
 interface AuthContextType {
