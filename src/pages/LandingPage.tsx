@@ -3,9 +3,8 @@ import {useNavigate} from 'react-router-dom';
 import {Button} from '@/components/ui/button';
 import {Card, CardContent} from '@/components/ui/card';
 import {Badge} from '@/components/ui/badge';
-import {Instagram, Star, Users, Link, Image, Video, Shield, Zap, MessageSquare, Check} from 'lucide-react';
+import {Instagram, Star, Users, Link, Image, Video, Shield, Zap, MessageSquare} from 'lucide-react';
 import {useAuth} from '@/contexts/AuthContext.tsx';
-import {toast} from 'sonner';
 import {signInWithGoogle} from "@/lib/firebase/auth.ts";
 
 const LandingPage = () => {
