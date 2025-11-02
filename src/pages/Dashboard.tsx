@@ -4,17 +4,27 @@ import {Button} from '@/components/ui/button';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {Badge} from '@/components/ui/badge';
 import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar';
-import {Copy, ExternalLink, Star, Users, TrendingUp, LogOut, Eye, MessageSquare, Crown, BarChart3} from 'lucide-react';
+import {Copy, ExternalLink, Star, Users, TrendingUp, LogOut, Eye, MessageSquare, Crown} from 'lucide-react';
 import {useAuth} from '@/contexts/AuthContext.tsx';
 import {toast} from 'sonner';
 import {getReviewsForShop} from "@/lib/firebase/reviewServise.ts";
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css'
 
+interface DashboardReview {
+    id: string;
+    name: string;
+    avatar?: string;
+    rating: number;
+    text: string;
+    date: Date;
+    media?: string[];
+}
+
 const Dashboard = () => {
     const {user, logout} = useAuth();
     const navigate = useNavigate();
-    const [reviews, setReviews] = useState([]);
+    const [reviews, setReviews] = useState<DashboardReview[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -60,14 +70,15 @@ const Dashboard = () => {
         toast.success('Вы вышли из системы');
     };
 
-    const planLimits = {
+    const planLimits: Record<string, {reviews: number, name: string}> = {
         free: {reviews: 10, name: 'Бесплатный'},
+        starter: {reviews: 50, name: 'Стартовый'},
         basic: {reviews: 100, name: 'Базовый'},
         business: {reviews: 500, name: 'Бизнес'},
         pro: {reviews: Infinity, name: 'Про'}
     };
 
-    const currentPlan = planLimits[user.plan];
+    const currentPlan = planLimits[user.plan] || planLimits.free;
     const usagePercentage = currentPlan.reviews === Infinity
         ? 0
         : Math.min((reviews.length / currentPlan.reviews) * 100, 100);
