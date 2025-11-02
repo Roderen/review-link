@@ -1,4 +1,15 @@
-export const PLANS = {
+export interface PlanConfig {
+    name: string;
+    maxReviews: number;
+}
+
+export interface Plans {
+    free: PlanConfig;
+    pro: PlanConfig;
+    enterprise: PlanConfig;
+}
+
+export const PLANS: Plans = {
     free: {
         name: 'Бесплатный',
         maxReviews: 10,

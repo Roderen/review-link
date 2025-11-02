@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {useParams, Navigate} from 'react-router-dom';
+import {Navigate} from 'react-router-dom';
 import {Button} from '@/components/ui/button';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {Input} from '@/components/ui/input';
@@ -128,6 +128,11 @@ const ReviewForm = () => {
 
         if (!rating || !name.trim() || !reviewText.trim()) {
             toast.error('Пожалуйста, заполните все обязательные поля');
+            return;
+        }
+
+        if (!shopOwnerId) {
+            toast.error('Ошибка: идентификатор магазина не найден');
             return;
         }
 

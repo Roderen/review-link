@@ -4,32 +4,22 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Check, MessageSquare, ArrowLeft } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext.tsx';
-import { toast } from 'sonner';
+import { signInWithGoogle } from '@/lib/firebase/auth.ts';
 
 const PricingPage = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleGoogleLogin = async () => {
     setIsLoading(true);
-    
-    setTimeout(() => {
-      const mockUser = {
-        id: '1',
-        name: 'Anna Kozlova',
-        email: 'anna@example.com',
-        avatar: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&fit=crop',
-        username: 'anna_boutique',
-        plan: 'free'
-      };
-      
-      login(mockUser);
-      toast.success('Успешно вошли в систему!');
-      navigate('/dashboard');
+    try {
+      await signInWithGoogle();
+      // AuthContext will handle navigation after successful login
+    } catch (error) {
+      console.error('Login error:', error);
+    } finally {
       setIsLoading(false);
-    }, 2000);
+    }
   };
 
   const plans = [

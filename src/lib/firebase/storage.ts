@@ -4,8 +4,6 @@ import {
     uploadBytes,
     uploadBytesResumable,
     getDownloadURL,
-    deleteObject,
-    listAll,
     getMetadata,
 } from 'firebase/storage';
 import { storage } from './firebase-config';
@@ -180,7 +178,7 @@ export const uploadMultipleReviewPhotos = async (
 export const uploadUserAvatar = async (
     file: File,
     userId: string,
-    onProgress?: (progress: UploadProgress) => void
+    _onProgress?: (progress: UploadProgress) => void
 ): Promise<UploadResult> => {
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
     const maxSize = 2 * 1024 * 1024; // 2MB для аватаров
@@ -217,7 +215,7 @@ export const uploadUserAvatar = async (
 export const uploadStoreLogo = async (
     file: File,
     storeId: string,
-    onProgress?: (progress: UploadProgress) => void
+    _onProgress?: (progress: UploadProgress) => void
 ): Promise<UploadResult> => {
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'];
     const maxSize = 3 * 1024 * 1024; // 3MB для логотипов
@@ -250,9 +248,3 @@ export const uploadStoreLogo = async (
         throw new Error('Failed to upload logo');
     }
 };
-
-/**
- * ПОЛУЧЕНИЕ И УПРАВЛЕНИЕ ФАЙЛАМИ
- */
-
-export const get

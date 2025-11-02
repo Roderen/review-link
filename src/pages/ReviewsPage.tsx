@@ -12,6 +12,28 @@ import 'react-loading-skeleton/dist/skeleton.css'
 
 const REVIEWS_PER_PAGE = 2;
 
+interface Review {
+    id: string;
+    name: string;
+    avatar?: string;
+    rating: number;
+    text: string;
+    date: Date;
+    media?: string[];
+}
+
+interface RatingDistribution {
+    rating: number;
+    count: number;
+    percentage: number;
+}
+
+interface ReviewStats {
+    totalCount: number;
+    averageRating: number;
+    ratingDistribution: RatingDistribution[];
+}
+
 const PublicReviewsPage = () => {
     const params = useParams();
     const shopId = params.username;
@@ -19,8 +41,8 @@ const PublicReviewsPage = () => {
     const [shop, setShop] = useState<any>(null);
     const [sortBy, setSortBy] = useState<'newest' | 'rating' | 'oldest'>('newest');
     const [filterRating, setFilterRating] = useState<number | null>(null);
-    const [allReviews, setAllReviews] = useState([]); // Все отзывы
-    const [allReviewsStats, setAllReviewsStats] = useState<any>(null);
+    const [allReviews, setAllReviews] = useState<Review[]>([]); // Все отзывы
+    const [allReviewsStats, setAllReviewsStats] = useState<ReviewStats | null>(null);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [shopNotFound, setShopNotFound] = useState(false);
@@ -64,7 +86,10 @@ const PublicReviewsPage = () => {
                 filterRating: null
             });
 
-            setAllReviews(result.reviews || []);
+            // Проверяем что результат - это объект с полем reviews
+            if (typeof result === 'object' && result !== null && 'reviews' in result) {
+                setAllReviews(result.reviews as Review[]);
+            }
         } catch (error) {
             console.error('Ошибка загрузки отзывов:', error);
         } finally {
