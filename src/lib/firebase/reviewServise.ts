@@ -14,7 +14,7 @@ import {
     DocumentSnapshot
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase/firebase-config.ts';
-import { PLANS } from './plans';
+import { PLANS, Plans } from './plans';
 
 interface ReviewQueryOptions {
     limit?: number;
@@ -201,7 +201,8 @@ export const getReviewsForShop = async (
 export const canSubmitReview = async (shopOwnerId: string) => {
     const shopRef = doc(db, 'users', shopOwnerId);
     const shopSnap = await getDoc(shopRef);
-    const plan = shopSnap.data().plan || 'free';
+    const shopData = shopSnap.data();
+    const plan = (shopData?.plan || 'free') as keyof Plans;
     const maxReviews = PLANS[plan].maxReviews;
 
     // Используем getCountFromServer для оптимизации
