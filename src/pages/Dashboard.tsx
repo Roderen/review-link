@@ -35,7 +35,10 @@ const Dashboard = () => {
             })
                 .then(reviewsShop => {
                     console.log(reviewsShop)
-                    setReviews(reviewsShop)
+                    // С skipPagination: true функция возвращает массив
+                    if (Array.isArray(reviewsShop)) {
+                        setReviews(reviewsShop as DashboardReview[])
+                    }
                     setLoading(false);
                 })
                 .catch(error => {
