@@ -9,8 +9,10 @@ import {Star, MessageSquare, Filter, SortDesc, Play, ImageIcon, ChevronLeft, Che
 import {getShopById, getPublicReviewsStats, getPublicReviews} from "@/lib/firebase/reviewServise.ts";
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css'
+import type { QueryDocumentSnapshot, DocumentData } from 'firebase/firestore';
 
-const REVIEWS_PER_PAGE = 2;
+const REVIEWS_PER_PAGE = 5; // Отображаем по 5 отзывов на странице
+const BATCH_SIZE = 50; // Загружаем по 50 отзывов из БД за раз
 
 interface Review {
     id: string;
@@ -41,7 +43,13 @@ const PublicReviewsPage = () => {
     const [shop, setShop] = useState<any>(null);
     const [sortBy, setSortBy] = useState<'newest' | 'rating' | 'oldest'>('newest');
     const [filterRating, setFilterRating] = useState<number | null>(null);
-    const [allReviews, setAllReviews] = useState<Review[]>([]); // Все отзывы
+
+    // Оптимизированная загрузка данных
+    const [loadedReviews, setLoadedReviews] = useState<Review[]>([]); // Загруженные отзывы из БД
+    const [lastVisibleDoc, setLastVisibleDoc] = useState<QueryDocumentSnapshot<DocumentData> | null>(null); // Курсор для пагинации
+    const [hasMoreInDB, setHasMoreInDB] = useState(true); // Есть ли еще данные в БД
+    const [isLoadingMore, setIsLoadingMore] = useState(false); // Загружается ли еще порция
+
     const [allReviewsStats, setAllReviewsStats] = useState<ReviewStats | null>(null);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
@@ -72,80 +80,90 @@ const PublicReviewsPage = () => {
         }
     }, [shopId]);
 
-    // Загрузка ВСЕХ отзывов один раз
-    const loadAllReviews = useCallback(async () => {
+    // Начальная загрузка отзывов (первая порция)
+    const loadInitialReviews = useCallback(async () => {
         if (!shopId) return;
 
         try {
             setLoading(true);
+            setLoadedReviews([]);
+            setLastVisibleDoc(null);
+            setHasMoreInDB(true);
 
-            // Загружаем все отзывы без лимита
             const result = await getPublicReviews(shopId, {
-                limit: 1000, // Большой лимит для всех отзывов
-                sortBy: 'newest', // Сортировка по умолчанию
-                filterRating: null
+                limit: BATCH_SIZE,
+                sortBy: sortBy,
+                filterRating: filterRating
             });
 
             // Проверяем что результат - это объект с полем reviews
             if (typeof result === 'object' && result !== null && 'reviews' in result) {
-                setAllReviews(result.reviews as Review[]);
+                setLoadedReviews(result.reviews as Review[]);
+                setLastVisibleDoc(result.lastVisible || null);
+                setHasMoreInDB(result.hasMore || false);
             }
         } catch (error) {
             console.error('Ошибка загрузки отзывов:', error);
         } finally {
             setLoading(false);
         }
-    }, [shopId]);
+    }, [shopId, sortBy, filterRating]);
+
+    // Подгрузка следующей порции отзывов
+    const loadMoreReviews = useCallback(async () => {
+        if (!shopId || !hasMoreInDB || isLoadingMore || !lastVisibleDoc) return;
+
+        try {
+            setIsLoadingMore(true);
+
+            const result = await getPublicReviews(shopId, {
+                limit: BATCH_SIZE,
+                sortBy: sortBy,
+                filterRating: filterRating,
+                startAfter: lastVisibleDoc
+            });
+
+            if (typeof result === 'object' && result !== null && 'reviews' in result) {
+                setLoadedReviews(prev => [...prev, ...(result.reviews as Review[])]);
+                setLastVisibleDoc(result.lastVisible || null);
+                setHasMoreInDB(result.hasMore || false);
+            }
+        } catch (error) {
+            console.error('Ошибка подгрузки отзывов:', error);
+        } finally {
+            setIsLoadingMore(false);
+        }
+    }, [shopId, sortBy, filterRating, lastVisibleDoc, hasMoreInDB, isLoadingMore]);
 
     // Начальная загрузка
     useEffect(() => {
         if (shopId) {
             loadShop();
         }
-    }, [shopId]);
+    }, [shopId, loadShop]);
 
     useEffect(() => {
         if (shop) {
             loadStats();
-            loadAllReviews();
+            loadInitialReviews();
         }
-    }, [shop]);
+    }, [shop, loadStats, loadInitialReviews]);
 
-    // Фильтрация и сортировка на фронте
-    const filteredAndSortedReviews = useMemo(() => {
-        let filtered = [...allReviews];
+    // Проверка: нужно ли подгрузить еще данные при переключении страницы
+    useEffect(() => {
+        const totalPagesPossible = Math.ceil(loadedReviews.length / REVIEWS_PER_PAGE);
 
-        // Фильтрация по рейтингу
-        if (filterRating !== null) {
-            filtered = filtered.filter(review => review.rating === filterRating);
+        // Если пользователь на последней или предпоследней странице и есть еще данные в БД
+        if (currentPage >= totalPagesPossible - 1 && hasMoreInDB && !isLoadingMore) {
+            loadMoreReviews();
         }
+    }, [currentPage, loadedReviews.length, hasMoreInDB, isLoadingMore, loadMoreReviews]);
 
-        // Сортировка
-        filtered.sort((a, b) => {
-            switch (sortBy) {
-                case 'newest':
-                    return new Date(b.date).getTime() - new Date(a.date).getTime();
-                case 'oldest':
-                    return new Date(a.date).getTime() - new Date(b.date).getTime();
-                case 'rating':
-                    // Сначала по рейтингу, потом по дате
-                    if (b.rating !== a.rating) {
-                        return b.rating - a.rating;
-                    }
-                    return new Date(b.date).getTime() - new Date(a.date).getTime();
-                default:
-                    return 0;
-            }
-        });
-
-        return filtered;
-    }, [allReviews, filterRating, sortBy]);
-
-    // Пагинация на фронте
+    // Пагинация на фронте (из загруженных данных)
     const startIndex = (currentPage - 1) * REVIEWS_PER_PAGE;
     const endIndex = startIndex + REVIEWS_PER_PAGE;
-    const currentReviews = filteredAndSortedReviews.slice(startIndex, endIndex);
-    const totalPages = Math.ceil(filteredAndSortedReviews.length / REVIEWS_PER_PAGE);
+    const currentReviews = loadedReviews.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(loadedReviews.length / REVIEWS_PER_PAGE);
 
     // Redirect если магазин не найден
     if (shopNotFound) {
@@ -359,8 +377,8 @@ const PublicReviewsPage = () => {
                                     />
                                 ) : (
                                     filterRating
-                                        ? `Отзывы с оценкой ${filterRating} звезд (${filteredAndSortedReviews.length})`
-                                        : `Все отзывы (${filteredAndSortedReviews.length})`
+                                        ? `Отзывы с оценкой ${filterRating} звезд (${allReviewsStats?.totalCount || 0})`
+                                        : `Все отзывы (${allReviewsStats?.totalCount || 0})`
                                 )}
                             </h2>
                             <Button variant="outline" size="sm"
@@ -489,7 +507,7 @@ const PublicReviewsPage = () => {
 
                                                         {review.media && review.media.length > 0 && (
                                                             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                                                {review.media.map((media, mediaIndex) => (
+                                                                {review.media.map((media: string, mediaIndex: number) => (
                                                                     <Dialog key={mediaIndex}>
                                                                         <DialogTrigger asChild>
                                                                             <div className="relative group cursor-pointer">
@@ -596,7 +614,8 @@ const PublicReviewsPage = () => {
                                 {/* Page info */}
                                 {totalPages > 1 && (
                                     <div className="text-center mt-4 text-sm text-gray-400">
-                                        Страница {currentPage} из {totalPages} ({startIndex + 1}-{Math.min(endIndex, filteredAndSortedReviews.length)} из {filteredAndSortedReviews.length} отзывов)
+                                        Страница {currentPage} из {totalPages} ({startIndex + 1}-{Math.min(endIndex, loadedReviews.length)} из {allReviewsStats?.totalCount || loadedReviews.length} отзывов)
+                                        {isLoadingMore && <span className="ml-2 text-gray-500">(загрузка...)</span>}
                                     </div>
                                 )}
                             </>
