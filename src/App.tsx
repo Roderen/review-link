@@ -64,7 +64,7 @@ const AppContent: React.FC = () => {
 function App() {
     return (
         <AuthProvider>
-            <Router>
+            <Router basename={import.meta.env.VITE_BASE_URL || '/'}>
                 <AppContent /> {}
             </Router>
         </AuthProvider>
