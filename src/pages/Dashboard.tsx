@@ -55,8 +55,9 @@ const Dashboard = () => {
 
     if (!user) return null;
 
-    const reviewUrl = `${window.location.origin}/review/${user.id}`;
-    const publicUrl = `${window.location.origin}/u/${user.id}`;
+    const baseUrl = import.meta.env.VITE_BASE_URL || '/';
+    const reviewUrl = `${window.location.origin}${baseUrl}review/${user.id}`;
+    const publicUrl = `${window.location.origin}${baseUrl}u/${user.id}`;
 
     const copyToClipboard = (text: string, message: string) => {
         navigator.clipboard.writeText(text);
