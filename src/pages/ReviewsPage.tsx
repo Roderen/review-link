@@ -6,7 +6,7 @@ import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar';
 import {Button} from '@/components/ui/button';
 import {Dialog, DialogContent, DialogTrigger} from '@/components/ui/dialog';
 import {Star, MessageSquare, Filter, SortDesc, Play, ImageIcon, ChevronLeft, ChevronRight} from 'lucide-react';
-import {getShopById, getPublicReviewsStats, getPublicReviews} from "@/lib/firebase/reviewServise.ts";
+import {getShopById, getPublicReviewsStats, getPublicReviews, getReviewsCount} from "@/lib/firebase/reviewServise.ts";
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css'
 import type { QueryDocumentSnapshot, DocumentData } from 'firebase/firestore';
@@ -57,6 +57,21 @@ const PublicReviewsPage = () => {
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [shopNotFound, setShopNotFound] = useState(false);
+
+    const [reviewsCount, setReviewsCount] = useState(0);
+
+    useEffect(() => {
+        const fetchCount = async () => {
+            try {
+                const count = await getReviewsCount(); // или getReviewsCount() для всех
+                setReviewsCount(count);
+            } catch (error) {
+                console.error('Ошибка загрузки счетчика:', error);
+            }
+        };
+
+        fetchCount();
+    }, []);
 
     // Загрузка данных магазина
     const loadShop = useCallback(async () => {
@@ -407,7 +422,7 @@ const PublicReviewsPage = () => {
                                 ) : (
                                     filterRating
                                         ? `Отзывы с оценкой ${filterRating} звезд (${allReviewsStats?.totalCount || 0})`
-                                        : `Все отзывы (${allReviewsStats?.totalCount || 0})`
+                                        : `Все отзывы (${reviewsCount})`
                                 )}
                             </h2>
                             <Button variant="outline" size="sm"
