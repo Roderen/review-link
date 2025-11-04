@@ -48,8 +48,8 @@ const ReviewForm = () => {
         }
     }, [shopOwnerId, authLoading]);
 
-    // Показываем загрузку только один раз
-    if (authLoading || loading) {
+    // Показываем загрузку пока идет аутентификация, проверка лимита или данные еще не получены
+    if (authLoading || loading || canSubmit === null) {
         return (
             <div className="min-h-screen bg-gray-950 flex items-center justify-center">
                 <div className="text-white">Загрузка...</div>

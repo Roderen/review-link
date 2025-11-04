@@ -1,4 +1,4 @@
-import {useEffect, useState, useCallback, useMemo} from 'react';
+import {useEffect, useState, useCallback} from 'react';
 import {useParams, Navigate} from 'react-router-dom';
 import {Card, CardContent} from '@/components/ui/card';
 import {Badge} from '@/components/ui/badge';
@@ -10,6 +10,9 @@ import {getShopById, getPublicReviewsStats, getPublicReviews} from "@/lib/fireba
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css'
 import type { QueryDocumentSnapshot, DocumentData } from 'firebase/firestore';
+import { deleteDoc, doc } from 'firebase/firestore';
+import { db } from '@/lib/firebase/firebase-config.ts';
+import { Trash2 } from 'lucide-react';
 
 const REVIEWS_PER_PAGE = 5; // Отображаем по 5 отзывов на странице
 const BATCH_SIZE = 50; // Загружаем по 50 отзывов из БД за раз
@@ -67,6 +70,32 @@ const PublicReviewsPage = () => {
             setShopNotFound(true);
         }
     }, [shopId]);
+
+    // Функция удаления отзыва
+    const handleDeleteReview = async (reviewId: string) => {
+        if (!reviewId) return;
+
+        try {
+            // Подтверждение удаления
+            if (!window.confirm('Вы уверены, что хотите удалить этот отзыв?')) {
+                return;
+            }
+
+            // Удаление из Firebase
+            await deleteDoc(doc(db, 'reviews', reviewId));
+
+            // Удаление из локального состояния
+            setLoadedReviews((prevReviews) =>
+                prevReviews.filter((review) => review.id !== reviewId)
+            );
+
+            // Опционально: показать уведомление об успехе
+            console.log('Отзыв успешно удален');
+        } catch (error) {
+            console.error('Ошибка при удалении отзыва:', error);
+            alert('Не удалось удалить отзыв. Попробуйте еще раз.');
+        }
+    };
 
     // Загрузка статистики
     const loadStats = useCallback(async () => {
@@ -491,16 +520,26 @@ const PublicReviewsPage = () => {
                                                                             />
                                                                         ))}
                                                                     </div>
-                                                                    <span
-                                                                        className="text-sm text-gray-500">{review.date?.toLocaleDateString()}</span>
+                                                                    <span className="text-sm text-gray-500">
+                                {review.date?.toLocaleDateString()}
+                            </span>
                                                                 </div>
                                                             </div>
-                                                            <Badge
-                                                                variant={review.rating >= 4 ? 'default' : 'secondary'}
-                                                                className="shrink-0 bg-gray-700 text-gray-300"
-                                                            >
-                                                                {review.rating}/5
-                                                            </Badge>
+                                                            <div className="flex items-center gap-2">
+                                                                <Badge
+                                                                    variant={review.rating >= 4 ? 'default' : 'secondary'}
+                                                                    className="shrink-0 bg-gray-700 text-gray-300"
+                                                                >
+                                                                    {review.rating}/5
+                                                                </Badge>
+                                                                <button
+                                                                    onClick={() => handleDeleteReview(review.id)}
+                                                                    className="text-red-500 hover:text-red-400 hover:bg-red-500/10 p-2 rounded-lg transition-colors"
+                                                                    aria-label="Delete review"
+                                                                >
+                                                                    <Trash2 className="w-4 h-4" />
+                                                                </button>
+                                                            </div>
                                                         </div>
 
                                                         <p className="text-gray-300 mb-4 leading-relaxed">{review.text}</p>
@@ -516,20 +555,16 @@ const PublicReviewsPage = () => {
                                                                                     alt={`Review media ${mediaIndex + 1}`}
                                                                                     className="w-full h-24 object-cover rounded-lg hover:opacity-90 transition-opacity"
                                                                                 />
-                                                                                <div
-                                                                                    className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 rounded-lg transition-all flex items-center justify-center">
+                                                                                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 rounded-lg transition-all flex items-center justify-center">
                                                                                     {media.includes('video') ? (
-                                                                                        <Play
-                                                                                            className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity"/>
+                                                                                        <Play className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity"/>
                                                                                     ) : (
-                                                                                        <ImageIcon
-                                                                                            className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity"/>
+                                                                                        <ImageIcon className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity"/>
                                                                                     )}
                                                                                 </div>
                                                                             </div>
                                                                         </DialogTrigger>
-                                                                        <DialogContent
-                                                                            className="max-w-4xl w-full p-0 bg-gray-900 border-gray-700">
+                                                                        <DialogContent className="max-w-4xl w-full p-0 bg-gray-900 border-gray-700">
                                                                             <div className="relative">
                                                                                 <img
                                                                                     src={media}
