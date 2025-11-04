@@ -18,6 +18,7 @@ export const signInWithGoogle = async () => {
             totalRating: 0,
             createdAt: serverTimestamp(),
             status: 'pending',
+            role: 'user',
         });
     }
 
