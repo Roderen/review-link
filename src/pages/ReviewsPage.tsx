@@ -541,12 +541,6 @@ const PublicReviewsPage = () => {
                                                                 </div>
                                                             </div>
                                                             <div className="flex items-center gap-2">
-                                                                <Badge
-                                                                    variant={review.rating >= 4 ? 'default' : 'secondary'}
-                                                                    className="shrink-0 bg-gray-700 text-gray-300"
-                                                                >
-                                                                    {review.rating}/5
-                                                                </Badge>
                                                                 <button
                                                                     onClick={() => handleDeleteReview(review.id)}
                                                                     className="text-red-500 hover:text-red-400 hover:bg-red-500/10 p-2 rounded-lg transition-colors"
