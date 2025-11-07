@@ -7,7 +7,7 @@ import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar';
 import {Copy, ExternalLink, Star, Users, TrendingUp, LogOut, Eye, MessageSquare, Crown} from 'lucide-react';
 import {useAuth} from '@/contexts/AuthContext.tsx';
 import {toast} from 'sonner';
-import {getReviewsForShop} from "@/lib/firebase/reviewServise.ts";
+import {getReviewsCount, getReviewsForShop} from "@/lib/firebase/reviewServise.ts";
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css'
 
@@ -25,6 +25,7 @@ const Dashboard = () => {
     const {user, logout} = useAuth();
     const navigate = useNavigate();
     const [reviews, setReviews] = useState<DashboardReview[]>([]);
+    const [reviewsCount, setReviewsCount] = useState<number>(0);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -44,6 +45,14 @@ const Dashboard = () => {
                 .catch(error => {
                     console.error('Ошибка:', error);
                 });
+
+            getReviewsCount()
+                .then(count => {
+                    setReviewsCount(count);
+                })
+                .catch(error => {
+                    console.error(error);
+                })
         }
     }, [user?.id]); // Зависимость от user.id
 
@@ -64,8 +73,8 @@ const Dashboard = () => {
         toast.success(message);
     };
 
-    const averageRating = reviews.length > 0
-        ? (reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1)
+    const averageRating = reviewsCount > 0
+        ? (reviews.reduce((sum, review) => sum + review.rating, 0) / reviewsCount).toFixed(1)
         : '0';
 
     const handleLogout = () => {
@@ -85,7 +94,7 @@ const Dashboard = () => {
     const currentPlan = planLimits[user.plan] || planLimits.free;
     const usagePercentage = currentPlan.reviews === Infinity
         ? 0
-        : Math.min((reviews.length / currentPlan.reviews) * 100, 100);
+        : Math.min((reviewsCount / currentPlan.reviews) * 100, 100);
 
     return (
         <div className="min-h-screen bg-gray-950">
@@ -137,8 +146,8 @@ const Dashboard = () => {
                                         />
                                     ) : (
                                         currentPlan.reviews === Infinity
-                                            ? `${reviews.length} отзывов (безлимит)`
-                                            : `${reviews.length} из ${currentPlan.reviews} отзывов`
+                                            ? `${reviewsCount} отзывов (безлимит)`
+                                            : `${reviewsCount} из ${currentPlan.reviews} отзывов`
                                     )}
                                 </p>
                             </div>
@@ -181,7 +190,7 @@ const Dashboard = () => {
                                                 style={{display: 'inline-block'}} // чтобы не растягивался
                                             />
                                         ) : (
-                                            reviews.length
+                                            reviewsCount
                                         )}
                                     </p>
                                 </div>
@@ -365,7 +374,7 @@ const Dashboard = () => {
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                {reviews.length === 0 && !loading ? (
+                                {reviewsCount === 0 && !loading ? (
                                     <div className="text-center py-12">
                                         <MessageSquare className="w-12 h-12 text-gray-600 mx-auto mb-4"/>
                                         <p className="text-gray-400 mb-4">Пока нет отзывов</p>
@@ -470,14 +479,14 @@ const Dashboard = () => {
                                                 </div>
                                             </div>
                                         ))}
-                                        {reviews.length > 5 && (
+                                        {reviewsCount > 5 && (
                                             <div className="text-center pt-4">
                                                 <Button
                                                     variant="outline"
                                                     onClick={() => window.open(publicUrl, '_blank')}
                                                     className="border-gray-600 text-gray-300 hover:bg-gray-800"
                                                 >
-                                                    Посмотреть все {reviews.length} отзывов
+                                                    Посмотреть все {reviewsCount} отзывов
                                                 </Button>
                                             </div>
                                         )}

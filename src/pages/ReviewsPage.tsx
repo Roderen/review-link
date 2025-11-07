@@ -14,7 +14,7 @@ import { deleteDoc, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase/firebase-config.ts';
 import { Trash2 } from 'lucide-react';
 
-const REVIEWS_PER_PAGE = 5; // Отображаем по 5 отзывов на странице
+const REVIEWS_PER_PAGE = 10; // Отображаем по 5 отзывов на странице
 const BATCH_SIZE = 50; // Загружаем по 50 отзывов из БД за раз
 
 interface Review {
@@ -421,17 +421,10 @@ const PublicReviewsPage = () => {
                                     />
                                 ) : (
                                     filterRating
-                                        ? `Отзывы с оценкой ${filterRating} звезд (${allReviewsStats?.totalCount || 0})`
-                                        : `Все отзывы (${reviewsCount})`
+                                        ? `Отзывы с оценкой ${filterRating} звезд`
+                                        : `Все отзывы`
                                 )}
                             </h2>
-                            <Button variant="outline" size="sm"
-                                    className="border-gray-600 text-gray-300 hover:bg-gray-800">
-                                <SortDesc className="w-4 h-4 mr-2"/>
-                                {sortBy === 'newest' && 'Новые'}
-                                {sortBy === 'rating' && 'По рейтингу'}
-                                {sortBy === 'oldest' && 'Старые'}
-                            </Button>
                         </div>
 
                         {currentReviews.length === 0 && !loading ? (
