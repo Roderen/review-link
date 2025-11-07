@@ -518,15 +518,17 @@ const PublicReviewsPage = () => {
                             </span>
                                                                 </div>
                                                             </div>
-                                                            <div className="flex items-center gap-2">
-                                                                <button
-                                                                    onClick={() => handleDeleteReview(review.id)}
-                                                                    className="text-red-500 hover:text-red-400 hover:bg-red-500/10 p-2 rounded-lg transition-colors"
-                                                                    aria-label="Delete review"
-                                                                >
-                                                                    <Trash2 className="w-4 h-4" />
-                                                                </button>
-                                                            </div>
+                                                            {user?.role === 'admin' && (
+                                                                <div className="flex items-center gap-2">
+                                                                    <button
+                                                                        onClick={() => handleDeleteReview(review.id)}
+                                                                        className="text-red-500 hover:text-red-400 hover:bg-red-500/10 p-2 rounded-lg transition-colors"
+                                                                        aria-label="Delete review"
+                                                                    >
+                                                                        <Trash2 className="w-4 h-4" />
+                                                                    </button>
+                                                                </div>
+                                                            )}
                                                         </div>
 
                                                         <p className="text-gray-300 mb-4 leading-relaxed">{review.text}</p>
