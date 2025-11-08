@@ -9,6 +9,8 @@ import Dashboard from './pages/Dashboard';
 import ReviewForm from './pages/ReviewForm';
 import ReviewsPage from './pages/ReviewsPage';
 import TestPage from "./pages/TestPage";
+import PaymentSuccessPage from './pages/PaymentSuccessPage';
+import PaymentCancelPage from './pages/PaymentCancelPage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { user, isLoading } = useAuth();
@@ -44,6 +46,8 @@ const AppContent: React.FC = () => {
             <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/pricing" element={<PricingPage />} />
+                <Route path="/payment/success" element={<PaymentSuccessPage />} />
+                <Route path="/payment/cancel" element={<PaymentCancelPage />} />
                 <Route
                     path="/dashboard"
                     element={

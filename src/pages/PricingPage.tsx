@@ -1,3 +1,4 @@
+import {useState} from 'react';
 import {useNavigate, Navigate} from 'react-router-dom';
 import {useAuth} from '@/contexts/AuthContext.tsx';
 import {PricingHeader} from '@/components/pricing/PricingHeader';
@@ -6,10 +7,13 @@ import {PricingCard} from '@/components/pricing/PricingCard';
 import {FAQSection} from '@/components/pricing/FAQSection';
 import {LandingFooter} from '@/components/landing/LandingFooter';
 import {PlanFeature} from '@/types/pricing';
+import {initiateWayForPayCheckout} from '@/lib/wayforpay/checkout';
+import {toast} from 'sonner';
 
 const PricingPage = () => {
     const navigate = useNavigate();
     const {user, isLoading: authLoading} = useAuth();
+    const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
 
     const plans: PlanFeature[] = [
         {
@@ -83,6 +87,34 @@ const PricingPage = () => {
         }
     ];
 
+    // Сопоставление планов с их ID
+    const planIds: Record<string, string> = {
+        'Бесплатный': 'free',
+        'Стартер': 'starter',
+        'Бизнес': 'business',
+        'Про': 'pro'
+    };
+
+    // Обработка выбора плана
+    const handleSelectPlan = async (planName: string) => {
+        const planId = planIds[planName];
+
+        if (!planId) {
+            toast.error('Неверный план');
+            return;
+        }
+
+        setSelectedPlan(planId);
+
+        try {
+            await initiateWayForPayCheckout(planId);
+        } catch (error) {
+            console.error('Payment error:', error);
+            toast.error('Ошибка при создании платежа. Попробуйте еще раз.');
+            setSelectedPlan(null);
+        }
+    };
+
     // Показываем загрузку пока проверяется аутентификация
     if (authLoading) {
         return (
@@ -114,8 +146,8 @@ const PricingPage = () => {
                             <PricingCard
                                 key={index}
                                 plan={plan}
-                                onSelect={() => {}}
-                                isLoading={false}
+                                onSelect={() => handleSelectPlan(plan.name)}
+                                isLoading={selectedPlan === planIds[plan.name]}
                             />
                         ))}
                     </div>
