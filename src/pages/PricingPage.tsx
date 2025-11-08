@@ -1,29 +1,15 @@
-import {useState} from 'react';
-import {useNavigate} from 'react-router-dom';
-import {signInWithGoogle} from '@/lib/firebase/auth.ts';
+import {useNavigate, Navigate} from 'react-router-dom';
+import {useAuth} from '@/contexts/AuthContext.tsx';
 import {PricingHeader} from '@/components/pricing/PricingHeader';
 import {PricingHero} from '@/components/pricing/PricingHero';
 import {PricingCard} from '@/components/pricing/PricingCard';
 import {FAQSection} from '@/components/pricing/FAQSection';
-import {PricingCTA} from '@/components/pricing/PricingCTA';
 import {LandingFooter} from '@/components/landing/LandingFooter';
 import {PlanFeature} from '@/types/pricing';
 
 const PricingPage = () => {
     const navigate = useNavigate();
-    const [isLoading, setIsLoading] = useState(false);
-
-    const handleGoogleLogin = async () => {
-        setIsLoading(true);
-        try {
-            await signInWithGoogle();
-            // AuthContext will handle navigation after successful login
-        } catch (error) {
-            console.error('Login error:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    const {user, isLoading: authLoading} = useAuth();
 
     const plans: PlanFeature[] = [
         {
@@ -97,12 +83,25 @@ const PricingPage = () => {
         }
     ];
 
+    // Показываем загрузку пока проверяется аутентификация
+    if (authLoading) {
+        return (
+            <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+                <div className="text-white">Загрузка...</div>
+            </div>
+        );
+    }
+
+    // Редирект на главную страницу если пользователь не авторизован
+    if (!user) {
+        return <Navigate to="/" replace />;
+    }
+
     return (
         <div className="min-h-screen bg-gray-950">
             <PricingHeader
-                onBack={() => navigate('/')}
-                onLogin={handleGoogleLogin}
-                isLoading={isLoading}
+                onBack={() => navigate('/dashboard')}
+                showLoginButton={false}
             />
 
             <PricingHero/>
@@ -115,8 +114,8 @@ const PricingPage = () => {
                             <PricingCard
                                 key={index}
                                 plan={plan}
-                                onSelect={handleGoogleLogin}
-                                isLoading={isLoading}
+                                onSelect={() => {}}
+                                isLoading={false}
                             />
                         ))}
                     </div>
@@ -124,8 +123,6 @@ const PricingPage = () => {
             </section>
 
             <FAQSection/>
-
-            <PricingCTA onLogin={handleGoogleLogin} isLoading={isLoading}/>
 
             <LandingFooter/>
         </div>
