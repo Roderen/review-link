@@ -1,21 +1,22 @@
-import {useEffect, useState, useCallback} from 'react';
+import {useEffect, useState, useCallback, useRef, useMemo} from 'react';
 import {useParams, Navigate} from 'react-router-dom';
 import {Card, CardContent} from '@/components/ui/card';
 import {Badge} from '@/components/ui/badge';
 import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar';
 import {Button} from '@/components/ui/button';
 import {Dialog, DialogContent, DialogTrigger} from '@/components/ui/dialog';
-import {Star, MessageSquare, Filter, SortDesc, Play, ImageIcon, ChevronLeft, ChevronRight} from 'lucide-react';
-import {getShopById, getPublicReviewsStats, getPublicReviews} from "@/lib/firebase/reviewServise.ts";
+import {Star, MessageSquare, Filter, Play, ImageIcon, ChevronLeft, ChevronRight} from 'lucide-react';
+import {getShopById, getPublicReviewsStats, getPublicReviews, getReviewsCount} from "@/lib/firebase/reviewServise.ts";
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css'
 import type { QueryDocumentSnapshot, DocumentData } from 'firebase/firestore';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase/firebase-config.ts';
 import { Trash2 } from 'lucide-react';
+import {useAuth} from "@/contexts/AuthContext.tsx";
 
-const REVIEWS_PER_PAGE = 5; // Отображаем по 5 отзывов на странице
-const BATCH_SIZE = 50; // Загружаем по 50 отзывов из БД за раз
+const REVIEWS_PER_PAGE = 5;
+const BATCH_SIZE = 50;
 
 interface Review {
     id: string;
@@ -42,107 +43,115 @@ interface ReviewStats {
 const PublicReviewsPage = () => {
     const params = useParams();
     const shopId = params.username;
+    const {user} = useAuth();
 
     const [shop, setShop] = useState<any>(null);
     const [sortBy, setSortBy] = useState<'newest' | 'rating' | 'oldest'>('newest');
     const [filterRating, setFilterRating] = useState<number | null>(null);
 
-    // Оптимизированная загрузка данных
-    const [loadedReviews, setLoadedReviews] = useState<Review[]>([]); // Загруженные отзывы из БД
-    const [lastVisibleDoc, setLastVisibleDoc] = useState<QueryDocumentSnapshot<DocumentData> | null>(null); // Курсор для пагинации
-    const [hasMoreInDB, setHasMoreInDB] = useState(true); // Есть ли еще данные в БД
-    const [isLoadingMore, setIsLoadingMore] = useState(false); // Загружается ли еще порция
+    const [loadedReviews, setLoadedReviews] = useState<Review[]>([]);
+    const [lastVisibleDoc, setLastVisibleDoc] = useState<QueryDocumentSnapshot<DocumentData> | null>(null);
+    const [hasMoreInDB, setHasMoreInDB] = useState(true);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
 
     const [allReviewsStats, setAllReviewsStats] = useState<ReviewStats | null>(null);
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [shopNotFound, setShopNotFound] = useState(false);
 
-    // Загрузка данных магазина
-    const loadShop = useCallback(async () => {
+    const [reviewsCount, setReviewsCount] = useState(0);
+
+    const loadingMoreRef = useRef(false);
+
+    useEffect(() => {
+        const fetchCount = async () => {
+            try {
+                const count = await getReviewsCount();
+                setReviewsCount(count);
+            } catch (error) {
+                console.error('Ошибка загрузки счетчика:', error);
+            }
+        };
+
+        fetchCount();
+    }, []);
+
+    useEffect(() => {
         if (!shopId) return;
 
-        try {
-            const shopData = await getShopById(shopId);
-            setShop(shopData);
-        } catch (error) {
-            console.error('Ошибка загрузки магазина:', error);
-            setShopNotFound(true);
-        }
+        const loadShop = async () => {
+            try {
+                const shopData = await getShopById(shopId);
+                setShop(shopData);
+            } catch (error) {
+                console.error('Ошибка загрузки магазина:', error);
+                setShopNotFound(true);
+            }
+        };
+
+        loadShop();
     }, [shopId]);
 
-    // Функция удаления отзыва
-    const handleDeleteReview = async (reviewId: string) => {
+    const handleDeleteReview = useCallback(async (reviewId: string) => {
         if (!reviewId) return;
 
         try {
-            // Подтверждение удаления
             if (!window.confirm('Вы уверены, что хотите удалить этот отзыв?')) {
                 return;
             }
 
-            // Удаление из Firebase
             await deleteDoc(doc(db, 'reviews', reviewId));
 
-            // Удаление из локального состояния
             setLoadedReviews((prevReviews) =>
                 prevReviews.filter((review) => review.id !== reviewId)
             );
 
-            // Опционально: показать уведомление об успехе
             console.log('Отзыв успешно удален');
         } catch (error) {
             console.error('Ошибка при удалении отзыва:', error);
             alert('Не удалось удалить отзыв. Попробуйте еще раз.');
         }
-    };
+    }, []);
 
-    // Загрузка статистики
-    const loadStats = useCallback(async () => {
-        if (!shopId) return;
+    useEffect(() => {
+        if (!shopId || !shop) return;
 
-        try {
-            const stats = await getPublicReviewsStats(shopId);
-            setAllReviewsStats(stats);
-        } catch (error) {
-            console.error('Ошибка загрузки статистики:', error);
-        }
-    }, [shopId]);
+        const loadData = async () => {
+            try {
+                setLoading(true);
+                setLoadedReviews([]);
+                setLastVisibleDoc(null);
+                setHasMoreInDB(true);
 
-    // Начальная загрузка отзывов (первая порция)
-    const loadInitialReviews = useCallback(async () => {
-        if (!shopId) return;
+                const stats = await getPublicReviewsStats(shopId);
+                setAllReviewsStats(stats);
 
-        try {
-            setLoading(true);
-            setLoadedReviews([]);
-            setLastVisibleDoc(null);
-            setHasMoreInDB(true);
+                const result = await getPublicReviews(shopId, {
+                    limit: BATCH_SIZE,
+                    sortBy: sortBy,
+                    filterRating: filterRating
+                });
 
-            const result = await getPublicReviews(shopId, {
-                limit: BATCH_SIZE,
-                sortBy: sortBy,
-                filterRating: filterRating
-            });
-
-            // Проверяем что результат - это объект с полем reviews
-            if (typeof result === 'object' && result !== null && 'reviews' in result) {
-                setLoadedReviews(result.reviews as Review[]);
-                setLastVisibleDoc(result.lastVisible || null);
-                setHasMoreInDB(result.hasMore || false);
+                if (typeof result === 'object' && result !== null && 'reviews' in result) {
+                    setLoadedReviews(result.reviews as Review[]);
+                    setLastVisibleDoc(result.lastVisible || null);
+                    setHasMoreInDB(result.hasMore || false);
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+            } finally {
+                setLoading(false);
             }
-        } catch (error) {
-            console.error('Ошибка загрузки отзывов:', error);
-        } finally {
-            setLoading(false);
-        }
-    }, [shopId, sortBy, filterRating]);
+        };
 
-    // Подгрузка следующей порции отзывов
+        loadData();
+    }, [shopId, shop, sortBy, filterRating]);
+
     const loadMoreReviews = useCallback(async () => {
-        if (!shopId || !hasMoreInDB || isLoadingMore || !lastVisibleDoc) return;
+        if (!shopId || !hasMoreInDB || loadingMoreRef.current || !lastVisibleDoc) return;
 
         try {
+            loadingMoreRef.current = true;
             setIsLoadingMore(true);
 
             const result = await getPublicReviews(shopId, {
@@ -161,45 +170,60 @@ const PublicReviewsPage = () => {
             console.error('Ошибка подгрузки отзывов:', error);
         } finally {
             setIsLoadingMore(false);
+            loadingMoreRef.current = false;
         }
-    }, [shopId, sortBy, filterRating, lastVisibleDoc, hasMoreInDB, isLoadingMore]);
-
-    // Начальная загрузка
-    useEffect(() => {
-        if (shopId) {
-            loadShop();
-        }
-    }, [shopId, loadShop]);
+    }, [shopId, sortBy, filterRating, lastVisibleDoc, hasMoreInDB]);
 
     useEffect(() => {
-        if (shop) {
-            loadStats();
-            loadInitialReviews();
-        }
-    }, [shop, loadStats, loadInitialReviews]);
+        if (loading || loadingMoreRef.current) return;
 
-    // Проверка: нужно ли подгрузить еще данные при переключении страницы
-    useEffect(() => {
         const totalPagesPossible = Math.ceil(loadedReviews.length / REVIEWS_PER_PAGE);
 
-        // Если пользователь на последней или предпоследней странице и есть еще данные в БД
-        if (currentPage >= totalPagesPossible - 1 && hasMoreInDB && !isLoadingMore) {
+        if (currentPage >= totalPagesPossible - 1 && hasMoreInDB) {
             loadMoreReviews();
         }
-    }, [currentPage, loadedReviews.length, hasMoreInDB, isLoadingMore, loadMoreReviews]);
+    }, [currentPage, loadedReviews.length, hasMoreInDB, loading, loadMoreReviews]);
 
-    // Пагинация на фронте (из загруженных данных)
-    const startIndex = (currentPage - 1) * REVIEWS_PER_PAGE;
-    const endIndex = startIndex + REVIEWS_PER_PAGE;
-    const currentReviews = loadedReviews.slice(startIndex, endIndex);
-    const totalPages = Math.ceil(loadedReviews.length / REVIEWS_PER_PAGE);
+    // Мемоизируем вычисления для пагинации
+    const paginationData = useMemo(() => {
+        const startIndex = (currentPage - 1) * REVIEWS_PER_PAGE;
+        const endIndex = startIndex + REVIEWS_PER_PAGE;
+        const currentReviews = loadedReviews.slice(startIndex, endIndex);
+        const totalPages = Math.ceil(loadedReviews.length / REVIEWS_PER_PAGE);
 
-    // Redirect если магазин не найден
+        return { startIndex, endIndex, currentReviews, totalPages };
+    }, [currentPage, loadedReviews]);
+
+    const { startIndex, endIndex, currentReviews, totalPages } = paginationData;
+
+    // Мемоизируем статистику
+    const statsData = useMemo(() => {
+        const averageRating = allReviewsStats?.averageRating?.toFixed(1) || '0';
+        const ratingDistribution = allReviewsStats?.ratingDistribution || [];
+        return { averageRating, ratingDistribution };
+    }, [allReviewsStats]);
+
+    const { averageRating, ratingDistribution } = statsData;
+
+    const handlePageChange = useCallback((page: number) => {
+        setCurrentPage(page);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, []);
+
+    const handleFilterChange = useCallback((rating: number | null) => {
+        setFilterRating(prev => prev === rating ? null : rating);
+        setCurrentPage(1);
+    }, []);
+
+    const handleSortChange = useCallback((sort: 'newest' | 'rating' | 'oldest') => {
+        setSortBy(sort);
+        setCurrentPage(1);
+    }, []);
+
     if (shopNotFound) {
         return <Navigate to="/404" replace />;
     }
 
-    // Если нет shopId в параметрах
     if (!shopId) {
         return (
             <div className="min-h-screen bg-gray-950 flex items-center justify-center">
@@ -211,7 +235,6 @@ const PublicReviewsPage = () => {
         );
     }
 
-    // Загрузка
     if (loading && !shop) {
         return (
             <div className="min-h-screen bg-gray-950 flex items-center justify-center">
@@ -219,29 +242,6 @@ const PublicReviewsPage = () => {
             </div>
         );
     }
-
-    // Статистика
-    const averageRating = allReviewsStats?.averageRating?.toFixed(1) || '0';
-    const ratingDistribution = allReviewsStats?.ratingDistribution || [];
-
-    const handlePageChange = (page: number) => {
-        setCurrentPage(page);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    const handleFilterChange = (rating: number | null) => {
-        if (filterRating === rating) {
-            setFilterRating(null);
-        } else {
-            setFilterRating(rating);
-        }
-        setCurrentPage(1); // Сбрасываем на первую страницу
-    };
-
-    const handleSortChange = (sort: 'newest' | 'rating' | 'oldest') => {
-        setSortBy(sort);
-        setCurrentPage(1); // Сбрасываем на первую страницу
-    };
 
     return (
         <div className="min-h-screen bg-gray-950">
@@ -406,17 +406,10 @@ const PublicReviewsPage = () => {
                                     />
                                 ) : (
                                     filterRating
-                                        ? `Отзывы с оценкой ${filterRating} звезд (${allReviewsStats?.totalCount || 0})`
-                                        : `Все отзывы (${allReviewsStats?.totalCount || 0})`
+                                        ? `Отзывы с оценкой ${filterRating} звезд`
+                                        : `Все отзывы`
                                 )}
                             </h2>
-                            <Button variant="outline" size="sm"
-                                    className="border-gray-600 text-gray-300 hover:bg-gray-800">
-                                <SortDesc className="w-4 h-4 mr-2"/>
-                                {sortBy === 'newest' && 'Новые'}
-                                {sortBy === 'rating' && 'По рейтингу'}
-                                {sortBy === 'oldest' && 'Старые'}
-                            </Button>
                         </div>
 
                         {currentReviews.length === 0 && !loading ? (
@@ -525,21 +518,17 @@ const PublicReviewsPage = () => {
                             </span>
                                                                 </div>
                                                             </div>
-                                                            <div className="flex items-center gap-2">
-                                                                <Badge
-                                                                    variant={review.rating >= 4 ? 'default' : 'secondary'}
-                                                                    className="shrink-0 bg-gray-700 text-gray-300"
-                                                                >
-                                                                    {review.rating}/5
-                                                                </Badge>
-                                                                <button
-                                                                    onClick={() => handleDeleteReview(review.id)}
-                                                                    className="text-red-500 hover:text-red-400 hover:bg-red-500/10 p-2 rounded-lg transition-colors"
-                                                                    aria-label="Delete review"
-                                                                >
-                                                                    <Trash2 className="w-4 h-4" />
-                                                                </button>
-                                                            </div>
+                                                            {user?.role === 'admin' && (
+                                                                <div className="flex items-center gap-2">
+                                                                    <button
+                                                                        onClick={() => handleDeleteReview(review.id)}
+                                                                        className="text-red-500 hover:text-red-400 hover:bg-red-500/10 p-2 rounded-lg transition-colors"
+                                                                        aria-label="Delete review"
+                                                                    >
+                                                                        <Trash2 className="w-4 h-4" />
+                                                                    </button>
+                                                                </div>
+                                                            )}
                                                         </div>
 
                                                         <p className="text-gray-300 mb-4 leading-relaxed">{review.text}</p>

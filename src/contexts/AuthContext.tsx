@@ -15,10 +15,11 @@ interface User {
   email: string;
   avatar: string;
   username: string;
-  plan: 'free' | 'starter' | 'business' | 'pro';
+  plan: 'free' | 'business' | 'pro';
   description?: string;
   averageRating?: number;
   totalReviews?: number;
+  role: 'user' | 'admin';
 }
 
 interface AuthContextType {
