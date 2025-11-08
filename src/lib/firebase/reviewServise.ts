@@ -271,10 +271,11 @@ export const getPublicReviews = async (
     }
 };
 
-export const getReviewsCount = async (): Promise<number> => {
+export const getReviewsCount = async (shopId: string): Promise<number> => {
     try {
         const reviewsCollection = collection(db, 'reviews');
-        const snapshot = await getCountFromServer(reviewsCollection);
+        const q = query(reviewsCollection, where('shopOwnerId', '==', shopId));
+        const snapshot = await getCountFromServer(q);
         return snapshot.data().count;
     } catch (error) {
         console.error('Ошибка при получении количества отзывов:', error);

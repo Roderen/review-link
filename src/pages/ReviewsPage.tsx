@@ -64,9 +64,11 @@ const PublicReviewsPage = () => {
     const loadingMoreRef = useRef(false);
 
     useEffect(() => {
+        if (!shopId) return;
+
         const fetchCount = async () => {
             try {
-                const count = await getReviewsCount();
+                const count = await getReviewsCount(shopId);
                 setReviewsCount(count);
             } catch (error) {
                 console.error('Ошибка загрузки счетчика:', error);
@@ -74,7 +76,7 @@ const PublicReviewsPage = () => {
         };
 
         fetchCount();
-    }, []);
+    }, [shopId]);
 
     useEffect(() => {
         if (!shopId) return;
@@ -105,6 +107,9 @@ const PublicReviewsPage = () => {
             setLoadedReviews((prevReviews) =>
                 prevReviews.filter((review) => review.id !== reviewId)
             );
+
+            // Обновляем счетчик отзывов
+            setReviewsCount((prevCount) => Math.max(0, prevCount - 1));
 
             console.log('Отзыв успешно удален');
         } catch (error) {
@@ -638,7 +643,7 @@ const PublicReviewsPage = () => {
                                 {/* Page info */}
                                 {totalPages > 1 && (
                                     <div className="text-center mt-4 text-sm text-gray-400">
-                                        Страница {currentPage} из {totalPages} ({startIndex + 1}-{Math.min(endIndex, loadedReviews.length)} из {allReviewsStats?.totalCount || loadedReviews.length} отзывов)
+                                        Страница {currentPage} из {totalPages} ({startIndex + 1}-{Math.min(endIndex, loadedReviews.length)} из {reviewsCount || loadedReviews.length} отзывов)
                                         {isLoadingMore && <span className="ml-2 text-gray-500">(загрузка...)</span>}
                                     </div>
                                 )}
