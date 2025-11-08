@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {Star, Users, TrendingUp, Eye, MessageSquare} from 'lucide-react';
+import {Star, TrendingUp, Eye, MessageSquare} from 'lucide-react';
 import {useAuth} from '@/contexts/AuthContext.tsx';
 import {toast} from 'sonner';
 import {getReviewsCount, getReviewsForShop} from "@/lib/firebase/reviewServise.ts";
@@ -75,8 +75,6 @@ const Dashboard = () => {
 
     const planLimits: Record<string, PlanLimits> = {
         free: {reviews: 10, name: 'Бесплатный'},
-        starter: {reviews: 50, name: 'Стартовый'},
-        basic: {reviews: 100, name: 'Базовый'},
         business: {reviews: 500, name: 'Бизнес'},
         pro: {reviews: Infinity, name: 'Про'}
     };
