@@ -1,20 +1,18 @@
 import {useEffect, useState} from 'react';
 import {Navigate} from 'react-router-dom';
-import {Button} from '@/components/ui/button';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
-import {Input} from '@/components/ui/input';
-import {Textarea} from '@/components/ui/textarea';
-import {Label} from '@/components/ui/label';
-import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar';
-import {Star, Upload, X, Check, MessageSquare, Camera, Video} from 'lucide-react';
+import {MessageSquare} from 'lucide-react';
 import {toast} from 'sonner';
 import {useAuth} from "@/contexts/AuthContext.tsx";
 import {canSubmitReview, submitReview, getPublicReviewsStats} from "@/lib/firebase/reviewServise.ts";
-
-interface ShopStats {
-    totalCount: number;
-    averageRating: number;
-}
+import {ShopInfoCard} from '@/components/review-form/ShopInfoCard';
+import {RatingInput} from '@/components/review-form/RatingInput';
+import {ReviewFormFields} from '@/components/review-form/ReviewFormFields';
+import {MediaUploadSection} from '@/components/review-form/MediaUploadSection';
+import {SubmitButton} from '@/components/review-form/SubmitButton';
+import {FormDisclaimer} from '@/components/review-form/FormDisclaimer';
+import {StatusCard} from '@/components/review-form/StatusCard';
+import {ShopStats} from '@/types/review-form';
 
 const ReviewForm = () => {
     const {user, isLoading: authLoading} = useAuth();
@@ -61,45 +59,6 @@ const ReviewForm = () => {
             loadData();
         }
     }, [shopOwnerId, authLoading]);
-
-    // Показываем загрузку пока идет аутентификация, проверка лимита или данные еще не получены
-    if (authLoading || loading || canSubmit === null) {
-        return (
-            <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-                <div className="text-white">Загрузка...</div>
-            </div>
-        );
-    }
-
-    // Редирект если нет пользователя
-    if (!user) {
-        return <Navigate to="/" replace/>;
-    }
-
-    // Показываем сообщение о лимите
-    if (canSubmit === false) {
-        return (
-            <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
-                <Card className="max-w-md w-full text-center bg-gray-900 border-gray-700">
-                    <CardContent className="pt-6">
-                        <div className="w-16 h-16 bg-red-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <X className="w-8 h-8 text-red-400"/>
-                        </div>
-                        <h2 className="text-2xl font-bold mb-2 text-white">Лимит отзывов достигнут</h2>
-                        <p className="text-gray-400 mb-6">
-                            К сожалению, для магазина {user.name || 'данного магазина'} достигнут лимит по количеству отзывов.
-                        </p>
-                        <Button
-                            onClick={() => window.close()}
-                            className="w-full bg-gray-700 hover:bg-gray-600"
-                        >
-                            Закрыть
-                        </Button>
-                    </CardContent>
-                </Card>
-            </div>
-        );
-    }
 
     const handleMediaUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
@@ -171,69 +130,35 @@ const ReviewForm = () => {
         }
     };
 
+    // Показываем загрузку пока идет аутентификация, проверка лимита или данные еще не получены
+    if (authLoading || loading || canSubmit === null) {
+        return <StatusCard type="loading"/>;
+    }
+
+    // Редирект если нет пользователя
+    if (!user) {
+        return <Navigate to="/" replace/>;
+    }
+
+    // Показываем сообщение о лимите
+    if (canSubmit === false) {
+        return <StatusCard type="limit-reached" shopName={user.name} onClose={() => window.close()}/>;
+    }
+
+    // Показываем сообщение об успехе
     if (isSubmitted) {
-        return (
-            <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
-                <Card className="max-w-md w-full text-center bg-gray-900 border-gray-700">
-                    <CardContent className="pt-6">
-                        <div
-                            className="w-16 h-16 bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <Check className="w-8 h-8 text-green-400"/>
-                        </div>
-                        <h2 className="text-2xl font-bold mb-2 text-white">Отзыв отправлен!</h2>
-                        <p className="text-gray-400 mb-6">
-                            Спасибо за ваш отзыв о магазине {user.name || 'магазина'}.
-                            Он поможет другим покупателям сделать правильный выбор.
-                        </p>
-                        <Button
-                            onClick={() => window.close()}
-                            className="w-full bg-gray-700 hover:bg-gray-600"
-                        >
-                            Закрыть
-                        </Button>
-                    </CardContent>
-                </Card>
-            </div>
-        );
+        return <StatusCard type="success" shopName={user.name} onClose={() => window.close()}/>;
     }
 
     return (
         <div className="min-h-screen bg-gray-950 p-4">
             <div className="max-w-2xl mx-auto">
-                {/* Shop Header */}
-                <Card className="mb-6 bg-gray-900 border-gray-700">
-                    <CardContent className="pt-6">
-                        <div className="flex items-center space-x-4 mb-4">
-                            <Avatar className="w-16 h-16">
-                                <AvatarImage src={user.avatar} alt={user.name}/>
-                                <AvatarFallback>{user.name?.charAt(0) || 'U'}</AvatarFallback>
-                            </Avatar>
-                            <div>
-                                <h1 className="text-2xl font-bold text-white">{user.name || 'Магазин'}</h1>
-                                <p className="text-gray-400">{user.description || 'Описание отсутствует'}</p>
-                                {shopStats && (
-                                    <div className="flex items-center space-x-2 mt-1">
-                                        <div className="flex space-x-1">
-                                            {[1, 2, 3, 4, 5].map((star) => (
-                                                <Star
-                                                    key={star}
-                                                    className={`w-4 h-4 ${
-                                                        star <= Math.floor(shopStats.averageRating)
-                                                            ? 'fill-yellow-400 text-yellow-400'
-                                                            : 'text-gray-600'
-                                                    }`}
-                                                />
-                                            ))}
-                                        </div>
-                                        <span className="text-sm text-gray-400">
-                                            {shopStats.averageRating.toFixed(1)} ({shopStats.totalCount} {shopStats.totalCount === 1 ? 'отзыв' : shopStats.totalCount < 5 ? 'отзыва' : 'отзывов'})
-                                        </span>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
+                <ShopInfoCard
+                    avatar={user.avatar}
+                    name={user.name}
+                    description={user.description}
+                    shopStats={shopStats}
+                />
 
                 {/* Review Form */}
                 <Card className="bg-gray-900 border-gray-700">
@@ -245,150 +170,34 @@ const ReviewForm = () => {
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-6">
-                            {/* Rating */}
-                            <div>
-                                <Label className="text-base font-medium text-white">Ваша оценка *</Label>
-                                <div className="flex space-x-1 mt-2">
-                                    {[1, 2, 3, 4, 5].map((star) => (
-                                        <button
-                                            key={star}
-                                            type="button"
-                                            onClick={() => setRating(star)}
-                                            onMouseEnter={() => setHoverRating(star)}
-                                            onMouseLeave={() => setHoverRating(0)}
-                                            className="focus:outline-none transition-transform hover:scale-110"
-                                        >
-                                            <Star
-                                                className={`w-8 h-8 ${
-                                                    star <= (hoverRating || rating)
-                                                        ? 'fill-yellow-400 text-yellow-400'
-                                                        : 'text-gray-600 hover:text-yellow-200'
-                                                } transition-colors`}
-                                            />
-                                        </button>
-                                    ))}
-                                </div>
-                                {rating > 0 && (
-                                    <p className="text-sm text-gray-400 mt-1">
-                                        {rating === 5 && 'Отлично! ⭐'}
-                                        {rating === 4 && 'Хорошо! 👍'}
-                                        {rating === 3 && 'Нормально 👌'}
-                                        {rating === 2 && 'Не очень 👎'}
-                                        {rating === 1 && 'Плохо 😞'}
-                                    </p>
-                                )}
-                            </div>
+                            <RatingInput
+                                rating={rating}
+                                hoverRating={hoverRating}
+                                onRatingChange={setRating}
+                                onHoverChange={setHoverRating}
+                            />
 
-                            {/* Name */}
-                            <div>
-                                <Label htmlFor="name" className="text-base font-medium text-white">Ваше имя *</Label>
-                                <Input
-                                    id="name"
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    placeholder="Как к вам обращаться?"
-                                    className="mt-2 bg-gray-800 border-gray-600 text-white placeholder-gray-400"
-                                />
-                            </div>
+                            <ReviewFormFields
+                                name={name}
+                                reviewText={reviewText}
+                                onNameChange={setName}
+                                onReviewTextChange={setReviewText}
+                            />
 
-                            {/* Review Text */}
-                            <div>
-                                <Label htmlFor="review" className="text-base font-medium text-white">Ваш отзыв *</Label>
-                                <Textarea
-                                    id="review"
-                                    value={reviewText}
-                                    onChange={(e) => setReviewText(e.target.value)}
-                                    placeholder="Расскажите о своем опыте покупки. Что вам понравилось? Качество товара, доставка, общение с продавцом..."
-                                    className="mt-2 min-h-32 bg-gray-800 border-gray-600 text-white placeholder-gray-400"
-                                />
-                            </div>
+                            <MediaUploadSection
+                                media={media}
+                                isUploading={isUploading}
+                                onMediaUpload={handleMediaUpload}
+                                onRemoveMedia={removeMedia}
+                            />
 
-                            {/* Media Upload */}
-                            <div>
-                                <Label className="text-base font-medium text-white">Фото и видео (необязательно)</Label>
-                                <p className="text-sm text-gray-400 mb-3">
-                                    Добавьте фото товара или видео-отзыв, чтобы помочь другим покупателям
-                                </p>
-
-                                {media.length > 0 && (
-                                    <div className="grid grid-cols-3 gap-3 mb-3">
-                                        {media.map((url, index) => (
-                                            <div key={index} className="relative group">
-                                                <img
-                                                    src={url}
-                                                    alt={`Media ${index + 1}`}
-                                                    className="w-full h-24 object-cover rounded-lg"
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() => removeMedia(index)}
-                                                    className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                                >
-                                                    <X className="w-4 h-4"/>
-                                                </button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-
-                                {media.length < 5 && (
-                                    <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-gray-500 transition-colors">
-                                        <input
-                                            type="file"
-                                            id="media"
-                                            multiple
-                                            accept="image/*,video/*"
-                                            onChange={handleMediaUpload}
-                                            className="hidden"
-                                            disabled={isUploading}
-                                        />
-                                        <label
-                                            htmlFor="media"
-                                            className="cursor-pointer flex flex-col items-center space-y-2"
-                                        >
-                                            <div className="flex items-center space-x-2 text-gray-500">
-                                                <Camera className="w-6 h-6"/>
-                                                <Video className="w-6 h-6"/>
-                                                <Upload className="w-6 h-6"/>
-                                            </div>
-                                            <span className="text-gray-400">
-                                                {isUploading ? 'Загрузка...' : 'Нажмите для загрузки фото или видео'}
-                                            </span>
-                                            <span className="text-xs text-gray-500">
-                                                Максимум 5 файлов
-                                            </span>
-                                        </label>
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Submit Button */}
-                            <Button
-                                type="submit"
-                                className="w-full text-lg py-6 bg-gray-700 hover:bg-gray-600"
+                            <SubmitButton
+                                isSubmitting={isSubmitting}
                                 disabled={isSubmitting || !rating || !name.trim() || !reviewText.trim()}
-                            >
-                                {isSubmitting ? (
-                                    <>
-                                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                                        Отправляем отзыв...
-                                    </>
-                                ) : (
-                                    <>
-                                        <MessageSquare className="w-5 h-5 mr-2"/>
-                                        Отправить отзыв
-                                    </>
-                                )}
-                            </Button>
+                            />
                         </form>
 
-                        <div className="mt-6 p-4 bg-gray-800 rounded-lg border border-gray-700">
-                            <p className="text-sm text-gray-400">
-                                <strong className="text-gray-300">Важно:</strong> Ваш отзыв будет опубликован на
-                                публичной странице магазина.
-                                Пожалуйста, будьте честны и конструктивны в своих комментариях.
-                            </p>
-                        </div>
+                        <FormDisclaimer/>
                     </CardContent>
                 </Card>
             </div>

@@ -5,8 +5,8 @@ export interface PlanConfig {
 
 export interface Plans {
     free: PlanConfig;
+    business: PlanConfig;
     pro: PlanConfig;
-    enterprise: PlanConfig;
 }
 
 export const PLANS: Plans = {
@@ -14,11 +14,11 @@ export const PLANS: Plans = {
         name: 'Бесплатный',
         maxReviews: 10,
     },
-    pro: {
+    business: {
         name: 'Профессиональный',
-        maxReviews: 100,
+        maxReviews: 500,
     },
-    enterprise: {
+    pro: {
         name: 'Бизнес',
         maxReviews: Infinity,
     },
