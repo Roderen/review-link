@@ -46,7 +46,7 @@ const Dashboard = () => {
                     console.error('Ошибка:', error);
                 });
 
-            getReviewsCount()
+            getReviewsCount(user.id)
                 .then(count => {
                     setReviewsCount(count);
                 })
