@@ -9,7 +9,12 @@ import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar';
 import {Star, Upload, X, Check, MessageSquare, Camera, Video} from 'lucide-react';
 import {toast} from 'sonner';
 import {useAuth} from "@/contexts/AuthContext.tsx";
-import {canSubmitReview, submitReview} from "@/lib/firebase/reviewServise.ts";
+import {canSubmitReview, submitReview, getPublicReviewsStats} from "@/lib/firebase/reviewServise.ts";
+
+interface ShopStats {
+    totalCount: number;
+    averageRating: number;
+}
 
 const ReviewForm = () => {
     const {user, isLoading: authLoading} = useAuth();
@@ -23,19 +28,28 @@ const ReviewForm = () => {
     const [isUploading, setIsUploading] = useState(false);
     const [canSubmit, setCanSubmit] = useState<boolean | null>(null);
     const [loading, setLoading] = useState(false);
+    const [shopStats, setShopStats] = useState<ShopStats | null>(null);
 
     const shopOwnerId = user?.id;
 
     useEffect(() => {
-        const checkCanSubmit = async () => {
+        const loadData = async () => {
             if (!shopOwnerId) return;
 
             setLoading(true);
             try {
+                // Загружаем статистику магазина
+                const stats = await getPublicReviewsStats(shopOwnerId);
+                setShopStats({
+                    totalCount: stats.totalCount,
+                    averageRating: stats.averageRating
+                });
+
+                // Проверяем возможность добавить отзыв
                 const result = await canSubmitReview(shopOwnerId);
                 setCanSubmit(result);
             } catch (error) {
-                console.error('Ошибка проверки лимита:', error);
+                console.error('Ошибка загрузки данных:', error);
                 setCanSubmit(false);
             } finally {
                 setLoading(false);
@@ -44,7 +58,7 @@ const ReviewForm = () => {
 
         // Проверяем только когда аутентификация завершена
         if (!authLoading && shopOwnerId) {
-            checkCanSubmit();
+            loadData();
         }
     }, [shopOwnerId, authLoading]);
 
@@ -197,23 +211,25 @@ const ReviewForm = () => {
                             <div>
                                 <h1 className="text-2xl font-bold text-white">{user.name || 'Магазин'}</h1>
                                 <p className="text-gray-400">{user.description || 'Описание отсутствует'}</p>
-                                <div className="flex items-center space-x-2 mt-1">
-                                    <div className="flex space-x-1">
-                                        {[1, 2, 3, 4, 5].map((star) => (
-                                            <Star
-                                                key={star}
-                                                className={`w-4 h-4 ${
-                                                    star <= Math.floor(user.averageRating || 0)
-                                                        ? 'fill-yellow-400 text-yellow-400'
-                                                        : 'text-gray-600'
-                                                }`}
-                                            />
-                                        ))}
+                                {shopStats && (
+                                    <div className="flex items-center space-x-2 mt-1">
+                                        <div className="flex space-x-1">
+                                            {[1, 2, 3, 4, 5].map((star) => (
+                                                <Star
+                                                    key={star}
+                                                    className={`w-4 h-4 ${
+                                                        star <= Math.floor(shopStats.averageRating)
+                                                            ? 'fill-yellow-400 text-yellow-400'
+                                                            : 'text-gray-600'
+                                                    }`}
+                                                />
+                                            ))}
+                                        </div>
+                                        <span className="text-sm text-gray-400">
+                                            {shopStats.averageRating.toFixed(1)} ({shopStats.totalCount} {shopStats.totalCount === 1 ? 'отзыв' : shopStats.totalCount < 5 ? 'отзыва' : 'отзывов'})
+                                        </span>
                                     </div>
-                                    <span className="text-sm text-gray-400">
-                                        {user.averageRating || 0} ({user.totalReviews || 0} отзывов)
-                                    </span>
-                                </div>
+                                )}
                             </div>
                         </div>
                     </CardContent>
