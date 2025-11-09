@@ -1,5 +1,5 @@
 import {Button} from '@/components/ui/button';
-import {MessageSquare, ArrowLeft} from 'lucide-react';
+import {ArrowLeft} from 'lucide-react';
 
 interface PricingHeaderProps {
     onBack: () => void;
