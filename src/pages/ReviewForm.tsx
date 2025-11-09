@@ -1,11 +1,10 @@
 import {useEffect, useState} from 'react';
-import {Navigate} from 'react-router-dom';
+import {Navigate, useSearchParams} from 'react-router-dom';
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {MessageSquare} from 'lucide-react';
 import {toast} from 'sonner';
 import {useAuth} from "@/contexts/AuthContext.tsx";
-import {canSubmitReview, canDeviceSubmitReview, submitReview, getPublicReviewsStats} from "@/lib/firebase/reviewServise.ts";
-import {getDeviceId} from "@/lib/utils/deviceId.ts";
+import {canSubmitReview, canUseReviewLink, submitReview, getPublicReviewsStats} from "@/lib/firebase/reviewServise.ts";
 import {ShopInfoCard} from '@/components/review-form/ShopInfoCard';
 import {RatingInput} from '@/components/review-form/RatingInput';
 import {ReviewFormFields} from '@/components/review-form/ReviewFormFields';
@@ -17,6 +16,9 @@ import {ShopStats} from '@/types/review-form';
 
 const ReviewForm = () => {
     const {user, isLoading: authLoading} = useAuth();
+    const [searchParams] = useSearchParams();
+    const reviewLinkId = searchParams.get('linkId'); // Получаем уникальный ID ссылки из URL
+
     const [rating, setRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
     const [name, setName] = useState('');
@@ -26,7 +28,7 @@ const ReviewForm = () => {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [canSubmit, setCanSubmit] = useState<boolean | null>(null);
-    const [limitType, setLimitType] = useState<'shop-limit' | 'device-limit' | null>(null);
+    const [limitType, setLimitType] = useState<'shop-limit' | 'link-used' | null>(null);
     const [loading, setLoading] = useState(false);
     const [shopStats, setShopStats] = useState<ShopStats | null>(null);
 
@@ -54,14 +56,15 @@ const ReviewForm = () => {
                     return;
                 }
 
-                // Проверяем, может ли это устройство отправить отзыв
-                const deviceId = getDeviceId();
-                const deviceCanSubmit = await canDeviceSubmitReview(shopOwnerId, deviceId);
+                // Проверяем, не использовалась ли уже эта ссылка для отзыва
+                if (reviewLinkId) {
+                    const linkCanBeUsed = await canUseReviewLink(reviewLinkId);
 
-                if (!deviceCanSubmit) {
-                    setCanSubmit(false);
-                    setLimitType('device-limit');
-                    return;
+                    if (!linkCanBeUsed) {
+                        setCanSubmit(false);
+                        setLimitType('link-used');
+                        return;
+                    }
                 }
 
                 // Все проверки пройдены - можно отправлять
@@ -80,7 +83,7 @@ const ReviewForm = () => {
         if (!authLoading && shopOwnerId) {
             loadData();
         }
-    }, [shopOwnerId, authLoading]);
+    }, [shopOwnerId, authLoading, reviewLinkId]);
 
     const handleMediaUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
@@ -134,15 +137,12 @@ const ReviewForm = () => {
         setIsSubmitting(true);
 
         try {
-            // Получаем ID устройства для отправки
-            const deviceId = getDeviceId();
-
             await submitReview({
                 shopOwnerId,
                 customerName: name,
                 rating,
                 text: reviewText,
-                deviceId, // Передаем ID устройства
+                reviewLinkId: reviewLinkId || undefined, // Передаем ID ссылки если есть
                 ...(media.length > 0 && {media})
             });
 
@@ -168,7 +168,7 @@ const ReviewForm = () => {
 
     // Показываем сообщение о лимите
     if (canSubmit === false) {
-        const statusType = limitType === 'device-limit' ? 'already-submitted' : 'limit-reached';
+        const statusType = limitType === 'link-used' ? 'already-submitted' : 'limit-reached';
         return <StatusCard type={statusType} shopName={user.name} onClose={() => window.close()}/>;
     }
 

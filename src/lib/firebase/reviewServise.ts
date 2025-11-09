@@ -41,7 +41,7 @@ interface SubmitReviewParams {
     rating: number;
     text: string;
     media?: string[];
-    deviceId: string; // Уникальный ID устройства для предотвращения спама
+    reviewLinkId?: string; // Уникальный ID ссылки для отзыва (опционально для обратной совместимости)
 }
 
 export const submitReview = async ({
@@ -50,7 +50,7 @@ export const submitReview = async ({
                                        rating,
                                        text,
                                        media = [],
-                                       deviceId
+                                       reviewLinkId
                                    }: SubmitReviewParams) => {
     await addDoc(collection(db, 'reviews'), {
         shopOwnerId,
@@ -58,7 +58,7 @@ export const submitReview = async ({
         rating,
         text,
         date: serverTimestamp(),
-        deviceId, // Сохраняем ID устройства
+        ...(reviewLinkId && { reviewLinkId }), // Сохраняем ID ссылки если есть
         ...(media.length > 0 && { media }),
     });
 };
@@ -216,32 +216,32 @@ export const canSubmitReview = async (shopOwnerId: string) => {
 };
 
 /**
- * Проверяет, может ли устройство отправить отзыв для данного магазина
- * Предотвращает спам - одно устройство может оставить только один отзыв
- * @param shopOwnerId - ID владельца магазина
- * @param deviceId - Уникальный ID устройства
- * @returns true если устройство еще не отправляло отзыв, false если уже отправляло
+ * Проверяет, была ли уже использована ссылка для отзыва
+ * Предотвращает повторное использование одной и той же ссылки
+ * @param reviewLinkId - Уникальный ID ссылки для отзыва
+ * @returns true если ссылка еще не использовалась, false если уже использовалась
  */
-export const canDeviceSubmitReview = async (
-    shopOwnerId: string,
-    deviceId: string
-): Promise<boolean> => {
+export const canUseReviewLink = async (reviewLinkId: string): Promise<boolean> => {
     try {
-        // Проверяем, есть ли уже отзыв от этого устройства для данного магазина
+        // Если reviewLinkId не передан, разрешаем (обратная совместимость)
+        if (!reviewLinkId) {
+            return true;
+        }
+
+        // Проверяем, есть ли уже отзыв с этим reviewLinkId
         const reviewsRef = collection(db, 'reviews');
         const q = query(
             reviewsRef,
-            where('shopOwnerId', '==', shopOwnerId),
-            where('deviceId', '==', deviceId)
+            where('reviewLinkId', '==', reviewLinkId)
         );
 
         const countSnapshot = await getCountFromServer(q);
         const reviewCount = countSnapshot.data().count;
 
-        // Если отзывов от этого устройства нет, можно отправлять
+        // Если отзывов с этой ссылкой нет, можно отправлять
         return reviewCount === 0;
     } catch (error) {
-        console.error('Ошибка проверки возможности отправки отзыва:', error);
+        console.error('Ошибка проверки ссылки для отзыва:', error);
         // В случае ошибки разрешаем отправку (fail-open)
         return true;
     }
