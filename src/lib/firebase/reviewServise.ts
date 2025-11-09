@@ -41,6 +41,7 @@ interface SubmitReviewParams {
     rating: number;
     text: string;
     media?: string[];
+    deviceId: string; // Уникальный ID устройства для предотвращения спама
 }
 
 export const submitReview = async ({
@@ -48,7 +49,8 @@ export const submitReview = async ({
                                        customerName,
                                        rating,
                                        text,
-                                       media = []
+                                       media = [],
+                                       deviceId
                                    }: SubmitReviewParams) => {
     await addDoc(collection(db, 'reviews'), {
         shopOwnerId,
@@ -56,6 +58,7 @@ export const submitReview = async ({
         rating,
         text,
         date: serverTimestamp(),
+        deviceId, // Сохраняем ID устройства
         ...(media.length > 0 && { media }),
     });
 };
@@ -210,6 +213,38 @@ export const canSubmitReview = async (shopOwnerId: string) => {
     const countSnapshot = await getCountFromServer(q);
 
     return countSnapshot.data().count < maxReviews;
+};
+
+/**
+ * Проверяет, может ли устройство отправить отзыв для данного магазина
+ * Предотвращает спам - одно устройство может оставить только один отзыв
+ * @param shopOwnerId - ID владельца магазина
+ * @param deviceId - Уникальный ID устройства
+ * @returns true если устройство еще не отправляло отзыв, false если уже отправляло
+ */
+export const canDeviceSubmitReview = async (
+    shopOwnerId: string,
+    deviceId: string
+): Promise<boolean> => {
+    try {
+        // Проверяем, есть ли уже отзыв от этого устройства для данного магазина
+        const reviewsRef = collection(db, 'reviews');
+        const q = query(
+            reviewsRef,
+            where('shopOwnerId', '==', shopOwnerId),
+            where('deviceId', '==', deviceId)
+        );
+
+        const countSnapshot = await getCountFromServer(q);
+        const reviewCount = countSnapshot.data().count;
+
+        // Если отзывов от этого устройства нет, можно отправлять
+        return reviewCount === 0;
+    } catch (error) {
+        console.error('Ошибка проверки возможности отправки отзыва:', error);
+        // В случае ошибки разрешаем отправку (fail-open)
+        return true;
+    }
 };
 
 // ===== ПУБЛИЧНЫЕ ФУНКЦИИ ДЛЯ СТРАНИЦЫ ОТЗЫВОВ =====

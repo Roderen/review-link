@@ -4,7 +4,8 @@ import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {MessageSquare} from 'lucide-react';
 import {toast} from 'sonner';
 import {useAuth} from "@/contexts/AuthContext.tsx";
-import {canSubmitReview, submitReview, getPublicReviewsStats} from "@/lib/firebase/reviewServise.ts";
+import {canSubmitReview, canDeviceSubmitReview, submitReview, getPublicReviewsStats} from "@/lib/firebase/reviewServise.ts";
+import {getDeviceId} from "@/lib/utils/deviceId.ts";
 import {ShopInfoCard} from '@/components/review-form/ShopInfoCard';
 import {RatingInput} from '@/components/review-form/RatingInput';
 import {ReviewFormFields} from '@/components/review-form/ReviewFormFields';
@@ -25,6 +26,7 @@ const ReviewForm = () => {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
     const [canSubmit, setCanSubmit] = useState<boolean | null>(null);
+    const [limitType, setLimitType] = useState<'shop-limit' | 'device-limit' | null>(null);
     const [loading, setLoading] = useState(false);
     const [shopStats, setShopStats] = useState<ShopStats | null>(null);
 
@@ -43,12 +45,32 @@ const ReviewForm = () => {
                     averageRating: stats.averageRating
                 });
 
-                // Проверяем возможность добавить отзыв
-                const result = await canSubmitReview(shopOwnerId);
-                setCanSubmit(result);
+                // Проверяем общий лимит отзывов для магазина
+                const shopCanAcceptReviews = await canSubmitReview(shopOwnerId);
+
+                if (!shopCanAcceptReviews) {
+                    setCanSubmit(false);
+                    setLimitType('shop-limit');
+                    return;
+                }
+
+                // Проверяем, может ли это устройство отправить отзыв
+                const deviceId = getDeviceId();
+                const deviceCanSubmit = await canDeviceSubmitReview(shopOwnerId, deviceId);
+
+                if (!deviceCanSubmit) {
+                    setCanSubmit(false);
+                    setLimitType('device-limit');
+                    return;
+                }
+
+                // Все проверки пройдены - можно отправлять
+                setCanSubmit(true);
+                setLimitType(null);
             } catch (error) {
                 console.error('Ошибка загрузки данных:', error);
                 setCanSubmit(false);
+                setLimitType('shop-limit'); // По умолчанию показываем общее сообщение об ошибке
             } finally {
                 setLoading(false);
             }
@@ -112,11 +134,15 @@ const ReviewForm = () => {
         setIsSubmitting(true);
 
         try {
+            // Получаем ID устройства для отправки
+            const deviceId = getDeviceId();
+
             await submitReview({
                 shopOwnerId,
                 customerName: name,
                 rating,
                 text: reviewText,
+                deviceId, // Передаем ID устройства
                 ...(media.length > 0 && {media})
             });
 
@@ -142,7 +168,8 @@ const ReviewForm = () => {
 
     // Показываем сообщение о лимите
     if (canSubmit === false) {
-        return <StatusCard type="limit-reached" shopName={user.name} onClose={() => window.close()}/>;
+        const statusType = limitType === 'device-limit' ? 'already-submitted' : 'limit-reached';
+        return <StatusCard type={statusType} shopName={user.name} onClose={() => window.close()}/>;
     }
 
     // Показываем сообщение об успехе
