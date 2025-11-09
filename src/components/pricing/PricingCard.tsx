@@ -29,9 +29,8 @@ export const PricingCard = ({plan, onSelect, isLoading}: PricingCardProps) => {
                 <CardTitle className="text-white text-xl mb-2">{plan.name}</CardTitle>
                 <div className="mb-2">
                     <span className="text-3xl font-bold text-white">{plan.price}</span>
-                    <span className="text-gray-400 text-sm ml-1">/{plan.period}</span>
+                    <span className="text-gray-400 text-sm ml-1">{plan.period}</span>
                 </div>
-                <p className="text-gray-400 text-sm">{plan.description}</p>
             </CardHeader>
 
             <CardContent className="space-y-4">

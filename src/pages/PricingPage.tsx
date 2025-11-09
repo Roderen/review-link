@@ -18,79 +18,49 @@ const PricingPage = () => {
     const plans: PlanFeature[] = [
         {
             name: 'Бесплатный',
-            price: '0₽',
+            price: '0$',
             period: 'навсегда',
-            description: 'Для начинающих',
             features: [
-                'До 10 отзывов в месяц',
-                'Базовая форма отзывов',
-                'Публичная страница',
-                'Загрузка фото (до 3 на отзыв)',
-                'Email поддержка'
+                'До 10 отзывов',
+                'Публичная страница отзывов',
+                'Статистика отзывов'
             ],
             popular: false,
-            buttonText: 'Начать бесплатно',
+            buttonText: 'Попробовать бесплатно',
             buttonVariant: 'outline' as const
-        },
-        {
-            name: 'Стартер',
-            price: '5$',
-            period: 'в месяц',
-            description: 'Для малого бизнеса',
-            features: [
-                'До 100 отзывов в месяц',
-                'Расширенная форма отзывов',
-                'Кастомизация страницы',
-                'Загрузка фото и видео (до 5 на отзыв)',
-                'Базовая аналитика',
-                'Приоритетная поддержка'
-            ],
-            popular: true,
-            buttonText: 'Выбрать план',
-            buttonVariant: 'default' as const
         },
         {
             name: 'Бизнес',
-            price: '12$',
-            period: 'в месяц',
-            description: 'Для растущего бизнеса',
+            price: '7.99$',
+            period: '/месяц',
             features: [
-                'До 500 отзывов в месяц',
-                'Полная кастомизация',
-                'Расширенная аналитика',
-                'Экспорт данных',
-                'Интеграция с соцсетями',
-                'Модерация отзывов',
-                'Приоритетная поддержка'
+                'До 100 отзывов',
+                'Загрузка фото (до 5 на отзыв)',
+                'Статистика отзывов',
+                'Email поддержка'
             ],
-            popular: false,
-            buttonText: 'Выбрать план',
-            buttonVariant: 'outline' as const
+            popular: true,
+            buttonText: 'Начать сейчас',
+            buttonVariant: 'default' as const
         },
         {
             name: 'Про',
-            price: '20$',
-            period: 'в месяц',
-            description: 'Для крупного бизнеса',
+            price: '14.99$',
+            period: '/месяц',
             features: [
                 'Безлимитные отзывы',
-                'Белый лейбл',
-                'API доступ',
-                'Продвинутая аналитика',
-                'Мультиязычность',
-                'Персональный менеджер',
-                'SLA 99.9%'
+                'Загрузка фото (до 5 на отзыв)',
+                'Статистика отзывов',
+                'Приоритетная поддержка'
             ],
             popular: false,
-            buttonText: 'Связаться с нами',
+            buttonText: 'Начать сейчас',
             buttonVariant: 'outline' as const
         }
     ];
 
-    // Сопоставление планов с их ID
     const planIds: Record<string, string> = {
         'Бесплатный': 'free',
-        'Стартер': 'starter',
         'Бизнес': 'business',
         'Про': 'pro'
     };
@@ -141,7 +111,7 @@ const PricingPage = () => {
             {/* Pricing Cards */}
             <section className="py-8 px-4">
                 <div className="container mx-auto max-w-7xl">
-                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {plans.map((plan, index) => (
                             <PricingCard
                                 key={index}
