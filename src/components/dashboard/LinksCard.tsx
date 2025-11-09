@@ -1,7 +1,7 @@
 import {Card, CardHeader, CardTitle, CardContent} from '@/components/ui/card';
 import {Button} from '@/components/ui/button';
 import {Badge} from '@/components/ui/badge';
-import {Users, Copy, ExternalLink, RefreshCw} from 'lucide-react';
+import {Users, Copy, ExternalLink} from 'lucide-react';
 
 interface LinksCardProps {
     reviewUrl: string;
@@ -44,7 +44,7 @@ export const LinksCard = ({reviewUrl, publicUrl, onCopy, onGenerateNewLink}: Lin
                     <p className="text-sm text-gray-400 mb-3 break-all font-mono bg-gray-700 p-2 rounded">
                         {reviewUrl}
                     </p>
-                    <div className="flex space-x-2 mb-2">
+                    <div className="flex space-x-2">
                         <Button
                             size="sm"
                             onClick={handleCopyReviewLink}
@@ -62,15 +62,6 @@ export const LinksCard = ({reviewUrl, publicUrl, onCopy, onGenerateNewLink}: Lin
                             <ExternalLink className="w-4 h-4"/>
                         </Button>
                     </div>
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={onGenerateNewLink}
-                        className="w-full border-gray-600 text-gray-300 hover:bg-gray-800"
-                    >
-                        <RefreshCw className="w-4 h-4 mr-2"/>
-                        Создать новую ссылку вручную
-                    </Button>
                 </div>
 
                 {/* Public Page Link */}
