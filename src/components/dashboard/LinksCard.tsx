@@ -11,6 +11,20 @@ interface LinksCardProps {
 }
 
 export const LinksCard = ({reviewUrl, publicUrl, onCopy, onGenerateNewLink}: LinksCardProps) => {
+    // Обработчик копирования с автогенерацией новой ссылки
+    const handleCopyReviewLink = () => {
+        onCopy(reviewUrl, 'Ссылка для отзывов скопирована!');
+        // Автоматически генерируем новую ссылку после копирования
+        onGenerateNewLink();
+    };
+
+    // Обработчик открытия ссылки с автогенерацией новой
+    const handleOpenReviewLink = () => {
+        window.open(reviewUrl, '_blank');
+        // Автоматически генерируем новую ссылку после открытия
+        onGenerateNewLink();
+    };
+
     return (
         <Card className="mb-6 bg-gray-900 border-gray-700">
             <CardHeader>
@@ -33,7 +47,7 @@ export const LinksCard = ({reviewUrl, publicUrl, onCopy, onGenerateNewLink}: Lin
                     <div className="flex space-x-2 mb-2">
                         <Button
                             size="sm"
-                            onClick={() => onCopy(reviewUrl, 'Ссылка для отзывов скопирована!')}
+                            onClick={handleCopyReviewLink}
                             className="flex-1 bg-gray-700 hover:bg-gray-600"
                         >
                             <Copy className="w-4 h-4 mr-2"/>
@@ -42,7 +56,7 @@ export const LinksCard = ({reviewUrl, publicUrl, onCopy, onGenerateNewLink}: Lin
                         <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => window.open(reviewUrl, '_blank')}
+                            onClick={handleOpenReviewLink}
                             className="border-gray-600 text-gray-300 hover:bg-gray-800"
                         >
                             <ExternalLink className="w-4 h-4"/>
@@ -55,7 +69,7 @@ export const LinksCard = ({reviewUrl, publicUrl, onCopy, onGenerateNewLink}: Lin
                         className="w-full border-gray-600 text-gray-300 hover:bg-gray-800"
                     >
                         <RefreshCw className="w-4 h-4 mr-2"/>
-                        Создать новую ссылку
+                        Создать новую ссылку вручную
                     </Button>
                 </div>
 
@@ -91,7 +105,8 @@ export const LinksCard = ({reviewUrl, publicUrl, onCopy, onGenerateNewLink}: Lin
 
                 <div className="text-xs text-gray-500 bg-gray-800 p-3 rounded border border-gray-700">
                     <strong className="text-gray-400">Как использовать:</strong><br/>
-                    • Ссылка для отзывов <strong className="text-yellow-400">одноразовая</strong> - создавайте новую для каждого клиента<br/>
+                    • Ссылка для отзывов <strong className="text-yellow-400">одноразовая</strong><br/>
+                    • При копировании или открытии автоматически генерируется новая ссылка<br/>
                     • После отправки отзыва ссылка становится неактивной<br/>
                     • Делитесь публичной страницей в Instagram<br/>
                     • Используйте публичную ссылку в био профиля
