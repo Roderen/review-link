@@ -1,6 +1,6 @@
 export const PricingHero = () => {
     return (
-        <section className="py-16 px-4">
+        <section className="pt-16 px-4">
             <div className="container mx-auto text-center max-w-4xl">
                 <h1 className="text-4xl md:text-5xl font-bold mb-6 text-white">
                     Выберите подходящий тариф
