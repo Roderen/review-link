@@ -7,9 +7,24 @@ interface LinksCardProps {
     reviewUrl: string;
     publicUrl: string;
     onCopy: (text: string, message: string) => void;
+    onGenerateNewLink: () => void;
 }
 
-export const LinksCard = ({reviewUrl, publicUrl, onCopy}: LinksCardProps) => {
+export const LinksCard = ({reviewUrl, publicUrl, onCopy, onGenerateNewLink}: LinksCardProps) => {
+    // Обработчик копирования с автогенерацией новой ссылки
+    const handleCopyReviewLink = () => {
+        onCopy(reviewUrl, 'Ссылка для отзывов скопирована!');
+        // Автоматически генерируем новую ссылку после копирования
+        onGenerateNewLink();
+    };
+
+    // Обработчик открытия ссылки с автогенерацией новой
+    const handleOpenReviewLink = () => {
+        window.open(reviewUrl, '_blank');
+        // Автоматически генерируем новую ссылку после открытия
+        onGenerateNewLink();
+    };
+
     return (
         <Card className="mb-6 bg-gray-900 border-gray-700">
             <CardHeader>
@@ -24,7 +39,7 @@ export const LinksCard = ({reviewUrl, publicUrl, onCopy}: LinksCardProps) => {
                     <div className="flex items-center justify-between mb-2">
                         <h4 className="font-medium text-white">Ссылка для отзывов</h4>
                         <Badge variant="secondary"
-                               className="bg-green-900 text-green-300">Активна</Badge>
+                               className="bg-green-900 text-green-300">Одноразовая</Badge>
                     </div>
                     <p className="text-sm text-gray-400 mb-3 break-all font-mono bg-gray-700 p-2 rounded">
                         {reviewUrl}
@@ -32,7 +47,7 @@ export const LinksCard = ({reviewUrl, publicUrl, onCopy}: LinksCardProps) => {
                     <div className="flex space-x-2">
                         <Button
                             size="sm"
-                            onClick={() => onCopy(reviewUrl, 'Ссылка для отзывов скопирована!')}
+                            onClick={handleCopyReviewLink}
                             className="flex-1 bg-gray-700 hover:bg-gray-600"
                         >
                             <Copy className="w-4 h-4 mr-2"/>
@@ -41,7 +56,7 @@ export const LinksCard = ({reviewUrl, publicUrl, onCopy}: LinksCardProps) => {
                         <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => window.open(reviewUrl, '_blank')}
+                            onClick={handleOpenReviewLink}
                             className="border-gray-600 text-gray-300 hover:bg-gray-800"
                         >
                             <ExternalLink className="w-4 h-4"/>
@@ -81,7 +96,9 @@ export const LinksCard = ({reviewUrl, publicUrl, onCopy}: LinksCardProps) => {
 
                 <div className="text-xs text-gray-500 bg-gray-800 p-3 rounded border border-gray-700">
                     <strong className="text-gray-400">Как использовать:</strong><br/>
-                    • Отправляйте ссылку для отзывов покупателям<br/>
+                    • Ссылка для отзывов <strong className="text-yellow-400">одноразовая</strong><br/>
+                    • При копировании или открытии автоматически генерируется новая ссылка<br/>
+                    • После отправки отзыва ссылка становится неактивной<br/>
                     • Делитесь публичной страницей в Instagram<br/>
                     • Используйте публичную ссылку в био профиля
                 </div>

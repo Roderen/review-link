@@ -1,9 +1,9 @@
 import {Card, CardContent} from '@/components/ui/card';
 import {Button} from '@/components/ui/button';
-import {Check, X} from 'lucide-react';
+import {Check, X, AlertCircle} from 'lucide-react';
 
 interface StatusCardProps {
-    type: 'success' | 'limit-reached' | 'loading';
+    type: 'success' | 'limit-reached' | 'already-submitted' | 'loading';
     shopName?: string;
     onClose?: () => void;
 }
@@ -28,6 +28,31 @@ export const StatusCard = ({type, shopName, onClose}: StatusCardProps) => {
                         <h2 className="text-2xl font-bold mb-2 text-white">Лимит отзывов достигнут</h2>
                         <p className="text-gray-400 mb-6">
                             К сожалению, для магазина {shopName || 'данного магазина'} достигнут лимит по количеству отзывов.
+                        </p>
+                        <Button
+                            onClick={onClose}
+                            className="w-full bg-gray-700 hover:bg-gray-600"
+                        >
+                            Закрыть
+                        </Button>
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
+
+    if (type === 'already-submitted') {
+        return (
+            <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
+                <Card className="max-w-md w-full text-center bg-gray-900 border-gray-700">
+                    <CardContent className="pt-6">
+                        <div className="w-16 h-16 bg-yellow-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <AlertCircle className="w-8 h-8 text-yellow-400"/>
+                        </div>
+                        <h2 className="text-2xl font-bold mb-2 text-white">Отзыв уже отправлен</h2>
+                        <p className="text-gray-400 mb-6">
+                            Вы уже оставили отзыв о магазине {shopName || 'данном магазине'}.
+                            Для предотвращения спама можно оставить только один отзыв с одного устройства.
                         </p>
                         <Button
                             onClick={onClose}

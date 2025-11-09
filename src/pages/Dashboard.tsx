@@ -4,6 +4,7 @@ import {Star, TrendingUp, Eye, MessageSquare} from 'lucide-react';
 import {useAuth} from '@/contexts/AuthContext.tsx';
 import {toast} from 'sonner';
 import {getReviewsCount, getReviewsForShop} from "@/lib/firebase/reviewServise.ts";
+import {generateReviewLinkId} from '@/lib/utils/generateLinkId';
 import {DashboardHeader} from '@/components/dashboard/DashboardHeader';
 import {PlanUsageCard} from '@/components/dashboard/PlanUsageCard';
 import {StatsCard} from '@/components/dashboard/StatsCard';
@@ -17,6 +18,7 @@ const Dashboard = () => {
     const [reviews, setReviews] = useState<DashboardReview[]>([]);
     const [reviewsCount, setReviewsCount] = useState<number>(0);
     const [loading, setLoading] = useState(true);
+    const [reviewLinkId, setReviewLinkId] = useState<string>(() => generateReviewLinkId());
 
     useEffect(() => {
         if (user?.id) {
@@ -55,12 +57,18 @@ const Dashboard = () => {
     if (!user) return null;
 
     const baseUrl = import.meta.env.VITE_BASE_URL || '/';
-    const reviewUrl = `${window.location.origin}${baseUrl}review/${user.id}`;
+    const reviewUrl = `${window.location.origin}${baseUrl}review/${user.id}?linkId=${reviewLinkId}`;
     const publicUrl = `${window.location.origin}${baseUrl}u/${user.id}`;
 
     const copyToClipboard = (text: string, message: string) => {
         navigator.clipboard.writeText(text);
         toast.success(message);
+    };
+
+    const generateNewReviewLink = () => {
+        const newLinkId = generateReviewLinkId();
+        setReviewLinkId(newLinkId);
+        toast.success('Новая ссылка для отзывов создана!');
     };
 
     const averageRating = reviewsCount > 0
@@ -138,6 +146,7 @@ const Dashboard = () => {
                             reviewUrl={reviewUrl}
                             publicUrl={publicUrl}
                             onCopy={copyToClipboard}
+                            onGenerateNewLink={generateNewReviewLink}
                         />
                     </div>
 

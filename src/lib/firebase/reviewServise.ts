@@ -41,6 +41,7 @@ interface SubmitReviewParams {
     rating: number;
     text: string;
     media?: string[];
+    reviewLinkId?: string; // Уникальный ID ссылки для отзыва (опционально для обратной совместимости)
 }
 
 export const submitReview = async ({
@@ -48,7 +49,8 @@ export const submitReview = async ({
                                        customerName,
                                        rating,
                                        text,
-                                       media = []
+                                       media = [],
+                                       reviewLinkId
                                    }: SubmitReviewParams) => {
     await addDoc(collection(db, 'reviews'), {
         shopOwnerId,
@@ -56,6 +58,7 @@ export const submitReview = async ({
         rating,
         text,
         date: serverTimestamp(),
+        ...(reviewLinkId && { reviewLinkId }), // Сохраняем ID ссылки если есть
         ...(media.length > 0 && { media }),
     });
 };
@@ -210,6 +213,38 @@ export const canSubmitReview = async (shopOwnerId: string) => {
     const countSnapshot = await getCountFromServer(q);
 
     return countSnapshot.data().count < maxReviews;
+};
+
+/**
+ * Проверяет, была ли уже использована ссылка для отзыва
+ * Предотвращает повторное использование одной и той же ссылки
+ * @param reviewLinkId - Уникальный ID ссылки для отзыва
+ * @returns true если ссылка еще не использовалась, false если уже использовалась
+ */
+export const canUseReviewLink = async (reviewLinkId: string): Promise<boolean> => {
+    try {
+        // Если reviewLinkId не передан, разрешаем (обратная совместимость)
+        if (!reviewLinkId) {
+            return true;
+        }
+
+        // Проверяем, есть ли уже отзыв с этим reviewLinkId
+        const reviewsRef = collection(db, 'reviews');
+        const q = query(
+            reviewsRef,
+            where('reviewLinkId', '==', reviewLinkId)
+        );
+
+        const countSnapshot = await getCountFromServer(q);
+        const reviewCount = countSnapshot.data().count;
+
+        // Если отзывов с этой ссылкой нет, можно отправлять
+        return reviewCount === 0;
+    } catch (error) {
+        console.error('Ошибка проверки ссылки для отзыва:', error);
+        // В случае ошибки разрешаем отправку (fail-open)
+        return true;
+    }
 };
 
 // ===== ПУБЛИЧНЫЕ ФУНКЦИИ ДЛЯ СТРАНИЦЫ ОТЗЫВОВ =====
