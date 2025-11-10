@@ -2,7 +2,8 @@ import {PricingCard} from '@/components/pricing/PricingCard';
 import {PlanFeature} from '@/types/pricing';
 
 interface PricingPreviewProps {
-    onViewAllPlans: () => void;
+    onLogin: () => void;
+    isLoading: boolean;
 }
 
 const plans: PlanFeature[] = [
@@ -16,7 +17,7 @@ const plans: PlanFeature[] = [
             'Статистика отзывов'
         ],
         popular: false,
-        buttonText: 'Попробовать бесплатно',
+        buttonText: 'Начать бесплатно',
         buttonVariant: 'outline' as const
     },
     {
@@ -49,7 +50,7 @@ const plans: PlanFeature[] = [
     }
 ];
 
-export const PricingPreview = ({onViewAllPlans}: PricingPreviewProps) => {
+export const PricingPreview = ({onLogin, isLoading}: PricingPreviewProps) => {
     return (
         <section className="py-16 px-4 bg-gray-900/30">
             <div className="container mx-auto max-w-7xl">
@@ -67,8 +68,8 @@ export const PricingPreview = ({onViewAllPlans}: PricingPreviewProps) => {
                         <PricingCard
                             key={index}
                             plan={plan}
-                            onSelect={onViewAllPlans}
-                            isLoading={false}
+                            onSelect={onLogin}
+                            isLoading={isLoading}
                         />
                     ))}
                 </div>

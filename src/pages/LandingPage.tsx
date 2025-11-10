@@ -55,7 +55,7 @@ const LandingPage = () => {
 
             <BenefitsSection />
 
-            <PricingPreview onViewAllPlans={handlePricingClick} />
+            <PricingPreview onLogin={handleGoogleLogin} isLoading={isLoading} />
 
             <CTASection onLogin={handleGoogleLogin} isLoading={isLoading} />
 
