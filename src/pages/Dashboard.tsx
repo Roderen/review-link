@@ -68,7 +68,6 @@ const Dashboard = () => {
     const generateNewReviewLink = () => {
         const newLinkId = generateReviewLinkId();
         setReviewLinkId(newLinkId);
-        toast.success('Новая ссылка для отзывов создана!');
     };
 
     const averageRating = reviewsCount > 0
