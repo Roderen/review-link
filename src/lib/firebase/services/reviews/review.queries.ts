@@ -21,6 +21,11 @@ import type {
 const REVIEWS_COLLECTION = 'reviews';
 
 /**
+ * Тип для отзывов (используется внутри функций)
+ */
+type ReviewData = any;
+
+/**
  * Получает статистику по отзывам для магазина
  * @param shopOwnerId - ID владельца магазина
  * @returns Promise<ReviewStats> - Статистика отзывов (общее количество, средний рейтинг, распределение)
@@ -250,3 +255,47 @@ export const getReviewsCount = async (shopId: string): Promise<number> => {
         throw error;
     }
 };
+
+/**
+ * Получает отзывы владельца магазина (для административной панели)
+ * @param storeOwnerId - ID владельца магазина
+ * @param limitCount - Максимальное количество отзывов (по умолчанию 50)
+ * @returns Promise<ReviewData[]> - Массив отзывов, отсортированных по дате создания (новые первые)
+ * @throws Error если не удалось получить отзывы
+ *
+ * @example
+ * const reviews = await getReviewsByStoreOwner("user123", 20);
+ * console.log(`Загружено ${reviews.length} отзывов`);
+ */
+export const getReviewsByStoreOwner = async (
+    storeOwnerId: string,
+    limitCount: number = 50
+): Promise<ReviewData[]> => {
+    try {
+        const q = query(
+            collection(db, REVIEWS_COLLECTION),
+            where("storeOwnerId", "==", storeOwnerId),
+            orderBy("createdAt", "desc"),
+            limit(limitCount)
+        );
+
+        const querySnapshot = await getDocs(q);
+        const reviews: ReviewData[] = [];
+
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            reviews.push({
+                ...data,
+                id: doc.id,
+                createdAt: data.createdAt?.toDate() || new Date(),
+                updatedAt: data.updatedAt?.toDate() || new Date(),
+            });
+        });
+
+        return reviews;
+    } catch (error) {
+        console.error("Ошибка получения отзывов владельца магазина:", error);
+        throw new Error("Не удалось получить отзывы");
+    }
+};
+

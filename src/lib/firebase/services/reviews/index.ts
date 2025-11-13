@@ -10,3 +10,6 @@ export * from './review.queries';
 
 // Валидация и проверки
 export * from './review.validation';
+
+// Real-time подписки
+export * from './review.subscriptions';
