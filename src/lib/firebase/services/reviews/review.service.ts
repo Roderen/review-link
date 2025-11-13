@@ -9,8 +9,7 @@ import {
     increment,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase/firebase-config';
-import type { SubmitReviewParams } from '@/lib/firebase/types/review.types';
-import type { Review } from '@/lib/firebase/types';
+import type { SubmitReviewParams, Review } from '@/lib/firebase/types/review.types';
 import { getUserProfile } from '@/lib/firebase/services/users';
 import { getReviewLink } from '@/lib/firebase/services/review-links';
 

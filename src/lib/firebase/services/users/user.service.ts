@@ -6,7 +6,7 @@ import {
     setDoc,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase/firebase-config';
-import type { User } from '@/lib/firebase/types';
+import type { User } from '@/lib/firebase/types/user.types';
 
 /**
  * Название коллекции пользователей в Firestore

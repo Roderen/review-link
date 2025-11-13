@@ -1,6 +1,70 @@
 import { DocumentSnapshot } from 'firebase/firestore';
 
 /**
+ * Основной интерфейс отзыва
+ */
+export interface Review {
+    /** Уникальный ID отзыва */
+    id: string;
+    /** ID владельца магазина */
+    storeOwnerId: string;
+    /** Имя клиента */
+    customerName: string;
+    /** Email клиента (опционально) */
+    customerEmail?: string;
+    /** Рейтинг (1-5 звезд) */
+    rating: number;
+    /** Заголовок отзыва */
+    title?: string;
+    /** Текст отзыва */
+    content: string;
+    /** URLs фотографий */
+    photos?: string[];
+    /** Публичный ли отзыв (всегда true при создании) */
+    isPublic: boolean;
+    /** Дата создания отзыва */
+    createdAt: Date;
+    /** Дата последнего обновления */
+    updatedAt: Date;
+    /** Метаданные отзыва */
+    metadata?: {
+        /** IP адрес клиента */
+        ipAddress?: string;
+        /** User-Agent клиента */
+        userAgent?: string;
+        /** Источник отзыва (всегда DIRECT_LINK) */
+        source: 'DIRECT_LINK';
+        /** Токен ссылки для отзыва */
+        reviewToken?: string;
+    };
+}
+
+/**
+ * Данные для создания публичного отзыва
+ */
+export interface CreatePublicReviewData {
+    /** Имя клиента */
+    customerName: string;
+    /** Email клиента (опционально) */
+    customerEmail?: string;
+    /** Рейтинг (1-5 звезд) */
+    rating: number;
+    /** Заголовок отзыва */
+    title?: string;
+    /** Текст отзыва */
+    content: string;
+    /** URLs фотографий */
+    photos?: string[];
+    /** Метаданные */
+    metadata?: {
+        /** IP адрес клиента */
+        ipAddress?: string;
+        /** User-Agent клиента */
+        userAgent?: string;
+    };
+}
+
+/**
  * Опции для запроса отзывов
  */
 export interface ReviewQueryOptions {
