@@ -4,7 +4,7 @@ import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
 import {MessageSquare} from 'lucide-react';
 import {toast} from 'sonner';
 import {useAuth} from "@/contexts/AuthContext.tsx";
-import {canSubmitReview, canUseReviewLink, submitReview, getPublicReviewsStats} from "@/lib/firebase/reviewServise.ts";
+import {canSubmitReview, canUseReviewLink, submitReview, getPublicReviewsStats} from "@/lib/firebase/services/reviews";
 import {ShopInfoCard} from '@/components/review-form/ShopInfoCard';
 import {RatingInput} from '@/components/review-form/RatingInput';
 import {ReviewFormFields} from '@/components/review-form/ReviewFormFields';
