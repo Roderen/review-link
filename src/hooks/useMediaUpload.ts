@@ -4,6 +4,9 @@ import { toast } from 'sonner';
 const UPLOADCARE_PUB_KEY = 'acb1f0d9f083d1dac8d6';
 const UPLOADCARE_CDN_URL = 'https://2jzkd06n6i.ucarecd.net/';
 const MAX_MEDIA_COUNT = 5;
+const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100 MB
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'];
 
 /**
  * Custom hook для загрузки медиа-файлов через Uploadcare
@@ -12,6 +15,26 @@ const MAX_MEDIA_COUNT = 5;
 export const useMediaUpload = () => {
     const [media, setMedia] = useState<string[]>([]);
     const [isUploading, setIsUploading] = useState(false);
+
+    /**
+     * Валидирует файл перед загрузкой
+     */
+    const validateFile = (file: File): string | null => {
+        // Проверка размера
+        if (file.size > MAX_FILE_SIZE) {
+            return `Файл "${file.name}" слишком большой. Максимум 100 МБ`;
+        }
+
+        // Проверка типа
+        const isImage = ALLOWED_IMAGE_TYPES.includes(file.type);
+        const isVideo = ALLOWED_VIDEO_TYPES.includes(file.type);
+
+        if (!isImage && !isVideo) {
+            return `Файл "${file.name}" имеет неподдерживаемый формат. Разрешены: JPG, PNG, GIF, WebP, MP4, WebM`;
+        }
+
+        return null;
+    };
 
     /**
      * Загружает файлы на Uploadcare
@@ -26,11 +49,19 @@ export const useMediaUpload = () => {
             return;
         }
 
+        // Валидация всех файлов
+        const filesToUpload = Array.from(files).slice(0, availableSlots);
+        for (const file of filesToUpload) {
+            const validationError = validateFile(file);
+            if (validationError) {
+                toast.error(validationError);
+                return;
+            }
+        }
+
         setIsUploading(true);
 
         try {
-            const filesToUpload = Array.from(files).slice(0, availableSlots);
-
             const uploadPromises = filesToUpload.map(async (file) => {
                 const formData = new FormData();
                 formData.append('UPLOADCARE_PUB_KEY', UPLOADCARE_PUB_KEY);
@@ -42,7 +73,9 @@ export const useMediaUpload = () => {
                 });
 
                 if (!response.ok) {
-                    throw new Error('Upload failed');
+                    const errorData = await response.json().catch(() => ({}));
+                    console.error('Upload error response:', errorData);
+                    throw new Error(`Ошибка загрузки "${file.name}": ${errorData.error?.content || response.statusText}`);
                 }
 
                 const data = await response.json();
@@ -51,10 +84,11 @@ export const useMediaUpload = () => {
 
             const uploadedUrls = await Promise.all(uploadPromises);
             setMedia((prev) => [...prev, ...uploadedUrls]);
-            toast.success('Файлы загружены!');
+            toast.success(`${uploadedUrls.length === 1 ? 'Файл загружен' : 'Файлы загружены'}!`);
         } catch (error) {
             console.error('Ошибка загрузки:', error);
-            toast.error('Ошибка при загрузке файлов');
+            const errorMessage = error instanceof Error ? error.message : 'Ошибка при загрузке файлов';
+            toast.error(errorMessage);
         } finally {
             setIsUploading(false);
         }
