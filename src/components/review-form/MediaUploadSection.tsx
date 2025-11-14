@@ -9,6 +9,11 @@ interface MediaUploadSectionProps {
 }
 
 export const MediaUploadSection = ({media, isUploading, onMediaUpload, onRemoveMedia}: MediaUploadSectionProps) => {
+    // Проверяет, является ли URL видео-файлом
+    const isVideo = (url: string) => {
+        return url.includes('/video/') || /\.(mp4|webm|ogg|mov)$/i.test(url);
+    };
+
     return (
         <div>
             <Label className="text-base font-medium text-white">Фото и видео (необязательно)</Label>
@@ -20,11 +25,21 @@ export const MediaUploadSection = ({media, isUploading, onMediaUpload, onRemoveM
                 <div className="grid grid-cols-3 gap-3 mb-3">
                     {media.map((url, index) => (
                         <div key={index} className="relative group">
-                            <img
-                                src={url}
-                                alt={`Media ${index + 1}`}
-                                className="w-full h-24 object-cover rounded-lg"
-                            />
+                            {isVideo(url) ? (
+                                <video
+                                    src={url}
+                                    className="w-full h-24 object-cover rounded-lg"
+                                    controls
+                                    muted
+                                    playsInline
+                                />
+                            ) : (
+                                <img
+                                    src={url}
+                                    alt={`Media ${index + 1}`}
+                                    className="w-full h-24 object-cover rounded-lg"
+                                />
+                            )}
                             <button
                                 type="button"
                                 onClick={() => onRemoveMedia(index)}

@@ -22,7 +22,7 @@ export const useMediaUpload = () => {
 
         const availableSlots = MAX_MEDIA_COUNT - media.length;
         if (availableSlots <= 0) {
-            toast.error(`Максимум ${MAX_MEDIA_COUNT} изображений`);
+            toast.error(`Максимум ${MAX_MEDIA_COUNT} файлов`);
             return;
         }
 
@@ -51,10 +51,10 @@ export const useMediaUpload = () => {
 
             const uploadedUrls = await Promise.all(uploadPromises);
             setMedia((prev) => [...prev, ...uploadedUrls]);
-            toast.success('Изображения загружены!');
+            toast.success('Файлы загружены!');
         } catch (error) {
             console.error('Ошибка загрузки:', error);
-            toast.error('Ошибка при загрузке изображений');
+            toast.error('Ошибка при загрузке файлов');
         } finally {
             setIsUploading(false);
         }
