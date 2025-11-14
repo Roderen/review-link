@@ -11,7 +11,7 @@ import {
     serverTimestamp,
     Timestamp,
 } from 'firebase/firestore';
-import { db } from '@/lib/firebase/firebase-config';
+import { db } from '@/lib/firebase/config/firebase-config';
 import type { ReviewLink, CreateReviewLinkOptions } from '@/lib/firebase/types/review-link.types';
 
 /**

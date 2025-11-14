@@ -8,7 +8,7 @@ import {
     startAfter,
     getCountFromServer,
 } from 'firebase/firestore';
-import { db } from '@/lib/firebase/firebase-config';
+import { db } from '@/lib/firebase/config/firebase-config';
 import type {
     ReviewQueryOptions,
     ReviewStats,

@@ -8,7 +8,7 @@ import {
     deleteDoc,
     increment,
 } from 'firebase/firestore';
-import { db } from '@/lib/firebase/firebase-config';
+import { db } from '@/lib/firebase/config/firebase-config';
 import type { SubmitReviewParams, Review } from '@/lib/firebase/types/review.types';
 import { getUserProfile } from '@/lib/firebase/services/users';
 import { getReviewLink } from '@/lib/firebase/services/review-links';

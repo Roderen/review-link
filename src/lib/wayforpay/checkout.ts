@@ -1,5 +1,5 @@
 import { httpsCallable } from 'firebase/functions';
-import { functions } from '@/lib/firebase/firebase-config';
+import { functions } from '@/lib/firebase/config/firebase-config';
 
 interface WayForPayFormData {
     merchantAccount: string;

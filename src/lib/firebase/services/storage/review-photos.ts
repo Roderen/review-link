@@ -5,7 +5,7 @@ import {
     getDownloadURL,
     getMetadata,
 } from 'firebase/storage';
-import { storage } from '@/lib/firebase/firebase-config';
+import { storage } from '@/lib/firebase/config/firebase-config';
 import type { UploadProgress, UploadResult } from '@/lib/firebase/types/storage.types';
 
 /**

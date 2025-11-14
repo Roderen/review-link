@@ -6,8 +6,8 @@ import {
     doc,
     getDoc,
 } from 'firebase/firestore';
-import { db } from '@/lib/firebase/firebase-config';
-import { PLANS, Plans } from '@/lib/firebase/plans';
+import { db } from '@/lib/firebase/config/firebase-config';
+import { PLANS, type Plans } from '@/lib/firebase/config/subscription-plans';
 
 /**
  * Название коллекций в Firestore
