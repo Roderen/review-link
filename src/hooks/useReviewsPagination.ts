@@ -54,10 +54,13 @@ export const useReviewsPagination = ({
                     setLoadedReviews(result.reviews as Review[]);
                     setLastVisibleDoc(result.lastVisible || null);
                     setHasMoreInDB(result.hasMore || false);
+                    // Устанавливаем loading в false только после установки данных
+                    setLoading(false);
+                } else {
+                    setLoading(false);
                 }
             } catch (error) {
                 console.error('Ошибка загрузки данных:', error);
-            } finally {
                 setLoading(false);
             }
         };
