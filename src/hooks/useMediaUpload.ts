@@ -82,7 +82,18 @@ export const useMediaUpload = () => {
                     } catch {
                         errorData = { error: errorText };
                     }
-                    throw new Error(`Ошибка загрузки "${file.name}": ${errorData.error?.content || errorData.error || response.statusText}`);
+
+                    const errorMsg = errorData.error?.content || errorData.error || response.statusText;
+
+                    // Специальная обработка для ошибки типа файла
+                    if (errorMsg.includes('file types is not allowed')) {
+                        const isVideo = ALLOWED_VIDEO_TYPES.includes(file.type);
+                        if (isVideo) {
+                            throw new Error(`Загрузка видео временно недоступна. Пожалуйста, используйте только фото (JPG, PNG, GIF, WebP)`);
+                        }
+                    }
+
+                    throw new Error(`Ошибка загрузки "${file.name}": ${errorMsg}`);
                 }
 
                 const data = await response.json();
