@@ -75,7 +75,7 @@ export const MediaUploadSection = ({media, isUploading, onMediaUpload, onRemoveM
                             {isUploading ? 'Загрузка...' : 'Нажмите для загрузки фото'}
                         </span>
                         <span className="text-xs text-gray-500">
-                            Максимум 5 файлов, до 100 МБ каждый
+                            Максимум 5 файлов, до 30 МБ каждый
                         </span>
                         <span className="text-xs text-gray-600">
                             JPG, PNG, GIF, WebP

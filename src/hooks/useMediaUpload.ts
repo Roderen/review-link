@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 const UPLOADCARE_PUB_KEY = 'acb1f0d9f083d1dac8d6';
 const UPLOADCARE_CDN_URL = 'https://2jzkd06n6i.ucarecd.net/';
 const MAX_MEDIA_COUNT = 5;
-const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100 MB
+const MAX_FILE_SIZE = 30 * 1024 * 1024; // 30 MB
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
 const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'];
 
@@ -22,7 +22,7 @@ export const useMediaUpload = () => {
     const validateFile = (file: File): string | null => {
         // Проверка размера
         if (file.size > MAX_FILE_SIZE) {
-            return `Файл "${file.name}" слишком большой. Максимум 100 МБ`;
+            return `Файл "${file.name}" слишком большой. Максимум 30 МБ`;
         }
 
         // Проверка типа
