@@ -2,7 +2,7 @@ import {useEffect, useState, useCallback, useRef, useMemo} from 'react';
 import {useParams, Navigate} from 'react-router-dom';
 import {getPublicReviewsStats, getPublicReviews, getReviewsCount} from "@/lib/firebase/services/reviews";
 import {getShopById} from "@/lib/firebase/services/shops";
-import type {QueryDocumentSnapshot, DocumentData} from 'firebase/firestore';
+import type {DocumentSnapshot, DocumentData} from 'firebase/firestore';
 import {deleteDoc, doc} from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import {useAuth} from "@/contexts/AuthContext.tsx";
@@ -29,7 +29,7 @@ const PublicReviewsPage = () => {
     const [filterRating, setFilterRating] = useState<number | null>(null);
 
     const [loadedReviews, setLoadedReviews] = useState<Review[]>([]);
-    const [lastVisibleDoc, setLastVisibleDoc] = useState<QueryDocumentSnapshot<DocumentData> | null>(null);
+    const [lastVisibleDoc, setLastVisibleDoc] = useState<DocumentSnapshot<DocumentData> | null>(null);
     const [hasMoreInDB, setHasMoreInDB] = useState(true);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
 
