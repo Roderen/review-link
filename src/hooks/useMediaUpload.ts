@@ -65,6 +65,7 @@ export const useMediaUpload = () => {
             const uploadPromises = filesToUpload.map(async (file) => {
                 const formData = new FormData();
                 formData.append('UPLOADCARE_PUB_KEY', UPLOADCARE_PUB_KEY);
+                formData.append('UPLOADCARE_STORE', '1');
                 formData.append('file', file);
 
                 const response = await fetch('https://upload.uploadcare.com/base/', {
@@ -73,9 +74,15 @@ export const useMediaUpload = () => {
                 });
 
                 if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({}));
-                    console.error('Upload error response:', errorData);
-                    throw new Error(`Ошибка загрузки "${file.name}": ${errorData.error?.content || response.statusText}`);
+                    const errorText = await response.text();
+                    console.error('Upload error response:', errorText);
+                    let errorData;
+                    try {
+                        errorData = JSON.parse(errorText);
+                    } catch {
+                        errorData = { error: errorText };
+                    }
+                    throw new Error(`Ошибка загрузки "${file.name}": ${errorData.error?.content || errorData.error || response.statusText}`);
                 }
 
                 const data = await response.json();
