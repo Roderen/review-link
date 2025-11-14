@@ -10,9 +10,10 @@ interface ShopHeaderProps {
     description?: string;
     instagram?: string;
     stats: ReviewStats | null;
+    loading?: boolean;
 }
 
-export const ShopHeader = ({avatar, name, description, instagram, stats}: ShopHeaderProps) => {
+export const ShopHeader = ({avatar, name, description, instagram, stats, loading = false}: ShopHeaderProps) => {
     const averageRating = stats?.averageRating?.toFixed(1) || '0';
 
     return (
@@ -24,8 +25,32 @@ export const ShopHeader = ({avatar, name, description, instagram, stats}: ShopHe
                         <AvatarFallback className="text-xl">{name?.charAt(0) || 'U'}</AvatarFallback>
                     </Avatar>
                     <div className="flex-1">
-                        <h1 className="text-3xl font-bold mb-2 text-white">{name || 'Магазин'}</h1>
-                        <p className="text-gray-400 mb-3">{description || 'Нет описания'}</p>
+                        <h1 className="text-3xl font-bold mb-2 text-white">
+                            {loading ? (
+                                <Skeleton
+                                    width={200}
+                                    height={36}
+                                    baseColor="#2d2d2d"
+                                    highlightColor="#3d3d3d"
+                                    style={{display: 'inline-block'}}
+                                />
+                            ) : (
+                                name || 'Магазин'
+                            )}
+                        </h1>
+                        <p className="text-gray-400 mb-3">
+                            {loading ? (
+                                <Skeleton
+                                    width={300}
+                                    height={20}
+                                    baseColor="#2d2d2d"
+                                    highlightColor="#3d3d3d"
+                                    style={{display: 'inline-block'}}
+                                />
+                            ) : (
+                                description || 'Нет описания'
+                            )}
+                        </p>
                         <div className="flex items-center space-x-4">
                             <div className="flex items-center space-x-2">
                                 {!stats ? (
