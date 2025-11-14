@@ -4,7 +4,7 @@ import {getPublicReviewsStats, getPublicReviews, getReviewsCount} from "@/lib/fi
 import {getShopById} from "@/lib/firebase/services/shops";
 import type {QueryDocumentSnapshot, DocumentData} from 'firebase/firestore';
 import {deleteDoc, doc} from 'firebase/firestore';
-import {db} from '@/lib/firebase/firebase-config.ts';
+import { db } from '@/lib/firebase';
 import {useAuth} from "@/contexts/AuthContext.tsx";
 import {ShopHeader} from '@/components/reviews-page/ShopHeader';
 import {StatsSidebar} from '@/components/reviews-page/StatsSidebar';
