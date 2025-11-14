@@ -1,4 +1,3 @@
-// src/lib/firebase/storage.ts
 import {
     ref,
     uploadBytes,
@@ -6,24 +5,11 @@ import {
     getDownloadURL,
     getMetadata,
 } from 'firebase/storage';
-import { storage } from './firebase-config';
-
-// Типы для загрузки файлов
-export interface UploadProgress {
-    bytesTransferred: number;
-    totalBytes: number;
-    percentage: number;
-}
-
-export interface UploadResult {
-    url: string;
-    path: string;
-    filename: string;
-    size: number;
-}
+import { storage } from '@/lib/firebase/config/firebase-config';
+import type { UploadProgress, UploadResult } from '@/lib/firebase/types/storage.types';
 
 /**
- * Генерирует уникальное имя файла
+ * Генерирует уникальное имя файла с timestamp и случайной строкой
  */
 const generateUniqueFilename = (originalName: string): string => {
     const timestamp = Date.now();
@@ -33,10 +19,10 @@ const generateUniqueFilename = (originalName: string): string => {
 };
 
 /**
- * Проверяет тип файла
+ * Проверяет тип файла по MIME-типу
  */
 const validateFileType = (file: File, allowedTypes: string[]): boolean => {
-    return allowedTypes.some(type => file.type.startsWith(type));
+    return allowedTypes.some((type) => file.type.startsWith(type));
 };
 
 /**
@@ -47,9 +33,19 @@ const validateFileSize = (file: File, maxSize: number): boolean => {
 };
 
 /**
- * ЗАГРУЗКА ФОТОГРАФИЙ ДЛЯ ОТЗЫВОВ
+ * Загружает одну фотографию для отзыва в Firebase Storage
+ * @param file - Файл изображения для загрузки
+ * @param reviewId - ID отзыва, к которому привязывается фото
+ * @param onProgress - Callback для отслеживания прогресса загрузки (опционально)
+ * @returns Promise<UploadResult> - Результат загрузки с URL и метаданными
+ * @throws Error если файл невалиден или загрузка не удалась
+ *
+ * @example
+ * const result = await uploadReviewPhoto(file, 'review123', (progress) => {
+ *   console.log(`Загружено: ${progress.percentage}%`);
+ * });
+ * console.log(`URL фото: ${result.url}`);
  */
-
 export const uploadReviewPhoto = async (
     file: File,
     reviewId: string,
@@ -60,11 +56,11 @@ export const uploadReviewPhoto = async (
     const maxSize = 5 * 1024 * 1024; // 5MB
 
     if (!validateFileType(file, allowedTypes)) {
-        throw new Error('Invalid file type. Only JPEG, PNG, and WebP images are allowed.');
+        throw new Error('Неверный тип файла. Разрешены только JPEG, PNG и WebP изображения.');
     }
 
     if (!validateFileSize(file, maxSize)) {
-        throw new Error('File size too large. Maximum size is 5MB.');
+        throw new Error('Размер файла слишком большой. Максимальный размер 5MB.');
     }
 
     try {
@@ -88,8 +84,8 @@ export const uploadReviewPhoto = async (
                         onProgress(progress);
                     },
                     (error) => {
-                        console.error('Upload error:', error);
-                        reject(new Error('Failed to upload image'));
+                        console.error('Ошибка загрузки:', error);
+                        reject(new Error('Не удалось загрузить изображение'));
                     },
                     async () => {
                         try {
@@ -103,7 +99,7 @@ export const uploadReviewPhoto = async (
                                 size: metadata.size,
                             });
                         } catch (error) {
-                            reject(new Error('Failed to get download URL'));
+                            reject(new Error('Не удалось получить URL загрузки'));
                         }
                     }
                 );
@@ -122,13 +118,27 @@ export const uploadReviewPhoto = async (
             };
         }
     } catch (error) {
-        console.error('Error uploading review photo:', error);
-        throw new Error('Failed to upload review photo');
+        console.error('Ошибка загрузки фото отзыва:', error);
+        throw new Error('Не удалось загрузить фото отзыва');
     }
 };
 
 /**
- * Загрузка нескольких фотографий для отзыва
+ * Загружает несколько фотографий для отзыва одновременно
+ * @param files - Массив файлов изображений
+ * @param reviewId - ID отзыва, к которому привязываются фото
+ * @param onIndividualProgress - Callback для отслеживания прогресса каждого файла (опционально)
+ * @param onOverallProgress - Callback для отслеживания общего прогресса (опционально)
+ * @returns Promise<UploadResult[]> - Массив результатов загрузки
+ * @throws Error если превышен лимит файлов или загрузка не удалась
+ *
+ * @example
+ * const results = await uploadMultipleReviewPhotos(
+ *   files,
+ *   'review123',
+ *   (index, progress) => console.log(`Файл ${index}: ${progress.percentage}%`),
+ *   (completed, total) => console.log(`Загружено ${completed} из ${total}`)
+ * );
  */
 export const uploadMultipleReviewPhotos = async (
     files: File[],
@@ -139,7 +149,7 @@ export const uploadMultipleReviewPhotos = async (
     const maxFiles = 5; // Максимум 5 фото на отзыв
 
     if (files.length > maxFiles) {
-        throw new Error(`Too many files. Maximum ${maxFiles} photos per review.`);
+        throw new Error(`Слишком много файлов. Максимум ${maxFiles} фото на отзыв.`);
     }
 
     const results: UploadResult[] = [];
@@ -166,85 +176,7 @@ export const uploadMultipleReviewPhotos = async (
 
         return results;
     } catch (error) {
-        console.error('Error uploading multiple photos:', error);
-        throw new Error('Failed to upload photos');
-    }
-};
-
-/**
- * ЗАГРУЗКА АВАТАРОВ И ЛОГОТИПОВ
- */
-
-export const uploadUserAvatar = async (
-    file: File,
-    userId: string,
-    _onProgress?: (progress: UploadProgress) => void
-): Promise<UploadResult> => {
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-    const maxSize = 2 * 1024 * 1024; // 2MB для аватаров
-
-    if (!validateFileType(file, allowedTypes)) {
-        throw new Error('Invalid file type for avatar.');
-    }
-
-    if (!validateFileSize(file, maxSize)) {
-        throw new Error('Avatar file size too large. Maximum size is 2MB.');
-    }
-
-    try {
-        const filename = generateUniqueFilename(file.name);
-        const storagePath = `avatars/${userId}/${filename}`;
-        const storageRef = ref(storage, storagePath);
-
-        const snapshot = await uploadBytes(storageRef, file);
-        const downloadURL = await getDownloadURL(snapshot.ref);
-        const metadata = await getMetadata(snapshot.ref);
-
-        return {
-            url: downloadURL,
-            path: storagePath,
-            filename,
-            size: metadata.size,
-        };
-    } catch (error) {
-        console.error('Error uploading avatar:', error);
-        throw new Error('Failed to upload avatar');
-    }
-};
-
-export const uploadStoreLogo = async (
-    file: File,
-    storeId: string,
-    _onProgress?: (progress: UploadProgress) => void
-): Promise<UploadResult> => {
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'];
-    const maxSize = 3 * 1024 * 1024; // 3MB для логотипов
-
-    if (!validateFileType(file, allowedTypes)) {
-        throw new Error('Invalid file type for logo.');
-    }
-
-    if (!validateFileSize(file, maxSize)) {
-        throw new Error('Logo file size too large. Maximum size is 3MB.');
-    }
-
-    try {
-        const filename = generateUniqueFilename(file.name);
-        const storagePath = `logos/${storeId}/${filename}`;
-        const storageRef = ref(storage, storagePath);
-
-        const snapshot = await uploadBytes(storageRef, file);
-        const downloadURL = await getDownloadURL(snapshot.ref);
-        const metadata = await getMetadata(snapshot.ref);
-
-        return {
-            url: downloadURL,
-            path: storagePath,
-            filename,
-            size: metadata.size,
-        };
-    } catch (error) {
-        console.error('Error uploading logo:', error);
-        throw new Error('Failed to upload logo');
+        console.error('Ошибка загрузки нескольких фото:', error);
+        throw new Error('Не удалось загрузить фото');
     }
 };

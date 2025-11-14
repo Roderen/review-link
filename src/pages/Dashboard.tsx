@@ -3,7 +3,7 @@ import {useNavigate} from 'react-router-dom';
 import {Star, TrendingUp, Eye, MessageSquare} from 'lucide-react';
 import {useAuth} from '@/contexts/AuthContext.tsx';
 import {toast} from 'sonner';
-import {getReviewsCount, getReviewsForShop} from "@/lib/firebase/reviewServise.ts";
+import {getReviewsCount, getReviewsForShop} from "@/lib/firebase/services/reviews";
 import {generateReviewLinkId} from '@/lib/utils/generateLinkId';
 import {DashboardHeader} from '@/components/dashboard/DashboardHeader';
 import {PlanUsageCard} from '@/components/dashboard/PlanUsageCard';

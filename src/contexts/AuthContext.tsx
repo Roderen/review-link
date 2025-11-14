@@ -7,7 +7,7 @@ import {
 } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { auth, db } from '../lib/firebase/firebase-config.ts'; // путь подредактируйте под себя
+import { auth, db } from '@/lib/firebase';
 
 interface User {
   id: string;

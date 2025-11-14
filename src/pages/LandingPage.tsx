@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {useAuth} from '@/contexts/AuthContext.tsx';
-import {signInWithGoogle} from "@/lib/firebase/auth.ts";
+import { signInWithGoogle } from '@/lib/firebase';
 import {LandingHeader} from '@/components/landing/LandingHeader';
 import {HeroSection} from '@/components/landing/HeroSection';
 import {HowItWorksSection} from '@/components/landing/HowItWorksSection';
