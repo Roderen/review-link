@@ -23,10 +23,11 @@ export const useShopData = (shopId: string | undefined) => {
                 const shopData = await getShopById(shopId);
                 setShop(shopData);
                 setShopNotFound(false);
+                // Устанавливаем loading в false только после установки данных
+                setLoading(false);
             } catch (error) {
                 console.error('Ошибка загрузки магазина:', error);
                 setShopNotFound(true);
-            } finally {
                 setLoading(false);
             }
         };

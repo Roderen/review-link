@@ -30,9 +30,10 @@ export const useReviewsStats = (shopId: string | undefined) => {
 
                 setStats(statsData);
                 setReviewsCount(count);
+                // Устанавливаем loading в false только после установки данных
+                setLoading(false);
             } catch (error) {
                 console.error('Ошибка загрузки статистики:', error);
-            } finally {
                 setLoading(false);
             }
         };
