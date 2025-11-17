@@ -36,8 +36,18 @@ export const HowItWorksSection = () => {
 
                 {/* Preview Cards */}
                 <div className="grid md:grid-cols-2 gap-12 items-center">
-                    <FeaturePreviewCard type="review-form"/>
-                    <FeaturePreviewCard type="public-page"/>
+                    <FeaturePreviewCard
+                        title="Форма отзыва"
+                        description="Ваши клиенты легко оставляют отзывы с фото"
+                        imageUrl="/screenshots/review-form.png"
+                        imageAlt="Скриншот формы для оставления отзыва"
+                    />
+                    <FeaturePreviewCard
+                        title="Публичная страница"
+                        description="Красивая витрина всех ваших отзывов для демонстрации клиентам"
+                        imageUrl="/screenshots/public-page.png"
+                        imageAlt="Скриншот публичной страницы с отзывами"
+                    />
                 </div>
             </div>
         </section>
