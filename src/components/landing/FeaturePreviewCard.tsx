@@ -11,7 +11,7 @@ export const FeaturePreviewCard = ({type}: FeaturePreviewCardProps) => {
             <div>
                 <h3 className="text-2xl font-bold mb-4 text-white">Форма отзыва</h3>
                 <p className="text-gray-400 mb-6">
-                    Ваши клиенты легко оставляют отзывы с фото и видео
+                    Ваши клиенты могут оставить отзыв о товаре
                 </p>
                 <Card className="p-6 bg-gray-800 border-gray-700 shadow-lg">
                     <div className="space-y-4">
@@ -33,9 +33,6 @@ export const FeaturePreviewCard = ({type}: FeaturePreviewCardProps) => {
                         <div className="flex space-x-2">
                             <div className="w-16 h-16 bg-gray-600 rounded flex items-center justify-center">
                                 <Image className="w-6 h-6 text-gray-400"/>
-                            </div>
-                            <div className="w-16 h-16 bg-gray-600 rounded flex items-center justify-center">
-                                <Video className="w-6 h-6 text-gray-400"/>
                             </div>
                         </div>
                     </div>

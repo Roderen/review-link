@@ -30,7 +30,7 @@ export const HowItWorksSection = () => {
                         icon={Star}
                         step="3"
                         title="Собирайте отзывы"
-                        description="Все отзывы собираются на красивой публичной странице"
+                        description="Все отзывы собираются на публичной странице"
                     />
                 </div>
 
