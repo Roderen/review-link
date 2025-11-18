@@ -1,5 +1,5 @@
 import {Label} from '@/components/ui/label';
-import {Camera, Video, Upload, X} from 'lucide-react';
+import {Camera, Upload, X} from 'lucide-react';
 
 interface MediaUploadSectionProps {
     media: string[];
