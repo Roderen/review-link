@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
+import { HelmetProvider } from 'react-helmet-async';
 import {AuthProvider, useAuth} from '@/contexts/AuthContext.tsx';
 
 import LandingPage from './pages/LandingPage';
@@ -67,11 +68,13 @@ const AppContent: React.FC = () => {
 
 function App() {
     return (
-        <AuthProvider>
-            <Router basename={import.meta.env.VITE_BASE_URL || '/'}>
-                <AppContent /> {}
-            </Router>
-        </AuthProvider>
+        <HelmetProvider>
+            <AuthProvider>
+                <Router basename={import.meta.env.VITE_BASE_URL || '/'}>
+                    <AppContent /> {}
+                </Router>
+            </AuthProvider>
+        </HelmetProvider>
     );
 }
 
