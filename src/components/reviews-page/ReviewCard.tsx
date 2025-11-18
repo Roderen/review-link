@@ -11,6 +11,11 @@ interface ReviewCardProps {
 }
 
 export const ReviewCard = ({review, showDeleteButton, onDelete}: ReviewCardProps) => {
+    // Проверяет, является ли URL видео-файлом
+    const isVideo = (url: string) => {
+        return url.includes('/video/') || /\.(mp4|webm|ogg|mov)$/i.test(url);
+    };
+
     return (
         <Card className="hover:shadow-md transition-shadow bg-gray-900 border-gray-700">
             <CardContent className="p-6">
@@ -58,38 +63,61 @@ export const ReviewCard = ({review, showDeleteButton, onDelete}: ReviewCardProps
 
                         {review.media && review.media.length > 0 && (
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                {review.media.map((media: string, mediaIndex: number) => (
-                                    <Dialog key={mediaIndex}>
-                                        <DialogTrigger asChild>
-                                            <div className="relative group cursor-pointer">
-                                                <img
-                                                    src={media}
-                                                    alt={`Review media ${mediaIndex + 1}`}
-                                                    className="w-full h-24 object-cover rounded-lg hover:opacity-90 transition-opacity"
-                                                />
-                                                <div
-                                                    className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 rounded-lg transition-all flex items-center justify-center">
-                                                    {media.includes('video') ? (
-                                                        <Play
-                                                            className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity"/>
+                                {review.media.map((media: string, mediaIndex: number) => {
+                                    const mediaIsVideo = isVideo(media);
+
+                                    return (
+                                        <Dialog key={mediaIndex}>
+                                            <DialogTrigger asChild>
+                                                <div className="relative group cursor-pointer">
+                                                    {mediaIsVideo ? (
+                                                        <video
+                                                            src={media}
+                                                            className="w-full h-24 object-cover rounded-lg hover:opacity-90 transition-opacity"
+                                                            muted
+                                                            playsInline
+                                                        />
                                                     ) : (
-                                                        <ImageIcon
-                                                            className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity"/>
+                                                        <img
+                                                            src={media}
+                                                            alt={`Review media ${mediaIndex + 1}`}
+                                                            className="w-full h-24 object-cover rounded-lg hover:opacity-90 transition-opacity"
+                                                        />
+                                                    )}
+                                                    <div
+                                                        className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 rounded-lg transition-all flex items-center justify-center">
+                                                        {mediaIsVideo ? (
+                                                            <Play
+                                                                className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity"/>
+                                                        ) : (
+                                                            <ImageIcon
+                                                                className="w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity"/>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </DialogTrigger>
+                                            <DialogContent className="max-w-4xl w-full p-0 bg-gray-900 border-gray-700">
+                                                <div className="relative">
+                                                    {mediaIsVideo ? (
+                                                        <video
+                                                            src={media}
+                                                            className="w-full h-auto max-h-[80vh] object-contain"
+                                                            controls
+                                                            autoPlay
+                                                            playsInline
+                                                        />
+                                                    ) : (
+                                                        <img
+                                                            src={media}
+                                                            alt={`Review media ${mediaIndex + 1}`}
+                                                            className="w-full h-auto max-h-[80vh] object-contain"
+                                                        />
                                                     )}
                                                 </div>
-                                            </div>
-                                        </DialogTrigger>
-                                        <DialogContent className="max-w-4xl w-full p-0 bg-gray-900 border-gray-700">
-                                            <div className="relative">
-                                                <img
-                                                    src={media}
-                                                    alt={`Review media ${mediaIndex + 1}`}
-                                                    className="w-full h-auto max-h-[80vh] object-contain"
-                                                />
-                                            </div>
-                                        </DialogContent>
-                                    </Dialog>
-                                ))}
+                                            </DialogContent>
+                                        </Dialog>
+                                    );
+                                })}
                             </div>
                         )}
                     </div>

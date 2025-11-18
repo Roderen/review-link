@@ -9,22 +9,37 @@ interface MediaUploadSectionProps {
 }
 
 export const MediaUploadSection = ({media, isUploading, onMediaUpload, onRemoveMedia}: MediaUploadSectionProps) => {
+    // Проверяет, является ли URL видео-файлом
+    const isVideo = (url: string) => {
+        return url.includes('/video/') || /\.(mp4|webm|ogg|mov)$/i.test(url);
+    };
+
     return (
         <div>
-            <Label className="text-base font-medium text-white">Фото и видео (необязательно)</Label>
+            <Label className="text-base font-medium text-white">Фото (необязательно)</Label>
             <p className="text-sm text-gray-400 mb-3">
-                Добавьте фото товара или видео-отзыв, чтобы помочь другим покупателям
+                Добавьте фото товара, чтобы помочь другим покупателям
             </p>
 
             {media.length > 0 && (
                 <div className="grid grid-cols-3 gap-3 mb-3">
                     {media.map((url, index) => (
                         <div key={index} className="relative group">
-                            <img
-                                src={url}
-                                alt={`Media ${index + 1}`}
-                                className="w-full h-24 object-cover rounded-lg"
-                            />
+                            {isVideo(url) ? (
+                                <video
+                                    src={url}
+                                    className="w-full h-24 object-cover rounded-lg"
+                                    controls
+                                    muted
+                                    playsInline
+                                />
+                            ) : (
+                                <img
+                                    src={url}
+                                    alt={`Media ${index + 1}`}
+                                    className="w-full h-24 object-cover rounded-lg"
+                                />
+                            )}
                             <button
                                 type="button"
                                 onClick={() => onRemoveMedia(index)}
@@ -43,7 +58,7 @@ export const MediaUploadSection = ({media, isUploading, onMediaUpload, onRemoveM
                         type="file"
                         id="media"
                         multiple
-                        accept="image/*,video/*"
+                        accept="image/*"
                         onChange={onMediaUpload}
                         className="hidden"
                         disabled={isUploading}
@@ -54,14 +69,19 @@ export const MediaUploadSection = ({media, isUploading, onMediaUpload, onRemoveM
                     >
                         <div className="flex items-center space-x-2 text-gray-500">
                             <Camera className="w-6 h-6"/>
-                            <Video className="w-6 h-6"/>
                             <Upload className="w-6 h-6"/>
                         </div>
                         <span className="text-gray-400">
-                            {isUploading ? 'Загрузка...' : 'Нажмите для загрузки фото или видео'}
+                            {isUploading ? 'Загрузка...' : 'Нажмите для загрузки фото'}
                         </span>
                         <span className="text-xs text-gray-500">
-                            Максимум 5 файлов
+                            Максимум 5 файлов, до 30 МБ каждый
+                        </span>
+                        <span className="text-xs text-gray-600">
+                            JPG, PNG, GIF, WebP
+                        </span>
+                        <span className="text-xs text-gray-500 italic">
+                            Видео временно недоступно
                         </span>
                     </label>
                 </div>

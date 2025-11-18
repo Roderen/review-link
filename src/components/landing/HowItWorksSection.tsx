@@ -30,14 +30,24 @@ export const HowItWorksSection = () => {
                         icon={Star}
                         step="3"
                         title="Собирайте отзывы"
-                        description="Все отзывы собираются на красивой публичной странице"
+                        description="Все отзывы собираются на публичной странице"
                     />
                 </div>
 
                 {/* Preview Cards */}
                 <div className="grid md:grid-cols-2 gap-12 items-center">
-                    <FeaturePreviewCard type="review-form"/>
-                    <FeaturePreviewCard type="public-page"/>
+                    <FeaturePreviewCard
+                        title="Форма отзыва"
+                        description="Ваши клиенты легко оставляют отзывы с фото"
+                        imageUrl="/src/images/review-form.png"
+                        imageAlt="Скриншот формы для оставления отзыва"
+                    />
+                    <FeaturePreviewCard
+                        title="Публичная страница"
+                        description="Красивая витрина всех ваших отзывов для демонстрации клиентам"
+                        imageUrl="/src/images/review-page.png"
+                        imageAlt="Скриншот публичной страницы с отзывами"
+                    />
                 </div>
             </div>
         </section>

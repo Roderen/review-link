@@ -106,14 +106,6 @@ const PublicReviewsPage = () => {
         );
     }
 
-    if (shopLoading && !shop) {
-        return (
-            <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-                <div className="text-white">Загрузка...</div>
-            </div>
-        );
-    }
-
     const loading = reviewsLoading;
 
     return (
@@ -124,6 +116,7 @@ const PublicReviewsPage = () => {
                 description={shop?.description}
                 instagram={shop?.instagram}
                 stats={stats}
+                loading={shopLoading}
             />
 
             <div className="max-w-4xl mx-auto px-4 py-8">
