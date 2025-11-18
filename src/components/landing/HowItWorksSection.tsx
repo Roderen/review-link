@@ -39,13 +39,13 @@ export const HowItWorksSection = () => {
                     <FeaturePreviewCard
                         title="Форма отзыва"
                         description="Ваши клиенты легко оставляют отзывы с фото"
-                        imageUrl="/screenshots/review-form.png"
+                        imageUrl="/src/images/review-form.png"
                         imageAlt="Скриншот формы для оставления отзыва"
                     />
                     <FeaturePreviewCard
                         title="Публичная страница"
                         description="Красивая витрина всех ваших отзывов для демонстрации клиентам"
-                        imageUrl="/screenshots/public-page.png"
+                        imageUrl="/src/images/review-page.png"
                         imageAlt="Скриншот публичной страницы с отзывами"
                     />
                 </div>
