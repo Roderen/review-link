@@ -52,7 +52,7 @@ const plans: PlanFeature[] = [
 
 export const PricingPreview = ({onLogin, isLoading}: PricingPreviewProps) => {
     return (
-        <section className="py-16 px-4 bg-gray-900/30">
+        <section id="pricing" className="py-16 px-4 bg-gray-900/30">
             <div className="container mx-auto max-w-7xl">
                 <div className="text-center mb-12">
                     <h2 className="text-3xl font-bold mb-4 text-white">

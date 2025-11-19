@@ -36,7 +36,12 @@ const LandingPage = () => {
         }
     };
 
-    const handlePricingClick = () => navigate('/pricing');
+    const handlePricingClick = () => {
+        const pricingSection = document.getElementById('pricing');
+        if (pricingSection) {
+            pricingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
 
     return (
         <div className="min-h-screen bg-gray-950">
