@@ -51,13 +51,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         const docRef = doc(db, 'users', firebaseUser.uid);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
+          const userData = docSnap.data();
           setUser({
             id: firebaseUser.uid,
             name: firebaseUser.displayName || '',
             email: firebaseUser.email || '',
             avatar: firebaseUser.photoURL || '',
             username: '', // если у вас будет отдельное поле
-            ...docSnap.data(),
+            ...userData,
+            // Normalize plan to uppercase to match type definition
+            plan: (userData.plan ? (userData.plan as string).toUpperCase() : 'FREE') as 'FREE' | 'PRO' | 'BUSINESS',
           } as User);
         } else {
           setUser(null); // нет записи в Firestore — можно редиректить/создать
