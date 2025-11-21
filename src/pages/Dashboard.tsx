@@ -81,12 +81,12 @@ const Dashboard = () => {
     };
 
     const planLimits: Record<string, PlanLimits> = {
-        free: {reviews: 10, name: 'Бесплатный'},
-        pro: {reviews: 100, name: 'Про'},
-        business: {reviews: Infinity, name: 'Бизнес'}
+        FREE: {reviews: 10, name: 'Бесплатный'},
+        PRO: {reviews: 100, name: 'Про'},
+        BUSINESS: {reviews: Infinity, name: 'Бизнес'}
     };
 
-    const currentPlan = planLimits[user.plan] || planLimits.free;
+    const currentPlan = planLimits[user.plan] || planLimits.FREE;
     const usagePercentage = currentPlan.reviews === Infinity
         ? 0
         : Math.min((reviewsCount / currentPlan.reviews) * 100, 100);
@@ -98,7 +98,7 @@ const Dashboard = () => {
                 userAvatar={user.avatar}
                 currentPlan={currentPlan}
                 onLogout={handleLogout}
-                showCrown={user.plan !== 'free'}
+                showCrown={user.plan !== 'FREE'}
             />
 
             <div className="container mx-auto px-4 py-8 max-w-6xl">
@@ -107,7 +107,7 @@ const Dashboard = () => {
                     reviewsCount={reviewsCount}
                     usagePercentage={usagePercentage}
                     loading={loading}
-                    showCrown={user.plan !== 'free'}
+                    showCrown={user.plan !== 'FREE'}
                     onChangePlan={() => navigate('/pricing')}
                 />
 
