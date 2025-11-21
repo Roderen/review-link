@@ -36,26 +36,27 @@ const ReviewForm = () => {
     } = useFormValidation();
 
     const {
-        media,
-        isUploading,
-        uploadMedia,
-        removeMedia,
-        maxMediaCount,
-    } = useMediaUpload(user?.plan || 'FREE');
-
-    const {
         canSubmit,
         limitType,
         loading: submissionLoading,
         isSubmitting,
         isSubmitted,
         shopStats,
+        ownerPlan,
         handleSubmit,
     } = useReviewSubmission({
         shopOwnerId: user?.id,
         reviewLinkId,
         isAuthLoading: authLoading,
     });
+
+    const {
+        media,
+        isUploading,
+        uploadMedia,
+        removeMedia,
+        maxMediaCount,
+    } = useMediaUpload(ownerPlan);
 
     // Обработчик отправки формы
     const onSubmit = async (e: React.FormEvent) => {
