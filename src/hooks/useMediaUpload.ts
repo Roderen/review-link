@@ -20,7 +20,9 @@ export const useMediaUpload = (userPlan: PlanType = 'FREE') => {
 
     // Получаем лимит фото из конфигурации тарифа - используем useMemo для реактивности
     const MAX_MEDIA_COUNT = useMemo(() => {
-        return PLAN_LIMITS[userPlan]?.maxPhotos || 0;
+        const limit = PLAN_LIMITS[userPlan]?.maxPhotos || 0;
+        console.log('📸 useMediaUpload - userPlan:', userPlan, 'limit:', limit);
+        return limit;
     }, [userPlan]);
 
     /**

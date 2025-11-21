@@ -59,6 +59,9 @@ const ReviewForm = () => {
         maxMediaCount,
     } = useMediaUpload(isOwnerPlanLoaded ? ownerPlan : 'FREE');
 
+    // Debug logging
+    console.log('🔍 ReviewForm - isOwnerPlanLoaded:', isOwnerPlanLoaded, 'ownerPlan:', ownerPlan, 'maxMediaCount:', maxMediaCount);
+
     // Обработчик отправки формы
     const onSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

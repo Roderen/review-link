@@ -64,8 +64,11 @@ export const useReviewSubmission = ({
                 if (ownerDoc.exists()) {
                     const ownerData = ownerDoc.data();
                     const plan = (ownerData?.plan || 'FREE') as PlanType;
+                    console.log('🎯 Owner plan loaded:', plan);
                     setOwnerPlan(plan);
-                    setIsOwnerPlanLoaded(true);
+                } else {
+                    console.warn('⚠️ Owner document not found, using FREE plan');
+                    setOwnerPlan('FREE');
                 }
 
                 // Загружаем статистику магазина
@@ -99,11 +102,16 @@ export const useReviewSubmission = ({
                 setCanSubmit(true);
                 setLimitType(null);
             } catch (error) {
-                console.error('Ошибка загрузки данных:', error);
+                console.error('❌ Ошибка загрузки данных:', error);
                 setCanSubmit(false);
                 setLimitType('shop-limit');
+                // В случае ошибки тоже используем FREE план
+                setOwnerPlan('FREE');
             } finally {
                 setLoading(false);
+                // Устанавливаем флаг загрузки в любом случае
+                setIsOwnerPlanLoaded(true);
+                console.log('✅ Owner plan load completed');
             }
         };
 
