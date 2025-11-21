@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
 import type { PlanType } from '@/lib/firebase/config/subscription-plans';
 import { PLAN_LIMITS } from '@/lib/firebase/config/subscription-plans';
@@ -18,8 +18,10 @@ export const useMediaUpload = (userPlan: PlanType = 'FREE') => {
     const [media, setMedia] = useState<string[]>([]);
     const [isUploading, setIsUploading] = useState(false);
 
-    // Получаем лимит фото из конфигурации тарифа
-    const MAX_MEDIA_COUNT = PLAN_LIMITS[userPlan]?.maxPhotos || 0;
+    // Получаем лимит фото из конфигурации тарифа - используем useMemo для реактивности
+    const MAX_MEDIA_COUNT = useMemo(() => {
+        return PLAN_LIMITS[userPlan]?.maxPhotos || 0;
+    }, [userPlan]);
 
     /**
      * Валидирует файл перед загрузкой
