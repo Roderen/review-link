@@ -15,7 +15,7 @@ interface User {
   email: string;
   avatar: string;
   username: string;
-  plan: 'free' | 'business' | 'pro';
+  plan: 'FREE' | 'PRO' | 'BUSINESS';
   description?: string;
   averageRating?: number;
   totalReviews?: number;

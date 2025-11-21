@@ -40,7 +40,8 @@ const ReviewForm = () => {
         isUploading,
         uploadMedia,
         removeMedia,
-    } = useMediaUpload();
+        maxMediaCount,
+    } = useMediaUpload(user?.plan || 'FREE');
 
     const {
         canSubmit,
@@ -130,6 +131,7 @@ const ReviewForm = () => {
                                 isUploading={isUploading}
                                 onMediaUpload={handleMediaUpload}
                                 onRemoveMedia={removeMedia}
+                                maxMediaCount={maxMediaCount}
                             />
 
                             <SubmitButton

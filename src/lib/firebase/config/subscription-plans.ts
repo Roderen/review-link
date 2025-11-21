@@ -8,6 +8,8 @@ export interface PlanConfig {
     name: string;
     /** Максимальное количество отзывов */
     maxReviews: number;
+    /** Максимальное количество фото в отзыве */
+    maxPhotos: number;
 }
 
 /**
@@ -23,14 +25,17 @@ export const PLAN_LIMITS: Record<PlanType, PlanConfig> = {
     FREE: {
         name: 'Бесплатный',
         maxReviews: 10,
+        maxPhotos: 0,
     },
     PRO: {
         name: 'Про',
         maxReviews: 100,
+        maxPhotos: 3,
     },
     BUSINESS: {
         name: 'Бизнес',
         maxReviews: Infinity,
+        maxPhotos: 7,
     },
 };
 

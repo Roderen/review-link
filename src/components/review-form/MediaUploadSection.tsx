@@ -6,19 +6,37 @@ interface MediaUploadSectionProps {
     isUploading: boolean;
     onMediaUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
     onRemoveMedia: (index: number) => void;
+    maxMediaCount: number;
 }
 
-export const MediaUploadSection = ({media, isUploading, onMediaUpload, onRemoveMedia}: MediaUploadSectionProps) => {
+export const MediaUploadSection = ({media, isUploading, onMediaUpload, onRemoveMedia, maxMediaCount}: MediaUploadSectionProps) => {
     // Проверяет, является ли URL видео-файлом
     const isVideo = (url: string) => {
         return url.includes('/video/') || /\.(mp4|webm|ogg|mov)$/i.test(url);
     };
 
+    // Если фото недоступны (FREE план)
+    if (maxMediaCount === 0) {
+        return (
+            <div>
+                <Label className="text-base font-medium text-gray-400">Фото (недоступно)</Label>
+                <p className="text-sm text-gray-500 mb-3">
+                    Загрузка фото доступна на платных тарифах
+                </p>
+                <div className="border-2 border-dashed border-gray-700 rounded-lg p-6 text-center bg-gray-800/50">
+                    <span className="text-gray-500">
+                        Обновите тариф для добавления фото к отзывам
+                    </span>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div>
             <Label className="text-base font-medium text-white">Фото (необязательно)</Label>
             <p className="text-sm text-gray-400 mb-3">
-                Добавьте фото товара, чтобы помочь другим покупателям
+                Добавьте фото товара, чтобы помочь другим покупателям (до {maxMediaCount} фото)
             </p>
 
             {media.length > 0 && (
@@ -52,7 +70,7 @@ export const MediaUploadSection = ({media, isUploading, onMediaUpload, onRemoveM
                 </div>
             )}
 
-            {media.length < 5 && (
+            {media.length < maxMediaCount && (
                 <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-gray-500 transition-colors">
                     <input
                         type="file"
@@ -75,7 +93,7 @@ export const MediaUploadSection = ({media, isUploading, onMediaUpload, onRemoveM
                             {isUploading ? 'Загрузка...' : 'Нажмите для загрузки фото'}
                         </span>
                         <span className="text-xs text-gray-500">
-                            Максимум 5 файлов, до 30 МБ каждый
+                            Максимум {maxMediaCount} {maxMediaCount === 1 ? 'фото' : 'фото'}, до 30 МБ каждый
                         </span>
                         <span className="text-xs text-gray-600">
                             JPG, PNG, GIF, WebP
