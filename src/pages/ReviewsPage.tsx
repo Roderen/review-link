@@ -45,6 +45,7 @@ const PublicReviewsPage = () => {
         shop,
         sortBy,
         filterRating,
+        ownerPlan: shop?.plan || 'FREE',
     });
 
     // Обработчик удаления отзыва (только для админов)

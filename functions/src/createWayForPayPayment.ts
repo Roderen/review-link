@@ -11,9 +11,8 @@ interface PlanConfig {
 
 const PLANS: Record<string, PlanConfig> = {
     'free': { name: 'Бесплатный', price: 0, currency: 'UAH', period: 'навсегда' },
-    'starter': { name: 'Стартер', price: 150, currency: 'UAH', period: 'месяц' },
-    'business': { name: 'Бизнес', price: 360, currency: 'UAH', period: 'месяц' },
-    'pro': { name: 'Про', price: 600, currency: 'UAH', period: 'месяц' }
+    'pro': { name: 'Про', price: 330, currency: 'UAH', period: 'месяц' },
+    'business': { name: 'Бизнес', price: 620, currency: 'UAH', period: 'месяц' }
 };
 
 // Генерация подписи WayForPay

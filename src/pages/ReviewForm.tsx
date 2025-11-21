@@ -36,25 +36,31 @@ const ReviewForm = () => {
     } = useFormValidation();
 
     const {
-        media,
-        isUploading,
-        uploadMedia,
-        removeMedia,
-    } = useMediaUpload();
-
-    const {
         canSubmit,
         limitType,
         loading: submissionLoading,
         isSubmitting,
         isSubmitted,
         shopStats,
+        ownerPlan,
+        isOwnerPlanLoaded,
         handleSubmit,
     } = useReviewSubmission({
         shopOwnerId: user?.id,
         reviewLinkId,
         isAuthLoading: authLoading,
     });
+
+    const {
+        media,
+        isUploading,
+        uploadMedia,
+        removeMedia,
+        maxMediaCount,
+    } = useMediaUpload(isOwnerPlanLoaded ? ownerPlan : 'FREE');
+
+    // Debug logging
+    console.log('🔍 ReviewForm - isOwnerPlanLoaded:', isOwnerPlanLoaded, 'ownerPlan:', ownerPlan, 'maxMediaCount:', maxMediaCount);
 
     // Обработчик отправки формы
     const onSubmit = async (e: React.FormEvent) => {
@@ -125,12 +131,19 @@ const ReviewForm = () => {
                                 onReviewTextChange={setReviewText}
                             />
 
-                            <MediaUploadSection
-                                media={media}
-                                isUploading={isUploading}
-                                onMediaUpload={handleMediaUpload}
-                                onRemoveMedia={removeMedia}
-                            />
+                            {isOwnerPlanLoaded ? (
+                                <MediaUploadSection
+                                    media={media}
+                                    isUploading={isUploading}
+                                    onMediaUpload={handleMediaUpload}
+                                    onRemoveMedia={removeMedia}
+                                    maxMediaCount={maxMediaCount}
+                                />
+                            ) : (
+                                <div className="border-2 border-dashed border-gray-700 rounded-lg p-6 text-center bg-gray-800/50">
+                                    <span className="text-gray-500">Загрузка...</span>
+                                </div>
+                            )}
 
                             <SubmitButton
                                 isSubmitting={isSubmitting}

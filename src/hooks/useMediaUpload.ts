@@ -1,20 +1,29 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { toast } from 'sonner';
+import type { PlanType } from '@/lib/firebase/config/subscription-plans';
+import { PLAN_LIMITS } from '@/lib/firebase/config/subscription-plans';
 
 const UPLOADCARE_PUB_KEY = 'acb1f0d9f083d1dac8d6';
 const UPLOADCARE_CDN_URL = 'https://2jzkd06n6i.ucarecd.net/';
-const MAX_MEDIA_COUNT = 5;
 const MAX_FILE_SIZE = 30 * 1024 * 1024; // 30 MB
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
 const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'];
 
 /**
  * Custom hook для загрузки медиа-файлов через Uploadcare
+ * @param userPlan - Тарифный план пользователя (FREE, PRO, BUSINESS)
  * @returns Состояние и методы для работы с медиа
  */
-export const useMediaUpload = () => {
+export const useMediaUpload = (userPlan: PlanType = 'FREE') => {
     const [media, setMedia] = useState<string[]>([]);
     const [isUploading, setIsUploading] = useState(false);
+
+    // Получаем лимит фото из конфигурации тарифа - используем useMemo для реактивности
+    const MAX_MEDIA_COUNT = useMemo(() => {
+        const limit = PLAN_LIMITS[userPlan]?.maxPhotos || 0;
+        console.log('📸 useMediaUpload - userPlan:', userPlan, 'limit:', limit);
+        return limit;
+    }, [userPlan]);
 
     /**
      * Валидирует файл перед загрузкой
@@ -43,9 +52,15 @@ export const useMediaUpload = () => {
     const uploadMedia = async (files: FileList | null) => {
         if (!files || files.length === 0) return;
 
+        // Проверка для FREE плана
+        if (MAX_MEDIA_COUNT === 0) {
+            toast.error('Загрузка фото недоступна на бесплатном тарифе. Обновите тариф для добавления фото.');
+            return;
+        }
+
         const availableSlots = MAX_MEDIA_COUNT - media.length;
         if (availableSlots <= 0) {
-            toast.error(`Максимум ${MAX_MEDIA_COUNT} файлов`);
+            toast.error(`Максимум ${MAX_MEDIA_COUNT} ${MAX_MEDIA_COUNT === 1 ? 'фото' : 'фото'} на вашем тарифе`);
             return;
         }
 
@@ -134,6 +149,7 @@ export const useMediaUpload = () => {
         removeMedia,
         resetMedia,
         hasMedia: media.length > 0,
-        canUploadMore: media.length < MAX_MEDIA_COUNT,
+        canUploadMore: media.length < MAX_MEDIA_COUNT && MAX_MEDIA_COUNT > 0,
+        maxMediaCount: MAX_MEDIA_COUNT,
     };
 };

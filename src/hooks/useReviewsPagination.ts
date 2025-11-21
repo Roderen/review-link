@@ -11,6 +11,7 @@ interface UseReviewsPaginationProps {
     shop: any;
     sortBy: SortOption;
     filterRating: number | null;
+    ownerPlan?: 'FREE' | 'PRO' | 'BUSINESS';
 }
 
 /**
@@ -22,6 +23,7 @@ export const useReviewsPagination = ({
     shop,
     sortBy,
     filterRating,
+    ownerPlan = 'FREE',
 }: UseReviewsPaginationProps) => {
     const [loadedReviews, setLoadedReviews] = useState<Review[]>([]);
     const [lastVisibleDoc, setLastVisibleDoc] = useState<DocumentSnapshot<DocumentData> | null>(null);
@@ -109,13 +111,19 @@ export const useReviewsPagination = ({
 
     // Вычисление данных для текущей страницы
     const paginationData = useMemo(() => {
+        // Для FREE плана ограничиваем до 10 последних отзывов
+        let reviewsToShow = loadedReviews;
+        if (ownerPlan === 'FREE' && loadedReviews.length > 10) {
+            reviewsToShow = loadedReviews.slice(0, 10);
+        }
+
         const startIndex = (currentPage - 1) * REVIEWS_PER_PAGE;
         const endIndex = startIndex + REVIEWS_PER_PAGE;
-        const currentReviews = loadedReviews.slice(startIndex, endIndex);
-        const totalPages = Math.ceil(loadedReviews.length / REVIEWS_PER_PAGE);
+        const currentReviews = reviewsToShow.slice(startIndex, endIndex);
+        const totalPages = Math.ceil(reviewsToShow.length / REVIEWS_PER_PAGE);
 
-        return { startIndex, endIndex, currentReviews, totalPages };
-    }, [currentPage, loadedReviews]);
+        return { startIndex, endIndex, currentReviews, totalPages, reviewsToShow };
+    }, [currentPage, loadedReviews, ownerPlan]);
 
     // Обработчик смены страницы
     const handlePageChange = useCallback((page: number) => {
@@ -124,7 +132,7 @@ export const useReviewsPagination = ({
     }, []);
 
     return {
-        loadedReviews,
+        loadedReviews: paginationData.reviewsToShow,
         loading,
         isLoadingMore,
         currentPage,

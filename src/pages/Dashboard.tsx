@@ -82,8 +82,8 @@ const Dashboard = () => {
 
     const planLimits: Record<string, PlanLimits> = {
         free: {reviews: 10, name: 'Бесплатный'},
-        business: {reviews: 500, name: 'Бизнес'},
-        pro: {reviews: Infinity, name: 'Про'}
+        pro: {reviews: 100, name: 'Про'},
+        business: {reviews: Infinity, name: 'Бизнес'}
     };
 
     const currentPlan = planLimits[user.plan] || planLimits.free;

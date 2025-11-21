@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import {
     canSubmitReview,
     canUseReviewLink,
     submitReview,
     getPublicReviewsStats,
 } from '@/lib/firebase/services/reviews';
+import { getReviewLink } from '@/lib/firebase/services/review-links';
 import { ShopStats } from '@/types/review-form';
+import type { PlanType } from '@/lib/firebase/config/subscription-plans';
 
 type LimitType = 'shop-limit' | 'link-used' | null;
 
@@ -31,23 +35,53 @@ export const useReviewSubmission = ({
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [shopStats, setShopStats] = useState<ShopStats | null>(null);
+    const [ownerPlan, setOwnerPlan] = useState<PlanType>('FREE');
+    const [isOwnerPlanLoaded, setIsOwnerPlanLoaded] = useState(false);
 
     // Проверка лимитов при загрузке
     useEffect(() => {
         const checkLimits = async () => {
-            if (!shopOwnerId) return;
+            // Сначала получаем shopOwnerId из reviewLink если он не передан напрямую
+            let actualShopOwnerId = shopOwnerId;
+
+            if (!actualShopOwnerId && reviewLinkId) {
+                try {
+                    const linkData = await getReviewLink(reviewLinkId);
+                    if (linkData) {
+                        actualShopOwnerId = linkData.storeOwnerId;
+                    }
+                } catch (error) {
+                    console.error('Ошибка загрузки review link:', error);
+                }
+            }
+
+            if (!actualShopOwnerId) return;
 
             setLoading(true);
             try {
+                // Загружаем данные владельца магазина для получения его плана
+                const ownerDoc = await getDoc(doc(db, 'users', actualShopOwnerId));
+                if (ownerDoc.exists()) {
+                    const ownerData = ownerDoc.data();
+                    // Преобразуем план в uppercase для совместимости с PLAN_LIMITS
+                    const rawPlan = ownerData?.plan || 'FREE';
+                    const plan = (typeof rawPlan === 'string' ? rawPlan.toUpperCase() : 'FREE') as PlanType;
+                    console.log('🎯 Owner plan loaded:', rawPlan, '→', plan);
+                    setOwnerPlan(plan);
+                } else {
+                    console.warn('⚠️ Owner document not found, using FREE plan');
+                    setOwnerPlan('FREE');
+                }
+
                 // Загружаем статистику магазина
-                const stats = await getPublicReviewsStats(shopOwnerId);
+                const stats = await getPublicReviewsStats(actualShopOwnerId);
                 setShopStats({
                     totalCount: stats.totalCount,
                     averageRating: stats.averageRating,
                 });
 
                 // Проверяем общий лимит отзывов для магазина
-                const shopCanAcceptReviews = await canSubmitReview(shopOwnerId);
+                const shopCanAcceptReviews = await canSubmitReview(actualShopOwnerId);
 
                 if (!shopCanAcceptReviews) {
                     setCanSubmit(false);
@@ -70,15 +104,20 @@ export const useReviewSubmission = ({
                 setCanSubmit(true);
                 setLimitType(null);
             } catch (error) {
-                console.error('Ошибка загрузки данных:', error);
+                console.error('❌ Ошибка загрузки данных:', error);
                 setCanSubmit(false);
                 setLimitType('shop-limit');
+                // В случае ошибки тоже используем FREE план
+                setOwnerPlan('FREE');
             } finally {
                 setLoading(false);
+                // Устанавливаем флаг загрузки в любом случае
+                setIsOwnerPlanLoaded(true);
+                console.log('✅ Owner plan load completed');
             }
         };
 
-        if (!isAuthLoading && shopOwnerId) {
+        if (!isAuthLoading) {
             checkLimits();
         }
     }, [shopOwnerId, isAuthLoading, reviewLinkId]);
@@ -132,6 +171,8 @@ export const useReviewSubmission = ({
         isSubmitting,
         isSubmitted,
         shopStats,
+        ownerPlan,
+        isOwnerPlanLoaded,
         handleSubmit,
     };
 };
