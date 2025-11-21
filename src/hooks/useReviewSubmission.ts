@@ -36,6 +36,7 @@ export const useReviewSubmission = ({
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [shopStats, setShopStats] = useState<ShopStats | null>(null);
     const [ownerPlan, setOwnerPlan] = useState<PlanType>('FREE');
+    const [isOwnerPlanLoaded, setIsOwnerPlanLoaded] = useState(false);
 
     // Проверка лимитов при загрузке
     useEffect(() => {
@@ -64,6 +65,7 @@ export const useReviewSubmission = ({
                     const ownerData = ownerDoc.data();
                     const plan = (ownerData?.plan || 'FREE') as PlanType;
                     setOwnerPlan(plan);
+                    setIsOwnerPlanLoaded(true);
                 }
 
                 // Загружаем статистику магазина
@@ -160,6 +162,7 @@ export const useReviewSubmission = ({
         isSubmitted,
         shopStats,
         ownerPlan,
+        isOwnerPlanLoaded,
         handleSubmit,
     };
 };

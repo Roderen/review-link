@@ -43,6 +43,7 @@ const ReviewForm = () => {
         isSubmitted,
         shopStats,
         ownerPlan,
+        isOwnerPlanLoaded,
         handleSubmit,
     } = useReviewSubmission({
         shopOwnerId: user?.id,
@@ -56,7 +57,7 @@ const ReviewForm = () => {
         uploadMedia,
         removeMedia,
         maxMediaCount,
-    } = useMediaUpload(ownerPlan);
+    } = useMediaUpload(isOwnerPlanLoaded ? ownerPlan : 'FREE');
 
     // Обработчик отправки формы
     const onSubmit = async (e: React.FormEvent) => {
@@ -127,13 +128,19 @@ const ReviewForm = () => {
                                 onReviewTextChange={setReviewText}
                             />
 
-                            <MediaUploadSection
-                                media={media}
-                                isUploading={isUploading}
-                                onMediaUpload={handleMediaUpload}
-                                onRemoveMedia={removeMedia}
-                                maxMediaCount={maxMediaCount}
-                            />
+                            {isOwnerPlanLoaded ? (
+                                <MediaUploadSection
+                                    media={media}
+                                    isUploading={isUploading}
+                                    onMediaUpload={handleMediaUpload}
+                                    onRemoveMedia={removeMedia}
+                                    maxMediaCount={maxMediaCount}
+                                />
+                            ) : (
+                                <div className="border-2 border-dashed border-gray-700 rounded-lg p-6 text-center bg-gray-800/50">
+                                    <span className="text-gray-500">Загрузка...</span>
+                                </div>
+                            )}
 
                             <SubmitButton
                                 isSubmitting={isSubmitting}
