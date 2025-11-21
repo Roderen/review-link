@@ -21,7 +21,7 @@ const plans: PlanFeature[] = [
         buttonVariant: 'outline' as const
     },
     {
-        name: 'Бизнес',
+        name: 'Про',
         price: '7.99$',
         period: '/месяц',
         features: [
@@ -35,7 +35,7 @@ const plans: PlanFeature[] = [
         buttonVariant: 'default' as const
     },
     {
-        name: 'Про',
+        name: 'Бизнес',
         price: '14.99$',
         period: '/месяц',
         features: [

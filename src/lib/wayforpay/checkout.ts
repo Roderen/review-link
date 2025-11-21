@@ -22,7 +22,7 @@ interface WayForPayFormData {
 
 /**
  * Создает платеж WayForPay и редиректит на страницу оплаты
- * @param planId - ID выбранного плана (free, starter, business, pro)
+ * @param planId - ID выбранного плана (free, pro, business)
  */
 export async function initiateWayForPayCheckout(planId: string): Promise<void> {
     try {

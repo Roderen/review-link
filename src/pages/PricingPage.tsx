@@ -31,7 +31,7 @@ const PricingPage = () => {
             buttonVariant: 'outline' as const
         },
         {
-            name: 'Бизнес',
+            name: 'Про',
             price: '7.99$',
             period: '/месяц',
             features: [
@@ -45,7 +45,7 @@ const PricingPage = () => {
             buttonVariant: 'default' as const
         },
         {
-            name: 'Про',
+            name: 'Бизнес',
             price: '14.99$',
             period: '/месяц',
             features: [
@@ -62,8 +62,8 @@ const PricingPage = () => {
 
     const planIds: Record<string, string> = {
         'Бесплатный': 'free',
-        'Бизнес': 'business',
-        'Про': 'pro'
+        'Про': 'pro',
+        'Бизнес': 'business'
     };
 
     // Обработка выбора плана

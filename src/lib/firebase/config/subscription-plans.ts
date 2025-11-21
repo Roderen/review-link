@@ -13,7 +13,7 @@ export interface PlanConfig {
 /**
  * Типы доступных тарифных планов
  */
-export type PlanType = 'FREE' | 'BASIC' | 'PREMIUM' | 'ENTERPRISE';
+export type PlanType = 'FREE' | 'PRO' | 'BUSINESS';
 
 /**
  * Карта тарифных планов для валидации и проверки лимитов
@@ -24,16 +24,12 @@ export const PLAN_LIMITS: Record<PlanType, PlanConfig> = {
         name: 'Бесплатный',
         maxReviews: 10,
     },
-    BASIC: {
-        name: 'Базовый',
+    PRO: {
+        name: 'Про',
         maxReviews: 100,
     },
-    PREMIUM: {
-        name: 'Премиум',
-        maxReviews: 500,
-    },
-    ENTERPRISE: {
-        name: 'Корпоративный',
+    BUSINESS: {
+        name: 'Бизнес',
         maxReviews: Infinity,
     },
 };
@@ -52,57 +48,37 @@ export const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
         reviewsLimit: 10,
         features: [
             'До 10 отзывов',
-            'Базовая статистика',
-            'Email поддержка',
+            'Публичная страница отзывов',
+            'Статистика отзывов',
         ],
     },
     {
-        id: 'basic',
-        name: 'BASIC',
-        displayName: 'Базовый',
-        price: 999,
+        id: 'pro',
+        name: 'PRO',
+        displayName: 'Про',
+        price: 799,
         currency: 'USD',
         reviewsLimit: 100,
         features: [
             'До 100 отзывов',
-            'Расширенная статистика',
-            'Приоритетная поддержка',
-            'Кастомизация виджета',
-        ],
-    },
-    {
-        id: 'premium',
-        name: 'PREMIUM',
-        displayName: 'Премиум',
-        price: 2999,
-        currency: 'USD',
-        reviewsLimit: 500,
-        features: [
-            'До 500 отзывов',
-            'Полная аналитика',
-            'VIP поддержка 24/7',
-            'Кастомизация виджета',
-            'API доступ',
-            'Экспорт данных',
+            'Загрузка фото (до 3 на отзыв)',
+            'Статистика отзывов',
+            'Email поддержка',
         ],
         isPopular: true,
     },
     {
-        id: 'enterprise',
-        name: 'ENTERPRISE',
-        displayName: 'Корпоративный',
-        price: 9999,
+        id: 'business',
+        name: 'BUSINESS',
+        displayName: 'Бизнес',
+        price: 1499,
         currency: 'USD',
         reviewsLimit: Infinity,
         features: [
             'Безлимитные отзывы',
-            'Расширенная аналитика',
-            'Персональный менеджер',
-            'Полная кастомизация',
-            'API доступ',
-            'Экспорт данных',
-            'SLA гарантия',
-            'White-label решение',
+            'Загрузка фото и видео (до 5 на отзыв)',
+            'Статистика отзывов',
+            'Приоритетная поддержка',
         ],
     },
 ];
@@ -143,14 +119,14 @@ export const getPlanDetails = (planType: PlanType): SubscriptionPlan | undefined
  * isValidPlanType('INVALID'); // false
  */
 export const isValidPlanType = (value: string): value is PlanType => {
-    return ['FREE', 'BASIC', 'PREMIUM', 'ENTERPRISE'].includes(value);
+    return ['FREE', 'PRO', 'BUSINESS'].includes(value);
 };
 
 // Обратная совместимость со старым plans.ts
 export interface Plans {
     free: PlanConfig;
-    business: PlanConfig;
     pro: PlanConfig;
+    business: PlanConfig;
 }
 
 /**
@@ -159,6 +135,6 @@ export interface Plans {
  */
 export const PLANS: Plans = {
     free: PLAN_LIMITS.FREE,
-    business: PLAN_LIMITS.PREMIUM,
-    pro: PLAN_LIMITS.ENTERPRISE,
+    pro: PLAN_LIMITS.PRO,
+    business: PLAN_LIMITS.BUSINESS,
 };

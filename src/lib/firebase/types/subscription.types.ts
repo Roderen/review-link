@@ -5,7 +5,7 @@ export interface SubscriptionPlan {
     /** Уникальный ID плана */
     id: string;
     /** Название плана (системное) */
-    name: 'FREE' | 'BASIC' | 'PREMIUM' | 'ENTERPRISE';
+    name: 'FREE' | 'PRO' | 'BUSINESS';
     /** Отображаемое название */
     displayName: string;
     /** Цена в центах */
