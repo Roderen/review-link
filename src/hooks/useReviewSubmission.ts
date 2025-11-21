@@ -63,8 +63,10 @@ export const useReviewSubmission = ({
                 const ownerDoc = await getDoc(doc(db, 'users', actualShopOwnerId));
                 if (ownerDoc.exists()) {
                     const ownerData = ownerDoc.data();
-                    const plan = (ownerData?.plan || 'FREE') as PlanType;
-                    console.log('🎯 Owner plan loaded:', plan);
+                    // Преобразуем план в uppercase для совместимости с PLAN_LIMITS
+                    const rawPlan = ownerData?.plan || 'FREE';
+                    const plan = (typeof rawPlan === 'string' ? rawPlan.toUpperCase() : 'FREE') as PlanType;
+                    console.log('🎯 Owner plan loaded:', rawPlan, '→', plan);
                     setOwnerPlan(plan);
                 } else {
                     console.warn('⚠️ Owner document not found, using FREE plan');
