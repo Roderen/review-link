@@ -1,16 +1,18 @@
 import {Card, CardContent} from '@/components/ui/card';
 import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar';
 import {Dialog, DialogContent, DialogTrigger} from '@/components/ui/dialog';
-import {Star, Play, ImageIcon, Trash2} from 'lucide-react';
+import {Star, Play, ImageIcon, Trash2, Flag} from 'lucide-react';
 import {Review} from '@/types/reviews-page';
 
 interface ReviewCardProps {
     review: Review;
     showDeleteButton: boolean;
     onDelete: (reviewId: string) => void;
+    showReportButton?: boolean;
+    onReport?: (reviewId: string, review: Review) => void;
 }
 
-export const ReviewCard = ({review, showDeleteButton, onDelete}: ReviewCardProps) => {
+export const ReviewCard = ({review, showDeleteButton, onDelete, showReportButton, onReport}: ReviewCardProps) => {
     // Проверяет, является ли URL видео-файлом
     const isVideo = (url: string) => {
         return url.includes('/video/') || /\.(mp4|webm|ogg|mov)$/i.test(url);
@@ -46,15 +48,27 @@ export const ReviewCard = ({review, showDeleteButton, onDelete}: ReviewCardProps
                                     </span>
                                 </div>
                             </div>
-                            {showDeleteButton && (
+                            {(showDeleteButton || showReportButton) && (
                                 <div className="flex items-center gap-2">
-                                    <button
-                                        onClick={() => onDelete(review.id)}
-                                        className="text-red-500 hover:text-red-400 hover:bg-red-500/10 p-2 rounded-lg transition-colors"
-                                        aria-label="Delete review"
-                                    >
-                                        <Trash2 className="w-4 h-4"/>
-                                    </button>
+                                    {showReportButton && onReport && (
+                                        <button
+                                            onClick={() => onReport(review.id, review)}
+                                            className="text-yellow-500 hover:text-yellow-400 hover:bg-yellow-500/10 p-2 rounded-lg transition-colors"
+                                            aria-label="Report review"
+                                            title="Пожаловаться на отзыв"
+                                        >
+                                            <Flag className="w-4 h-4"/>
+                                        </button>
+                                    )}
+                                    {showDeleteButton && (
+                                        <button
+                                            onClick={() => onDelete(review.id)}
+                                            className="text-red-500 hover:text-red-400 hover:bg-red-500/10 p-2 rounded-lg transition-colors"
+                                            aria-label="Delete review"
+                                        >
+                                            <Trash2 className="w-4 h-4"/>
+                                        </button>
+                                    )}
                                 </div>
                             )}
                         </div>

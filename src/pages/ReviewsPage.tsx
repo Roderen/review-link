@@ -15,6 +15,7 @@ import { LoadingSkeleton } from '@/components/reviews-page/LoadingSkeleton';
 import { Pagination } from '@/components/reviews-page/Pagination';
 import { ReviewsFooter } from '@/components/reviews-page/ReviewsFooter';
 import { ReviewsListHeader } from '@/components/reviews-page/ReviewsListHeader';
+import { Review } from '@/types/reviews-page';
 
 /**
  * Публичная страница отзывов магазина
@@ -66,6 +67,35 @@ const PublicReviewsPage = () => {
             }
         },
         []
+    );
+
+    // Обработчик жалобы на отзыв (только для владельца магазина)
+    const handleReportReview = useCallback(
+        async (reviewId: string, review: Review) => {
+            // TODO: Добавьте здесь функционал отправки жалобы
+            // Например, отправка на сервер, сохранение в Firebase, отправка email и т.д.
+            console.log('Жалоба на отзыв:', {
+                reviewId,
+                shopId,
+                reviewData: {
+                    name: review.name,
+                    rating: review.rating,
+                    text: review.text,
+                    date: review.date,
+                    media: review.media,
+                },
+                reportedBy: {
+                    userId: user?.id,
+                    userName: user?.name,
+                    userEmail: user?.email,
+                },
+                timestamp: new Date().toISOString(),
+            });
+
+            // Временное уведомление для пользователя
+            alert('Жалоба отправлена. Мы рассмотрим её в ближайшее время.');
+        },
+        [shopId, user]
     );
 
     // Мемоизируем распределение рейтингов
@@ -153,6 +183,8 @@ const PublicReviewsPage = () => {
                                             review={review}
                                             showDeleteButton={user?.role === 'admin'}
                                             onDelete={handleDeleteReview}
+                                            showReportButton={user?.id === shopId && user?.role === 'user'}
+                                            onReport={handleReportReview}
                                         />
                                     ))}
                                 </div>
