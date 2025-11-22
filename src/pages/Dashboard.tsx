@@ -86,7 +86,9 @@ const Dashboard = () => {
         BUSINESS: {reviews: Infinity, name: 'Бизнес'}
     };
 
-    const currentPlan = planLimits[user.plan] || planLimits.FREE;
+    // Normalize plan to uppercase to handle Firebase lowercase values
+    const normalizedPlan = (user.plan as string).toUpperCase();
+    const currentPlan = planLimits[normalizedPlan] || planLimits.FREE;
     const usagePercentage = currentPlan.reviews === Infinity
         ? 0
         : Math.min((reviewsCount / currentPlan.reviews) * 100, 100);
@@ -98,7 +100,7 @@ const Dashboard = () => {
                 userAvatar={user.avatar}
                 currentPlan={currentPlan}
                 onLogout={handleLogout}
-                showCrown={user.plan !== 'FREE'}
+                showCrown={normalizedPlan !== 'FREE'}
             />
 
             <div className="container mx-auto px-4 py-8 max-w-6xl">
@@ -107,7 +109,7 @@ const Dashboard = () => {
                     reviewsCount={reviewsCount}
                     usagePercentage={usagePercentage}
                     loading={loading}
-                    showCrown={user.plan !== 'FREE'}
+                    showCrown={normalizedPlan !== 'FREE'}
                     onChangePlan={() => navigate('/pricing')}
                 />
 
