@@ -20,6 +20,7 @@ interface User {
   averageRating?: number;
   totalReviews?: number;
   role: 'user' | 'admin';
+  accountStatus?: 'pending' | 'active' | 'rejected';
 }
 
 interface AuthContextType {
