@@ -12,6 +12,7 @@ import ReviewsPage from './pages/ReviewsPage';
 import TestPage from "./pages/TestPage";
 import PaymentSuccessPage from './pages/PaymentSuccessPage';
 import PaymentCancelPage from './pages/PaymentCancelPage';
+import PendingApprovalPage from './pages/PendingApprovalPage';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { user, isLoading } = useAuth();
@@ -26,6 +27,34 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
     if (!user) {
         return <Navigate to="/" replace />;
+    }
+
+    // Если статус pending, перенаправляем на страницу ожидания
+    if (user.accountStatus === 'pending') {
+        return <Navigate to="/pending" replace />;
+    }
+
+    return <>{children}</>;
+};
+
+const PendingRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const { user, isLoading } = useAuth();
+
+    if (isLoading) {
+        return (
+            <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+                <div className="text-white">Загрузка...</div>
+            </div>
+        );
+    }
+
+    if (!user) {
+        return <Navigate to="/" replace />;
+    }
+
+    // Если статус уже активен, перенаправляем в dashboard
+    if (user.accountStatus === 'active') {
+        return <Navigate to="/dashboard" replace />;
     }
 
     return <>{children}</>;
@@ -49,6 +78,14 @@ const AppContent: React.FC = () => {
                 <Route path="/pricing" element={<PricingPage />} />
                 <Route path="/payment/success" element={<PaymentSuccessPage />} />
                 <Route path="/payment/cancel" element={<PaymentCancelPage />} />
+                <Route
+                    path="/pending"
+                    element={
+                        <PendingRoute>
+                            <PendingApprovalPage />
+                        </PendingRoute>
+                    }
+                />
                 <Route
                     path="/dashboard"
                     element={
