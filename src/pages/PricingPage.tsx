@@ -11,6 +11,9 @@ import {PlanFeature} from '@/types/pricing';
 import {initiateWayForPayCheckout} from '@/lib/wayforpay/checkout';
 import {toast} from 'sonner';
 
+// WhatsApp номер для поддержки
+const SUPPORT_WHATSAPP = '+380000000000'; // TODO: Замените на реальный номер
+
 const PricingPage = () => {
     const navigate = useNavigate();
     const {user, isLoading: authLoading} = useAuth();
@@ -91,6 +94,26 @@ const PricingPage = () => {
         if (!planId) {
             toast.error('Неверный план');
             return;
+        }
+
+        // Проверяем попытку даунгрейда с платного на бесплатный
+        if (user && user.plan) {
+            const currentPlan = (user.plan as string).toUpperCase();
+            const isPaidPlan = currentPlan === 'PRO' || currentPlan === 'BUSINESS';
+            const isDowngradeToFree = planId === 'free' && isPaidPlan;
+
+            if (isDowngradeToFree) {
+                // Формируем сообщение для WhatsApp
+                const message = `Здравствуйте! Я хочу перейти на бесплатный тариф с тарифа ${currentPlan}.`;
+                const encodedMessage = encodeURIComponent(message);
+                const whatsappUrl = `https://wa.me/${SUPPORT_WHATSAPP.replace(/[^0-9]/g, '')}?text=${encodedMessage}`;
+
+                // Открываем WhatsApp в новой вкладке
+                window.open(whatsappUrl, '_blank');
+
+                toast.info('Для перехода на бесплатный тариф свяжитесь с поддержкой');
+                return;
+            }
         }
 
         setSelectedPlan(planId);
