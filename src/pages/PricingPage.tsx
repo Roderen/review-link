@@ -19,8 +19,8 @@ const PricingPage = () => {
 
     // Базовые цены за месяц
     const basePrices = {
-        pro: 14.99,
-        business: 7.99
+        pro: 7.99,
+        business: 14.99
     };
 
     // Расчет цены с учетом периода

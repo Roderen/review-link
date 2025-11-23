@@ -10,8 +10,8 @@ interface PlanConfig {
 
 const PLANS: Record<string, PlanConfig> = {
     'free': { name: 'Бесплатный', monthlyPrice: 0, currency: 'UAH' },
-    'pro': { name: 'Про', monthlyPrice: 620, currency: 'UAH' }, // Поменяли цены: PRO дороже
-    'business': { name: 'Бизнес', monthlyPrice: 330, currency: 'UAH' } // BUSINESS дешевле
+    'pro': { name: 'Про', monthlyPrice: 330, currency: 'UAH' },
+    'business': { name: 'Бизнес', monthlyPrice: 620, currency: 'UAH' }
 };
 
 // Функция расчета цены с учетом периода
