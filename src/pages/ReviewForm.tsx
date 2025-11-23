@@ -80,7 +80,7 @@ const ReviewForm = () => {
     };
 
     // Guard clauses для early returns
-    if (authLoading || submissionLoading || canSubmit === null) {
+    if (authLoading || submissionLoading || canSubmit === null || !isOwnerPlanLoaded) {
         return <StatusCard type="loading" />;
     }
 
@@ -131,19 +131,13 @@ const ReviewForm = () => {
                                 onReviewTextChange={setReviewText}
                             />
 
-                            {isOwnerPlanLoaded ? (
-                                <MediaUploadSection
-                                    media={media}
-                                    isUploading={isUploading}
-                                    onMediaUpload={handleMediaUpload}
-                                    onRemoveMedia={removeMedia}
-                                    maxMediaCount={maxMediaCount}
-                                />
-                            ) : (
-                                <div className="border-2 border-dashed border-gray-700 rounded-lg p-6 text-center bg-gray-800/50">
-                                    <span className="text-gray-500">Загрузка...</span>
-                                </div>
-                            )}
+                            <MediaUploadSection
+                                media={media}
+                                isUploading={isUploading}
+                                onMediaUpload={handleMediaUpload}
+                                onRemoveMedia={removeMedia}
+                                maxMediaCount={maxMediaCount}
+                            />
 
                             <SubmitButton
                                 isSubmitting={isSubmitting}
