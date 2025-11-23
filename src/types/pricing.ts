@@ -6,6 +6,7 @@ export interface PlanFeature {
     popular: boolean;
     buttonText: string;
     buttonVariant: 'default' | 'outline';
+    savings?: string;
 }
 
 export interface FAQItem {
