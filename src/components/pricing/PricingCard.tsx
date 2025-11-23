@@ -31,6 +31,11 @@ export const PricingCard = ({plan, onSelect, isLoading}: PricingCardProps) => {
                     <span className="text-3xl font-bold text-white">{plan.price}</span>
                     <span className="text-gray-400 text-sm ml-1">{plan.period}</span>
                 </div>
+                {plan.savings && (
+                    <Badge className="bg-green-500 text-white text-xs">
+                        {plan.savings}
+                    </Badge>
+                )}
             </CardHeader>
 
             <CardContent className="space-y-4">

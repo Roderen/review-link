@@ -82,6 +82,7 @@ export const wayforpayWebhook = functions.https.onRequest(async (req, res) => {
         const paymentData = paymentDoc.data();
         const userId = paymentData?.userId;
         const plan = paymentData?.plan;
+        const billingPeriod = paymentData?.billingPeriod || 'monthly';
 
         // Обновляем статус платежа
         await admin.firestore()
@@ -99,20 +100,27 @@ export const wayforpayWebhook = functions.https.onRequest(async (req, res) => {
         // Если оплата успешна - обновляем план пользователя
         if (transactionStatus === 'Approved' && userId && plan) {
             const subscriptionEndDate = new Date();
-            subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + 1); // +1 месяц
+
+            // Устанавливаем дату окончания в зависимости от периода
+            if (billingPeriod === 'yearly') {
+                subscriptionEndDate.setFullYear(subscriptionEndDate.getFullYear() + 1); // +1 год
+            } else {
+                subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + 1); // +1 месяц
+            }
 
             await admin.firestore()
                 .collection('users')
                 .doc(userId)
                 .update({
                     plan,
+                    billingPeriod,
                     subscriptionStatus: 'active',
                     subscriptionStartDate: admin.firestore.FieldValue.serverTimestamp(),
                     subscriptionEndDate: admin.firestore.Timestamp.fromDate(subscriptionEndDate),
                     lastPaymentDate: admin.firestore.FieldValue.serverTimestamp()
                 });
 
-            console.log('User plan updated:', { userId, plan });
+            console.log('User plan updated:', { userId, plan, billingPeriod, subscriptionEndDate });
         }
 
         // Отправляем ответ WayForPay в нужном формате

@@ -15,6 +15,22 @@ const PricingPage = () => {
     const navigate = useNavigate();
     const {user, isLoading: authLoading} = useAuth();
     const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+    const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
+
+    // Базовые цены за месяц
+    const basePrices = {
+        pro: 14.99,
+        business: 7.99
+    };
+
+    // Расчет цены с учетом периода
+    const calculatePrice = (basePrice: number) => {
+        if (billingPeriod === 'yearly') {
+            const yearlyPrice = basePrice * 12 * 0.8; // 20% скидка
+            return yearlyPrice.toFixed(2);
+        }
+        return basePrice.toFixed(2);
+    };
 
     const plans: PlanFeature[] = [
         {
@@ -32,8 +48,8 @@ const PricingPage = () => {
         },
         {
             name: 'Про',
-            price: '7.99$',
-            period: '/месяц',
+            price: `${calculatePrice(basePrices.pro)}$`,
+            period: billingPeriod === 'monthly' ? '/месяц' : '/год',
             features: [
                 'До 100 отзывов',
                 'Загрузка фото (до 3 на отзыв)',
@@ -42,12 +58,13 @@ const PricingPage = () => {
             ],
             popular: true,
             buttonText: 'Начать сейчас',
-            buttonVariant: 'default' as const
+            buttonVariant: 'default' as const,
+            savings: billingPeriod === 'yearly' ? '20% экономия' : undefined
         },
         {
             name: 'Бизнес',
-            price: '14.99$',
-            period: '/месяц',
+            price: `${calculatePrice(basePrices.business)}$`,
+            period: billingPeriod === 'monthly' ? '/месяц' : '/год',
             features: [
                 'Безлимитные отзывы',
                 'Загрузка фото и видео (до 5 на отзыв)',
@@ -56,7 +73,8 @@ const PricingPage = () => {
             ],
             popular: false,
             buttonText: 'Начать сейчас',
-            buttonVariant: 'outline' as const
+            buttonVariant: 'outline' as const,
+            savings: billingPeriod === 'yearly' ? '20% экономия' : undefined
         }
     ];
 
@@ -78,7 +96,7 @@ const PricingPage = () => {
         setSelectedPlan(planId);
 
         try {
-            await initiateWayForPayCheckout(planId);
+            await initiateWayForPayCheckout(planId, billingPeriod);
         } catch (error) {
             console.error('Payment error:', error);
             toast.error('Ошибка при создании платежа. Попробуйте еще раз.');
@@ -127,8 +145,41 @@ const PricingPage = () => {
 
             <PricingHero/>
 
-            {/* Pricing Cards */}
+            {/* Billing Period Toggle */}
             <section className="py-8 px-4">
+                <div className="container mx-auto max-w-7xl">
+                    <div className="flex justify-center mb-8">
+                        <div className="inline-flex items-center bg-gray-800 rounded-lg p-1">
+                            <button
+                                onClick={() => setBillingPeriod('monthly')}
+                                className={`px-6 py-2 rounded-md text-sm font-medium transition-all ${
+                                    billingPeriod === 'monthly'
+                                        ? 'bg-white text-gray-900'
+                                        : 'text-gray-400 hover:text-white'
+                                }`}
+                            >
+                                На месяц
+                            </button>
+                            <button
+                                onClick={() => setBillingPeriod('yearly')}
+                                className={`px-6 py-2 rounded-md text-sm font-medium transition-all relative ${
+                                    billingPeriod === 'yearly'
+                                        ? 'bg-white text-gray-900'
+                                        : 'text-gray-400 hover:text-white'
+                                }`}
+                            >
+                                На год
+                                <span className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-0.5 rounded-full">
+                                    -20%
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Pricing Cards */}
+            <section className="py-0 px-4">
                 <div className="container mx-auto max-w-7xl">
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {plans.map((plan, index) => (

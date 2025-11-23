@@ -23,12 +23,13 @@ interface WayForPayFormData {
 /**
  * Создает платеж WayForPay и редиректит на страницу оплаты
  * @param planId - ID выбранного плана (free, pro, business)
+ * @param billingPeriod - Период оплаты (monthly, yearly)
  */
-export async function initiateWayForPayCheckout(planId: string): Promise<void> {
+export async function initiateWayForPayCheckout(planId: string, billingPeriod: 'monthly' | 'yearly' = 'monthly'): Promise<void> {
     try {
         // Вызываем Cloud Function для создания платежа
         const createPayment = httpsCallable(functions, 'createWayForPayPayment');
-        const result = await createPayment({ plan: planId });
+        const result = await createPayment({ plan: planId, billingPeriod });
 
         const paymentData = result.data as any;
 

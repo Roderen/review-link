@@ -4,16 +4,23 @@ import * as crypto from 'crypto';
 
 interface PlanConfig {
     name: string;
-    price: number;
+    monthlyPrice: number;
     currency: string;
-    period: string;
 }
 
 const PLANS: Record<string, PlanConfig> = {
-    'free': { name: 'Бесплатный', price: 0, currency: 'UAH', period: 'навсегда' },
-    'pro': { name: 'Про', price: 330, currency: 'UAH', period: 'месяц' },
-    'business': { name: 'Бизнес', price: 620, currency: 'UAH', period: 'месяц' }
+    'free': { name: 'Бесплатный', monthlyPrice: 0, currency: 'UAH' },
+    'pro': { name: 'Про', monthlyPrice: 620, currency: 'UAH' }, // Поменяли цены: PRO дороже
+    'business': { name: 'Бизнес', monthlyPrice: 330, currency: 'UAH' } // BUSINESS дешевле
 };
+
+// Функция расчета цены с учетом периода
+function calculatePrice(monthlyPrice: number, billingPeriod: 'monthly' | 'yearly'): number {
+    if (billingPeriod === 'yearly') {
+        return monthlyPrice * 12 * 0.8; // 20% скидка на годовой план
+    }
+    return monthlyPrice;
+}
 
 // Генерация подписи WayForPay
 function generateSignature(merchantSecretKey: string, ...params: string[]): string {
@@ -34,7 +41,7 @@ export const createWayForPayPayment = functions.https.onCall(async (data, contex
     }
 
     const userId = context.auth.uid;
-    const { plan } = data;
+    const { plan, billingPeriod = 'monthly' } = data;
 
     // Проверяем наличие плана
     if (!plan || !PLANS[plan]) {
@@ -44,10 +51,18 @@ export const createWayForPayPayment = functions.https.onCall(async (data, contex
         );
     }
 
+    // Проверяем валидность билинг периода
+    if (billingPeriod !== 'monthly' && billingPeriod !== 'yearly') {
+        throw new functions.https.HttpsError(
+            'invalid-argument',
+            'Invalid billing period'
+        );
+    }
+
     const planConfig = PLANS[plan];
 
     // Бесплатный план не требует оплаты
-    if (planConfig.price === 0) {
+    if (planConfig.monthlyPrice === 0) {
         // Обновляем план пользователя сразу
         await admin.firestore().collection('users').doc(userId).update({
             plan: 'free',
@@ -72,12 +87,16 @@ export const createWayForPayPayment = functions.https.onCall(async (data, contex
         );
     }
 
+    // Рассчитываем цену с учетом периода
+    const finalPrice = calculatePrice(planConfig.monthlyPrice, billingPeriod);
+
     // Генерируем уникальный ID заказа
     const orderReference = `order_${userId}_${Date.now()}`;
     const orderDate = Math.floor(Date.now() / 1000).toString(); // Unix timestamp
-    const amount = planConfig.price.toString();
+    const amount = Math.round(finalPrice).toString();
     const currency = planConfig.currency;
-    const productName = `ReviewLink ${planConfig.name}`;
+    const periodText = billingPeriod === 'yearly' ? 'Годовая подписка' : 'Месячная подписка';
+    const productName = `ReviewLink ${planConfig.name} - ${periodText}`;
     const productCount = '1';
     const productPrice = amount;
 
@@ -103,7 +122,8 @@ export const createWayForPayPayment = functions.https.onCall(async (data, contex
     await admin.firestore().collection('payments').doc(orderReference).set({
         userId,
         plan,
-        amount: planConfig.price,
+        billingPeriod,
+        amount: finalPrice,
         currency,
         status: 'pending',
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
