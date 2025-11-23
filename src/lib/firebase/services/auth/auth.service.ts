@@ -56,6 +56,7 @@ export const signInWithGoogle = async (): Promise<AuthResult> => {
                 displayName: firebaseUser.displayName || 'User',
                 profilePicture: firebaseUser.photoURL || undefined,
                 accountType: 'PERSONAL',
+                accountStatus: 'pending', // Новый пользователь требует модерации
 
                 // Инициализация подписки FREE
                 subscription: {
