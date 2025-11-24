@@ -108,19 +108,26 @@ export const wayforpayWebhook = functions.https.onRequest(async (req, res) => {
                 subscriptionEndDate.setMonth(subscriptionEndDate.getMonth() + 1); // +1 месяц
             }
 
+            // Определяем лимит отзывов по плану
+            const reviewsLimit = plan === 'pro' ? 100 : (plan === 'business' ? 999999 : 10);
+
             await admin.firestore()
                 .collection('users')
                 .doc(userId)
                 .update({
-                    plan,
+                    plan: plan.toUpperCase(), // Для совместимости с AuthContext
+                    'subscription.plan': plan.toUpperCase(),
+                    'subscription.status': 'ACTIVE',
+                    'subscription.reviewsLimit': reviewsLimit,
+                    'subscription.startDate': admin.firestore.FieldValue.serverTimestamp(),
+                    'subscription.endDate': admin.firestore.Timestamp.fromDate(subscriptionEndDate),
+                    'subscription.renewalDate': admin.firestore.Timestamp.fromDate(subscriptionEndDate),
                     billingPeriod,
-                    subscriptionStatus: 'active',
-                    subscriptionStartDate: admin.firestore.FieldValue.serverTimestamp(),
-                    subscriptionEndDate: admin.firestore.Timestamp.fromDate(subscriptionEndDate),
-                    lastPaymentDate: admin.firestore.FieldValue.serverTimestamp()
+                    lastPaymentDate: admin.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: admin.firestore.FieldValue.serverTimestamp()
                 });
 
-            console.log('User plan updated:', { userId, plan, billingPeriod, subscriptionEndDate });
+            console.log('User plan updated:', { userId, plan, billingPeriod, subscriptionEndDate, reviewsLimit });
         }
 
         // Отправляем ответ WayForPay в нужном формате
