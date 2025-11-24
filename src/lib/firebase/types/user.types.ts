@@ -68,7 +68,7 @@ export interface UserSubscription {
     /** Тарифный план */
     plan: 'FREE' | 'PRO' | 'BUSINESS';
     /** Статус подписки */
-    accountStatus: 'ACTIVE' | 'PENDING' | 'INACTIVE' | 'EXPIRED';
+    status: 'ACTIVE' | 'INACTIVE' | 'EXPIRED';
     /** Лимит отзывов по плану */
     reviewsLimit: number;
     /** Использовано отзывов */
