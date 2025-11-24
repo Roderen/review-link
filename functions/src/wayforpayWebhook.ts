@@ -40,6 +40,28 @@ app.post('/', async (req: Request, res: Response) => {
             return;
         }
 
+        // WayForPay отправляет данные в странном формате:
+        // весь JSON как ключ объекта с пустым значением
+        let parsedData;
+        try {
+            const keys = Object.keys(req.body);
+            if (keys.length === 0) {
+                console.error('Empty request body');
+                res.status(400).send('Empty request body');
+                return;
+            }
+
+            // Берем первый ключ - это и есть JSON-строка с данными
+            const jsonKey = keys[0];
+            console.log('Parsing JSON key:', jsonKey);
+            parsedData = JSON.parse(jsonKey);
+            console.log('Parsed data:', JSON.stringify(parsedData, null, 2));
+        } catch (error) {
+            console.error('Failed to parse WayForPay data:', error);
+            res.status(400).send('Invalid request format');
+            return;
+        }
+
         const {
             merchantAccount,
             orderReference,
@@ -50,7 +72,7 @@ app.post('/', async (req: Request, res: Response) => {
             transactionStatus,
             reasonCode,
             merchantSignature
-        } = req.body;
+        } = parsedData;
 
         console.log('WayForPay webhook received:', {
             orderReference,
