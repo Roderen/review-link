@@ -1,6 +1,15 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import * as crypto from 'crypto';
+import express, { Request, Response } from 'express';
+import bodyParser from 'body-parser';
+
+// Создаем Express приложение
+const app = express();
+
+// Добавляем middleware для парсинга form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 // Генерация подписи для проверки
 function generateSignature(merchantSecretKey: string, ...params: string[]): string {
@@ -11,7 +20,7 @@ function generateSignature(merchantSecretKey: string, ...params: string[]): stri
         .digest('hex');
 }
 
-export const wayforpayWebhook = functions.https.onRequest(async (req, res) => {
+app.post('/', async (req: Request, res: Response) => {
     try {
         // Логируем весь запрос для отладки
         console.log('=== WEBHOOK DEBUG START ===');
@@ -22,12 +31,6 @@ export const wayforpayWebhook = functions.https.onRequest(async (req, res) => {
         console.log('Content-Type:', req.get('content-type'));
         console.log('Raw Body type:', typeof req.body);
         console.log('=== WEBHOOK DEBUG END ===');
-
-        // WayForPay отправляет POST запрос
-        if (req.method !== 'POST') {
-            res.status(405).send('Method not allowed');
-            return;
-        }
 
         const merchantSecretKey = functions.config().wayforpay?.secret_key;
 
@@ -160,3 +163,6 @@ export const wayforpayWebhook = functions.https.onRequest(async (req, res) => {
         res.status(500).send('Internal server error');
     }
 });
+
+// Экспортируем Express app как Cloud Function
+export const wayforpayWebhook = functions.https.onRequest(app);
