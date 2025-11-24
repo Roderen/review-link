@@ -28,10 +28,10 @@ const LandingPage = () => {
         setIsLoading(true);
         try {
             await signInWithGoogle();
-            // убрать navigate('/dashboard') отсюда
+            // Navigation will happen automatically via useEffect when AuthContext updates user state
+            // AuthContext now has retry logic to handle race condition with Firestore
         } catch (error) {
             console.error('❌ Ошибка входа:', error);
-        } finally {
             setIsLoading(false);
         }
     };
