@@ -13,6 +13,16 @@ function generateSignature(merchantSecretKey: string, ...params: string[]): stri
 
 export const wayforpayWebhook = functions.https.onRequest(async (req, res) => {
     try {
+        // Логируем весь запрос для отладки
+        console.log('=== WEBHOOK DEBUG START ===');
+        console.log('Method:', req.method);
+        console.log('Headers:', JSON.stringify(req.headers, null, 2));
+        console.log('Body:', JSON.stringify(req.body, null, 2));
+        console.log('Query:', JSON.stringify(req.query, null, 2));
+        console.log('Content-Type:', req.get('content-type'));
+        console.log('Raw Body type:', typeof req.body);
+        console.log('=== WEBHOOK DEBUG END ===');
+
         // WayForPay отправляет POST запрос
         if (req.method !== 'POST') {
             res.status(405).send('Method not allowed');
