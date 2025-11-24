@@ -32,53 +32,22 @@ const PendingApprovalPage = () => {
                     {/* Icon */}
                     <div className="relative">
                         <div className="w-24 h-24 bg-blue-500/10 rounded-full flex items-center justify-center">
-                            <Clock className="w-12 h-12 text-blue-500" />
-                        </div>
-                        <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-yellow-500/20 rounded-full flex items-center justify-center">
-                            <CheckCircle2 className="w-5 h-5 text-yellow-500" />
+                            <Clock className="w-12 h-12 text-yellow-500" />
                         </div>
                     </div>
 
                     {/* Title */}
                     <div className="space-y-2">
                         <h1 className="text-3xl font-bold text-white">
-                            Аккаунт на рассмотрении
-                        </h1>
-                        <p className="text-gray-400 text-lg">
                             Спасибо за регистрацию!
-                        </p>
+                        </h1>
                     </div>
 
                     {/* Message */}
                     <div className="space-y-4 text-gray-300 max-w-md">
                         <p className="text-base">
-                            Ваш аккаунт находится на рассмотрении. Мы проверим вашу заявку и активируем доступ
-                            <span className="font-semibold text-white"> в течение 48 часов</span>.
+                            Ваш аккаунт находится на рассмотрении. <br></br> Мы проверим вашу заявку <span className="font-semibold text-white"> в течение 48 часов</span>.
                         </p>
-                        <p className="text-sm text-gray-400">
-                            Вы получите уведомление на email, как только ваш аккаунт будет одобрен.
-                        </p>
-                    </div>
-
-                    {/* Info Card */}
-                    <div className="w-full bg-gray-800/50 rounded-lg p-4 border border-gray-700">
-                        <h3 className="text-sm font-semibold text-white mb-2">
-                            Что происходит дальше?
-                        </h3>
-                        <ul className="text-sm text-gray-400 space-y-2 text-left">
-                            <li className="flex items-start gap-2">
-                                <span className="text-blue-500 mt-0.5">•</span>
-                                <span>Наша команда проверит ваш аккаунт в рабочее время</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <span className="text-blue-500 mt-0.5">•</span>
-                                <span>После одобрения вы получите полный доступ к платформе</span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                                <span className="text-blue-500 mt-0.5">•</span>
-                                <span>Вы сможете создавать ссылки для отзывов и управлять своим магазином</span>
-                            </li>
-                        </ul>
                     </div>
 
                     {/* User Info */}
