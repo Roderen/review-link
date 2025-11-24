@@ -28,10 +28,11 @@ const LandingPage = () => {
         setIsLoading(true);
         try {
             await signInWithGoogle();
-            // убрать navigate('/dashboard') отсюда
+            // Redirect immediately after successful login
+            // This prevents race condition with AuthContext loading user from Firestore
+            navigate('/dashboard');
         } catch (error) {
             console.error('❌ Ошибка входа:', error);
-        } finally {
             setIsLoading(false);
         }
     };
