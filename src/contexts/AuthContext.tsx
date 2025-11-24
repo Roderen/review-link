@@ -50,7 +50,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       setIsLoading(true);
       if (firebaseUser) {
         const docRef = doc(db, 'users', firebaseUser.uid);
-        const docSnap = await getDoc(docRef);
+
+        // Retry logic to handle race condition with user profile creation
+        let docSnap = await getDoc(docRef);
+        let retries = 0;
+        const maxRetries = 5;
+
+        // If document doesn't exist, retry a few times with exponential backoff
+        // This handles the case when user just signed up and profile is being created
+        while (!docSnap.exists() && retries < maxRetries) {
+          await new Promise(resolve => setTimeout(resolve, 200 * Math.pow(2, retries)));
+          docSnap = await getDoc(docRef);
+          retries++;
+        }
+
         if (docSnap.exists()) {
           const userData = docSnap.data();
           setUser({

@@ -28,9 +28,8 @@ const LandingPage = () => {
         setIsLoading(true);
         try {
             await signInWithGoogle();
-            // Redirect immediately after successful login
-            // This prevents race condition with AuthContext loading user from Firestore
-            navigate('/dashboard');
+            // Navigation will happen automatically via useEffect when AuthContext updates user state
+            // AuthContext now has retry logic to handle race condition with Firestore
         } catch (error) {
             console.error('❌ Ошибка входа:', error);
             setIsLoading(false);
