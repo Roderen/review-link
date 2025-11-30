@@ -1,0 +1,66 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isValidImageOrVideo() {
+      return request.resource.contentType.matches('image/.*') ||
+             request.resource.contentType.matches('video/.*');
+    }
+
+    function isUnder10MB() {
+      return request.resource.size < 10 * 1024 * 1024; // 10 MB
+    }
+
+    function isUnder50MB() {
+      return request.resource.size < 50 * 1024 * 1024; // 50 MB
+    }
+
+    // Review media files (photos/videos from reviews)
+    match /reviews/{reviewId}/{fileName} {
+      // Anyone can upload media when submitting a review
+      allow create: if isValidImageOrVideo() && (
+        (request.resource.contentType.matches('image/.*') && isUnder10MB()) ||
+        (request.resource.contentType.matches('video/.*') && isUnder50MB())
+      );
+
+      // Public read access (to display reviews)
+      allow read: if true;
+
+      // Only authenticated users can delete (shop owners via cloud function)
+      allow delete: if isAuthenticated();
+    }
+
+    // Shop logos and media
+    match /shops/{shopId}/{fileName} {
+      // Shop owners can upload
+      allow create, update: if isAuthenticated() && isValidImageOrVideo() && isUnder10MB();
+
+      // Public read access
+      allow read: if true;
+
+      // Shop owners can delete
+      allow delete: if isAuthenticated();
+    }
+
+    // User profile pictures
+    match /users/{userId}/{fileName} {
+      // Users can upload their own profile pictures
+      allow create, update: if isAuthenticated() &&
+        request.auth.uid == userId &&
+        request.resource.contentType.matches('image/.*') &&
+        isUnder10MB();
+
+      // Public read access
+      allow read: if true;
+
+      // Users can delete their own pictures
+      allow delete: if isAuthenticated() && request.auth.uid == userId;
+    }
+  }
+}
