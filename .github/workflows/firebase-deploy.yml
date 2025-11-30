@@ -1,9 +1,10 @@
 name: Deploy to Firebase
 
 on:
-  push:
-    branches:
-      - main  # Деплой при пуше в main
+  # Temporarily disabled automatic deployment - uncomment to enable
+  # push:
+  #   branches:
+  #     - main  # Деплой при пуше в main
   workflow_dispatch:  # Ручной запуск через GitHub UI
 
 jobs:
