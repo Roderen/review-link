@@ -65,8 +65,9 @@ export const createWayForPayPayment = functions.https.onCall(async (data, contex
     if (planConfig.monthlyPrice === 0) {
         // Обновляем план пользователя сразу
         await admin.firestore().collection('users').doc(userId).update({
-            plan: 'free',
-            subscriptionStatus: 'active'
+            'subscription.plan': 'FREE',
+            'subscription.status': 'ACTIVE',
+            'subscription.reviewsLimit': 10
         });
 
         return {

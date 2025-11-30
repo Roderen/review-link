@@ -17,8 +17,8 @@ export const checkExpiredSubscriptions = functions.pubsub
             // Находим всех пользователей с активными платными подписками
             const usersSnapshot = await admin.firestore()
                 .collection('users')
-                .where('subscriptionStatus', '==', 'active')
-                .where('plan', 'in', ['pro', 'business'])
+                .where('subscription.status', '==', 'ACTIVE')
+                .where('subscription.plan', 'in', ['PRO', 'BUSINESS'])
                 .get();
 
             let expiredCount = 0;
@@ -26,7 +26,7 @@ export const checkExpiredSubscriptions = functions.pubsub
 
             for (const doc of usersSnapshot.docs) {
                 const userData = doc.data();
-                const subscriptionEndDate = userData.subscriptionEndDate;
+                const subscriptionEndDate = userData.subscription?.endDate;
 
                 // Проверяем истекла ли подписка
                 if (subscriptionEndDate && subscriptionEndDate.toMillis() < now.toMillis()) {
@@ -34,10 +34,11 @@ export const checkExpiredSubscriptions = functions.pubsub
 
                     // Обновляем пользователя: возвращаем на FREE план
                     batch.update(doc.ref, {
-                        plan: 'free',
-                        subscriptionStatus: 'expired',
+                        'subscription.plan': 'FREE',
+                        'subscription.status': 'EXPIRED',
+                        'subscription.reviewsLimit': 10,
                         billingPeriod: null,
-                        previousPlan: userData.plan, // Сохраняем предыдущий план
+                        previousPlan: userData.subscription?.plan, // Сохраняем предыдущий план
                         expiredAt: admin.firestore.FieldValue.serverTimestamp()
                     });
 
