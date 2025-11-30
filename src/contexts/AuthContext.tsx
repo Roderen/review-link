@@ -73,8 +73,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             avatar: firebaseUser.photoURL || '',
             username: '', // если у вас будет отдельное поле
             ...userData,
-            // Normalize plan to uppercase to match type definition
-            plan: (userData.plan ? (userData.plan as string).toUpperCase() : 'FREE') as 'FREE' | 'PRO' | 'BUSINESS',
+            // Read plan from subscription object and normalize to uppercase
+            plan: (userData.subscription?.plan ? (userData.subscription.plan as string).toUpperCase() : 'FREE') as 'FREE' | 'PRO' | 'BUSINESS',
           } as User);
         } else {
           setUser(null); // нет записи в Firestore — можно редиректить/создать

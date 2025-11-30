@@ -150,7 +150,6 @@ app.post('/', async (req: Request, res: Response) => {
                 .collection('users')
                 .doc(userId)
                 .update({
-                    plan: plan.toUpperCase(), // Для совместимости с AuthContext
                     'subscription.plan': plan.toUpperCase(),
                     'subscription.status': 'ACTIVE',
                     'subscription.reviewsLimit': reviewsLimit,
