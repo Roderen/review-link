@@ -1,0 +1,84 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Users collection
+    match /users/{userId} {
+      // Users can read and write their own data
+      allow read, write: if isOwner(userId);
+
+      // Allow user creation during signup
+      allow create: if isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Shops collection
+    match /shops/{shopId} {
+      // Shop owners can read and write their shops
+      allow read, write: if isAuthenticated() &&
+        resource.data.userId == request.auth.uid;
+
+      // Allow shop creation for authenticated users
+      allow create: if isAuthenticated() &&
+        request.resource.data.userId == request.auth.uid;
+    }
+
+    // Review links collection
+    match /reviewLinks/{linkId} {
+      // Public read access for review links (needed for public review form)
+      allow read: if true;
+
+      // Only owners can write
+      allow write: if isAuthenticated() &&
+        resource.data.userId == request.auth.uid;
+
+      // Allow creation for authenticated users
+      allow create: if isAuthenticated() &&
+        request.resource.data.userId == request.auth.uid;
+    }
+
+    // Reviews collection
+    match /reviews/{reviewId} {
+      // Public can create reviews (anonymous reviews allowed)
+      allow create: if true;
+
+      // Public read access
+      allow read: if true;
+
+      // Only review owners or shop owners can update/delete
+      allow update, delete: if isAuthenticated() && (
+        resource.data.userId == request.auth.uid ||
+        get(/databases/$(database)/documents/shops/$(resource.data.shopId)).data.userId == request.auth.uid
+      );
+    }
+
+    // Payments collection
+    match /payments/{paymentId} {
+      // Users can read their own payments
+      allow read: if isAuthenticated() &&
+        resource.data.userId == request.auth.uid;
+
+      // Only cloud functions can write payments
+      allow write: if false;
+    }
+
+    // Stats collection (if used)
+    match /stats/{statId} {
+      // Users can read their own stats
+      allow read: if isAuthenticated() &&
+        resource.data.userId == request.auth.uid;
+
+      // Only cloud functions can write stats
+      allow write: if false;
+    }
+  }
+}
