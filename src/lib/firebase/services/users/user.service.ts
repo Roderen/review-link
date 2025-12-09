@@ -41,7 +41,21 @@ export const createUserProfile = async (userData: {
     email: undefined;
     username: string;
     updatedAt: Date
-}): Promise<User> => {
+}): Promise<{
+    role: string;
+    displayName: string;
+    accountType: string;
+    subscription: { reviewsUsed: number; reviewsLimit: number; plan: string; startDate: Date; status: string };
+    accountStatus: string;
+    reviewSettings: { allowPhotos: boolean; requireEmail: boolean; publicDisplayEnabled: boolean };
+    uid: any;
+    profilePicture: any;
+    createdAt: Date;
+    instagramId: string;
+    email: undefined;
+    username: string;
+    updatedAt: Date
+}> => {
     try {
         const userDoc = doc(db, USERS_COLLECTION, userData.uid);
         const userWithTimestamps = {
