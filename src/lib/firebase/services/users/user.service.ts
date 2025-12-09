@@ -44,7 +44,7 @@ export const createUserProfile = async (userData: {
 }): Promise<{
     role: string;
     displayName: string;
-    accountType: string;
+    accountType: "BUSINESS" | "PERSONAL" | "CREATOR";
     subscription: { reviewsUsed: number; reviewsLimit: number; plan: string; startDate: Date; status: string };
     accountStatus: string;
     reviewSettings: { allowPhotos: boolean; requireEmail: boolean; publicDisplayEnabled: boolean };
