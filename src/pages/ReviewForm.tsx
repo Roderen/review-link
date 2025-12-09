@@ -1,4 +1,4 @@
-import { Navigate, useSearchParams } from 'react-router-dom';
+import {Navigate, useParams, useSearchParams} from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MessageSquare } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext.tsx';
@@ -12,15 +12,22 @@ import { MediaUploadSection } from '@/components/review-form/MediaUploadSection'
 import { SubmitButton } from '@/components/review-form/SubmitButton';
 import { FormDisclaimer } from '@/components/review-form/FormDisclaimer';
 import { StatusCard } from '@/components/review-form/StatusCard';
+import {useShopData} from "@/hooks/useShopData.ts";
+import {useReviewsStats} from "@/hooks/useReviewsStats.ts";
 
 /**
  * Форма для оставления отзыва клиентом
  * Поддерживает загрузку медиа, валидацию и проверку лимитов
  */
 const ReviewForm = () => {
+    const params = useParams();
+    const shopId = params.username;
     const { user, isLoading: authLoading } = useAuth();
     const [searchParams] = useSearchParams();
     const reviewLinkId = searchParams.get('linkId');
+    const { stats, reviewsCount } = useReviewsStats(shopId);
+
+    const { shop, loading: shopLoading, shopNotFound } = useShopData(shopId);
 
     // Custom hooks для управления состоянием
     const {
@@ -80,12 +87,8 @@ const ReviewForm = () => {
     };
 
     // Guard clauses для early returns
-    if (authLoading || submissionLoading || canSubmit === null || !isOwnerPlanLoaded) {
+    if (submissionLoading) {
         return <StatusCard type="loading" />;
-    }
-
-    if (!user) {
-        return <Navigate to="/" replace />;
     }
 
     if (canSubmit === false) {
@@ -97,14 +100,18 @@ const ReviewForm = () => {
         return <StatusCard type="success" shopName={user.name} onClose={() => window.close()} />;
     }
 
+    if (shopNotFound) {
+        return <Navigate to="/" replace />;
+    }
+
     return (
         <div className="min-h-screen bg-gray-950 p-4">
             <div className="max-w-2xl mx-auto">
                 <ShopInfoCard
-                    avatar={user.avatar}
-                    name={user.name}
-                    description={user.description}
-                    shopStats={shopStats}
+                    avatar={shop?.avatar}
+                    name={shop?.name}
+                    description={shop?.description}
+                    shopStats={stats}
                 />
 
                 {/* Review Form */}

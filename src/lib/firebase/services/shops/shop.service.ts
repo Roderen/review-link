@@ -42,12 +42,13 @@ export const getShopById = async (shopId: string): Promise<ShopPublicInfo> => {
         }
 
         const data = shopDoc.data();
+        console.log(data)
 
         // Возвращаем только публичную информацию
         return {
             id: shopDoc.id,
-            name: data.name || '',
-            avatar: data.avatar || '',
+            name: data.username || '',
+            avatar: data.profilePicture || '',
             description: data.description || '',
             instagram: data.instagram || '',
         };
