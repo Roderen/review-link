@@ -23,7 +23,7 @@ export interface User {
     /** Username Instagram */
     username: string;
     /** Email пользователя (опционально) */
-    email?: string;
+    email?: string | undefined;
     /** Отображаемое имя */
     displayName: string;
     /** URL фото профиля */

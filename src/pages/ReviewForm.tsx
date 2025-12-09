@@ -25,9 +25,9 @@ const ReviewForm = () => {
     const { user, isLoading: authLoading } = useAuth();
     const [searchParams] = useSearchParams();
     const reviewLinkId = searchParams.get('linkId');
-    const { stats, reviewsCount } = useReviewsStats(shopId);
+    const { stats } = useReviewsStats(shopId);
 
-    const { shop, loading: shopLoading, shopNotFound } = useShopData(shopId);
+    const { shop, shopNotFound } = useShopData(shopId);
 
     // Custom hooks для управления состоянием
     const {
@@ -48,7 +48,6 @@ const ReviewForm = () => {
         loading: submissionLoading,
         isSubmitting,
         isSubmitted,
-        shopStats,
         ownerPlan,
         isOwnerPlanLoaded,
         handleSubmit,
@@ -93,11 +92,11 @@ const ReviewForm = () => {
 
     if (canSubmit === false) {
         const statusType = limitType === 'link-used' ? 'already-submitted' : 'limit-reached';
-        return <StatusCard type={statusType} shopName={user.name} onClose={() => window.close()} />;
+        return <StatusCard type={statusType} shopName={shop.name} onClose={() => window.close()} />;
     }
 
     if (isSubmitted) {
-        return <StatusCard type="success" shopName={user.name} onClose={() => window.close()} />;
+        return <StatusCard type="success" shopName={shop.name} onClose={() => window.close()} />;
     }
 
     if (shopNotFound) {
