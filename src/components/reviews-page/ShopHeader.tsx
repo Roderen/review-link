@@ -22,7 +22,19 @@ export const ShopHeader = ({avatar, name, description, instagram, stats, loading
                 <div className="flex items-center space-x-6">
                     <Avatar className="w-20 h-20">
                         <AvatarImage src={avatar} alt={name}/>
-                        <AvatarFallback className="text-xl">{name?.charAt(0) || 'U'}</AvatarFallback>
+                        <AvatarFallback className="text-xl">
+                            {
+                                name?.charAt(0)
+                                ||
+                                <Skeleton
+                                    width={80}
+                                    height={80}
+                                    baseColor="#2d2d2d"
+                                    highlightColor="#3d3d3d"
+                                    style={{display: 'inline-block'}}
+                                />
+                            }
+                        </AvatarFallback>
                     </Avatar>
                     <div className="flex-1">
                         <h1 className="text-3xl font-bold mb-2 text-white">

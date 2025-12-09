@@ -84,11 +84,6 @@ const PublicReviewsPage = () => {
                     date: review.date,
                     media: review.media,
                 },
-                reportedBy: {
-                    userId: user?.id,
-                    userName: user?.name,
-                    userEmail: user?.email,
-                },
                 timestamp: new Date().toISOString(),
             });
 

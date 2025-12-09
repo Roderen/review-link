@@ -27,7 +27,21 @@ const USERS_COLLECTION = 'users';
  *   plan: 'free'
  * });
  */
-export const createUserProfile = async (userData: Omit<User, 'id'>): Promise<User> => {
+export const createUserProfile = async (userData: {
+    role: string;
+    displayName: string;
+    accountType: string;
+    subscription: { reviewsUsed: number; reviewsLimit: number; plan: string; startDate: Date; status: string };
+    accountStatus: string;
+    reviewSettings: { allowPhotos: boolean; requireEmail: boolean; publicDisplayEnabled: boolean };
+    uid: any;
+    profilePicture: any;
+    createdAt: Date;
+    instagramId: string;
+    email: undefined;
+    username: string;
+    updatedAt: Date
+}): Promise<User> => {
     try {
         const userDoc = doc(db, USERS_COLLECTION, userData.uid);
         const userWithTimestamps = {
