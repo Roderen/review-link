@@ -55,7 +55,7 @@ export const signInWithGoogle = async (): Promise<AuthResult> => {
                 email: firebaseUser.email || undefined,
                 displayName: firebaseUser.displayName || 'User',
                 profilePicture: firebaseUser.photoURL || undefined,
-                accountType: 'PERSONAL',
+                accountType: 'PERSONAL' as const, // ✅ Исправлено: добавлен as const
                 accountStatus: 'pending',
                 role: 'user',
 
@@ -78,6 +78,11 @@ export const signInWithGoogle = async (): Promise<AuthResult> => {
                 createdAt: new Date(),
                 updatedAt: new Date(),
             });
+        }
+
+        // ✅ Исправлено: проверка на null
+        if (!userProfile) {
+            throw new Error('Не удалось создать или получить профиль пользователя');
         }
 
         return {
