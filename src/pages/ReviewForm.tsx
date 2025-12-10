@@ -1,8 +1,6 @@
-import {Navigate, useParams, useSearchParams} from 'react-router-dom';
+import { Navigate, useParams, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MessageSquare } from 'lucide-react';
-// ❌ Убери этот импорт
-// import { useAuth } from '@/contexts/AuthContext.tsx';
 import { useFormValidation } from '@/hooks/useFormValidation';
 import { useMediaUpload } from '@/hooks/useMediaUpload';
 import { useReviewSubmission } from '@/hooks/useReviewSubmission';
@@ -13,8 +11,8 @@ import { MediaUploadSection } from '@/components/review-form/MediaUploadSection'
 import { SubmitButton } from '@/components/review-form/SubmitButton';
 import { FormDisclaimer } from '@/components/review-form/FormDisclaimer';
 import { StatusCard } from '@/components/review-form/StatusCard';
-import {useShopData} from "@/hooks/useShopData.ts";
-import {useReviewsStats} from "@/hooks/useReviewsStats.ts";
+import { useShopData } from '@/hooks/useShopData.ts';
+import { useReviewsStats } from '@/hooks/useReviewsStats.ts';
 
 /**
  * Форма для оставления отзыва клиентом
@@ -23,15 +21,14 @@ import {useReviewsStats} from "@/hooks/useReviewsStats.ts";
 const ReviewForm = () => {
     const params = useParams();
     const shopId = params.username;
-    // ❌ Убери эту строку
-    // const { user, isLoading: authLoading } = useAuth();
     const [searchParams] = useSearchParams();
     const reviewLinkId = searchParams.get('linkId');
+
+    // Custom hooks для загрузки данных магазина
+    const { shop, loading: shopLoading, shopNotFound } = useShopData(shopId);
     const { stats } = useReviewsStats(shopId);
 
-    const { shop, shopNotFound } = useShopData(shopId);
-
-    // Custom hooks для управления состоянием
+    // Custom hooks для управления состоянием формы
     const {
         rating,
         hoverRating,
@@ -54,9 +51,9 @@ const ReviewForm = () => {
         isOwnerPlanLoaded,
         handleSubmit,
     } = useReviewSubmission({
-        shopOwnerId: shop?.id, // ✅ Используй shop.id вместо user.id
+        shopOwnerId: shop?.id,
         reviewLinkId,
-        isAuthLoading: false, // ✅ Всегда false для публичной страницы
+        isAuthLoading: shopLoading,
     });
 
     const {
@@ -88,12 +85,25 @@ const ReviewForm = () => {
     };
 
     // Guard clauses для early returns
-    if (submissionLoading || !shop) {
-        return <StatusCard type="loading" />;
+    if (shopNotFound) {
+        return <Navigate to="/404" replace />;
     }
 
-    if (shopNotFound) {
-        return <Navigate to="/" replace />;
+    if (!shopId) {
+        return (
+            <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+                <div className="text-center">
+                    <h2 className="text-2xl text-white mb-4">Ошибка</h2>
+                    <p className="text-gray-400">ID магазина не найден в URL</p>
+                </div>
+            </div>
+        );
+    }
+
+    const loading = shopLoading || submissionLoading;
+
+    if (loading || !shop) {
+        return <StatusCard type="loading" />;
     }
 
     if (canSubmit === false) {
