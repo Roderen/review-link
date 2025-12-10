@@ -15,47 +15,20 @@ const USERS_COLLECTION = 'users';
 
 /**
  * Создает профиль пользователя в Firestore
- * @param userData - Данные пользователя без ID
+ * @param userData - Данные пользователя
  * @returns Promise<User> - Созданный профиль пользователя
  * @throws Error если не удалось создать профиль
  *
  * @example
  * const user = await createUserProfile({
  *   uid: 'user123',
- *   name: 'Иван Иванов',
+ *   username: 'ivan',
+ *   displayName: 'Иван Иванов',
  *   email: 'ivan@example.com',
- *   plan: 'free'
+ *   // ... остальные поля
  * });
  */
-export const createUserProfile = async (userData: {
-    role: string;
-    displayName: string;
-    accountType: string;
-    subscription: { reviewsUsed: number; reviewsLimit: number; plan: string; startDate: Date; status: string };
-    accountStatus: string;
-    reviewSettings: { allowPhotos: boolean; requireEmail: boolean; publicDisplayEnabled: boolean };
-    uid: any;
-    profilePicture: any;
-    createdAt: Date;
-    instagramId: string;
-    email: undefined;
-    username: string;
-    updatedAt: Date
-}): Promise<{
-    role: string;
-    displayName: string;
-    accountType: "BUSINESS" | "PERSONAL" | "CREATOR";
-    subscription: { reviewsUsed: number; reviewsLimit: number; plan: string; startDate: Date; status: string };
-    accountStatus: string;
-    reviewSettings: { allowPhotos: boolean; requireEmail: boolean; publicDisplayEnabled: boolean };
-    uid: any;
-    profilePicture: any;
-    createdAt: Date;
-    instagramId: string;
-    email: undefined;
-    username: string;
-    updatedAt: Date
-}> => {
+export const createUserProfile = async (userData: Omit<User, 'createdAt' | 'updatedAt'>): Promise<User> => {
     try {
         const userDoc = doc(db, USERS_COLLECTION, userData.uid);
         const userWithTimestamps = {
@@ -86,7 +59,7 @@ export const createUserProfile = async (userData: {
  * @example
  * const user = await getUserProfile('user123');
  * if (user) {
- *   console.log(user.name);
+ *   console.log(user.displayName);
  * }
  */
 export const getUserProfile = async (uid: string): Promise<User | null> => {
@@ -126,8 +99,8 @@ export const getUserProfile = async (uid: string): Promise<User | null> => {
  *
  * @example
  * await updateUserProfile('user123', {
- *   name: 'Новое Имя',
- *   plan: 'business'
+ *   displayName: 'Новое Имя',
+ *   subscription: { plan: 'BUSINESS', ... }
  * });
  */
 export const updateUserProfile = async (uid: string, updates: Partial<User>): Promise<void> => {

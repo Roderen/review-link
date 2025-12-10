@@ -40,7 +40,7 @@ export const signInWithGoogle = async (): Promise<AuthResult> => {
         const firebaseUser = result.user;
 
         // Проверяем, существует ли профиль пользователя
-        let userProfile = await getUserProfile(firebaseUser.uid);
+        let userProfile: User | null = await getUserProfile(firebaseUser.uid);
         let isNewUser = false;
 
         // Если профиля нет - создаем новый
@@ -55,7 +55,7 @@ export const signInWithGoogle = async (): Promise<AuthResult> => {
                 email: firebaseUser.email || undefined,
                 displayName: firebaseUser.displayName || 'User',
                 profilePicture: firebaseUser.photoURL || undefined,
-                accountType: 'PERSONAL' as const, // ✅ Исправлено: добавлен as const
+                accountType: 'PERSONAL',
                 accountStatus: 'pending',
                 role: 'user',
 
@@ -74,9 +74,6 @@ export const signInWithGoogle = async (): Promise<AuthResult> => {
                     requireEmail: false,
                     publicDisplayEnabled: true,
                 },
-
-                createdAt: new Date(),
-                updatedAt: new Date(),
             });
         }
 

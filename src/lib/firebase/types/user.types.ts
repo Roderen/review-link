@@ -32,6 +32,7 @@ export interface User {
     accountType: 'PERSONAL' | 'BUSINESS' | 'CREATOR';
     /** Статус аккаунта (для модерации новых пользователей) */
     accountStatus?: 'pending' | 'active' | 'rejected';
+    role?: string;
 
     /** Название магазина */
     storeName?: string;
