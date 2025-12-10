@@ -44,7 +44,6 @@ const ReviewForm = () => {
     const {
         canSubmit,
         limitType,
-        loading: submissionLoading,
         isSubmitting,
         isSubmitted,
         ownerPlan,
@@ -84,7 +83,7 @@ const ReviewForm = () => {
         uploadMedia(event.target.files);
     };
 
-    // Guard clauses для early returns
+    // Guard clauses для early returns (в том же порядке что и в PublicReviewsPage)
     if (shopNotFound) {
         return <Navigate to="/404" replace />;
     }
@@ -100,28 +99,28 @@ const ReviewForm = () => {
         );
     }
 
-    const loading = shopLoading || submissionLoading;
-
-    if (loading || !shop) {
+    // Показываем loading только пока грузятся данные магазина
+    if (shopLoading) {
         return <StatusCard type="loading" />;
     }
 
+    // Проверяем статусы отправки
     if (canSubmit === false) {
         const statusType = limitType === 'link-used' ? 'already-submitted' : 'limit-reached';
-        return <StatusCard type={statusType} shopName={shop.name} onClose={() => window.close()} />;
+        return <StatusCard type={statusType} shopName={shop?.name} onClose={() => window.close()} />;
     }
 
     if (isSubmitted) {
-        return <StatusCard type="success" shopName={shop.name} onClose={() => window.close()} />;
+        return <StatusCard type="success" shopName={shop?.name} onClose={() => window.close()} />;
     }
 
     return (
         <div className="min-h-screen bg-gray-950 p-4">
             <div className="max-w-2xl mx-auto">
                 <ShopInfoCard
-                    avatar={shop.avatar}
-                    name={shop.name}
-                    description={shop.description}
+                    avatar={shop?.avatar}
+                    name={shop?.name}
+                    description={shop?.description}
                     shopStats={stats}
                 />
 
