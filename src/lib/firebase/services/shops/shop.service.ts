@@ -35,45 +35,25 @@ export interface ShopPublicInfo {
  */
 export const getShopById = async (shopId: string): Promise<ShopPublicInfo> => {
     try {
-        console.log('🔍 [getShopById] Start fetching shop:', shopId);
-        console.log('🔍 [getShopById] Collection:', USERS_COLLECTION);
-        console.log('🔍 [getShopById] DB instance:', db ? 'exists' : 'null');
-        console.log('🔍 [getShopById] DB app options:', {
-            projectId: db?.app?.options?.projectId,
-            authDomain: db?.app?.options?.authDomain
-        });
-
-        const docRef = doc(db, USERS_COLLECTION, shopId);
-        console.log('🔍 [getShopById] Doc reference created:', docRef.path);
-
-        console.log('📡 [getShopById] Calling getDoc...');
-        const shopDoc = await getDoc(docRef);
-        console.log('✅ [getShopById] getDoc completed, exists:', shopDoc.exists());
+        const shopDoc = await getDoc(doc(db, USERS_COLLECTION, shopId));
 
         if (!shopDoc.exists()) {
-            console.error('❌ [getShopById] Document does not exist');
             throw new Error('Магазин не найден');
         }
 
         const data = shopDoc.data();
-        console.log('✅ [getShopById] Document data:', data);
+        console.log(data)
 
-        const result = {
+        // Возвращаем только публичную информацию
+        return {
             id: shopDoc.id,
-            name: data.username || data.displayName || '',
-            avatar: data.profilePicture || data.avatar || '',
-            description: data.description || data.storeDescription || '',
+            name: data.username || '',
+            avatar: data.profilePicture || '',
+            description: data.description || '',
             instagram: data.instagram || '',
         };
-
-        console.log('✅ [getShopById] Returning result:', result);
-        return result;
     } catch (error) {
-        console.error('❌ [getShopById] Error caught:', error);
-        console.error('❌ [getShopById] Error type:', error.constructor?.name);
-        console.error('❌ [getShopById] Error message:', error.message);
-        console.error('❌ [getShopById] Error code:', error.code);
-        console.error('❌ [getShopById] Full error:', error);
+        console.error('Ошибка получения данных магазина:', error);
         throw error;
     }
 };
