@@ -1,7 +1,8 @@
 import {Navigate, useParams, useSearchParams} from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MessageSquare } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext.tsx';
+// ❌ Убери этот импорт
+// import { useAuth } from '@/contexts/AuthContext.tsx';
 import { useFormValidation } from '@/hooks/useFormValidation';
 import { useMediaUpload } from '@/hooks/useMediaUpload';
 import { useReviewSubmission } from '@/hooks/useReviewSubmission';
@@ -22,7 +23,8 @@ import {useReviewsStats} from "@/hooks/useReviewsStats.ts";
 const ReviewForm = () => {
     const params = useParams();
     const shopId = params.username;
-    const { user, isLoading: authLoading } = useAuth();
+    // ❌ Убери эту строку
+    // const { user, isLoading: authLoading } = useAuth();
     const [searchParams] = useSearchParams();
     const reviewLinkId = searchParams.get('linkId');
     const { stats } = useReviewsStats(shopId);
@@ -52,9 +54,9 @@ const ReviewForm = () => {
         isOwnerPlanLoaded,
         handleSubmit,
     } = useReviewSubmission({
-        shopOwnerId: user?.id,
+        shopOwnerId: shop?.id, // ✅ Используй shop.id вместо user.id
         reviewLinkId,
-        isAuthLoading: authLoading,
+        isAuthLoading: false, // ✅ Всегда false для публичной страницы
     });
 
     const {
@@ -86,8 +88,12 @@ const ReviewForm = () => {
     };
 
     // Guard clauses для early returns
-    if (submissionLoading) {
+    if (submissionLoading || !shop) {
         return <StatusCard type="loading" />;
+    }
+
+    if (shopNotFound) {
+        return <Navigate to="/" replace />;
     }
 
     if (canSubmit === false) {
@@ -99,17 +105,13 @@ const ReviewForm = () => {
         return <StatusCard type="success" shopName={shop.name} onClose={() => window.close()} />;
     }
 
-    if (shopNotFound) {
-        return <Navigate to="/" replace />;
-    }
-
     return (
         <div className="min-h-screen bg-gray-950 p-4">
             <div className="max-w-2xl mx-auto">
                 <ShopInfoCard
-                    avatar={shop?.avatar}
-                    name={shop?.name}
-                    description={shop?.description}
+                    avatar={shop.avatar}
+                    name={shop.name}
+                    description={shop.description}
                     shopStats={stats}
                 />
 
