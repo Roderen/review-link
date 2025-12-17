@@ -64,9 +64,8 @@ export const useReviewSubmission = ({
                 if (ownerDoc.exists()) {
                     const ownerData = ownerDoc.data();
                     // Преобразуем план в uppercase для совместимости с PLAN_LIMITS
-                    const rawPlan = ownerData?.plan || 'FREE';
+                    const rawPlan = ownerData?.subscription.plan || 'FREE';
                     const plan = (typeof rawPlan === 'string' ? rawPlan.toUpperCase() : 'FREE') as PlanType;
-                    console.log('🎯 Owner plan loaded:', rawPlan, '→', plan);
                     setOwnerPlan(plan);
                 } else {
                     console.warn('⚠️ Owner document not found, using FREE plan');
@@ -113,7 +112,6 @@ export const useReviewSubmission = ({
                 setLoading(false);
                 // Устанавливаем флаг загрузки в любом случае
                 setIsOwnerPlanLoaded(true);
-                console.log('✅ Owner plan load completed');
             }
         };
 

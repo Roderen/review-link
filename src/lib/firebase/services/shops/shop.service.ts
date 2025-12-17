@@ -42,7 +42,6 @@ export const getShopById = async (shopId: string): Promise<ShopPublicInfo> => {
         }
 
         const data = shopDoc.data();
-        console.log(data)
 
         // Возвращаем только публичную информацию
         return {

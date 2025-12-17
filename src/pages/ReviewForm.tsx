@@ -1,4 +1,4 @@
-import { Navigate, useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { MessageSquare } from 'lucide-react';
 import { useFormValidation } from '@/hooks/useFormValidation';
@@ -25,7 +25,7 @@ const ReviewForm = () => {
     const reviewLinkId = searchParams.get('linkId');
 
     // Custom hooks для загрузки данных магазина
-    const { shop, loading: shopLoading, shopNotFound } = useShopData(shopId);
+    const { shop, loading: shopLoading } = useShopData(shopId);
     const { stats } = useReviewsStats(shopId);
 
     // Custom hooks для управления состоянием формы
@@ -50,7 +50,7 @@ const ReviewForm = () => {
         isOwnerPlanLoaded,
         handleSubmit,
     } = useReviewSubmission({
-        shopOwnerId: shop?.id,
+        shopOwnerId: shopId,
         reviewLinkId,
         isAuthLoading: shopLoading,
     });
@@ -62,9 +62,6 @@ const ReviewForm = () => {
         removeMedia,
         maxMediaCount,
     } = useMediaUpload(isOwnerPlanLoaded ? ownerPlan : 'FREE');
-
-    // Debug logging
-    console.log('🔍 ReviewForm - isOwnerPlanLoaded:', isOwnerPlanLoaded, 'ownerPlan:', ownerPlan, 'maxMediaCount:', maxMediaCount);
 
     // Обработчик отправки формы
     const onSubmit = async (e: React.FormEvent) => {
@@ -83,11 +80,7 @@ const ReviewForm = () => {
         uploadMedia(event.target.files);
     };
 
-    // Guard clauses для early returns (в том же порядке что и в PublicReviewsPage)
-    if (shopNotFound) {
-        return <Navigate to="/404" replace />;
-    }
-
+    // Guard clauses - НЕ проверяем shopNotFound, потому что в reviewPage это тоже работает
     if (!shopId) {
         return (
             <div className="min-h-screen bg-gray-950 flex items-center justify-center">
@@ -99,8 +92,8 @@ const ReviewForm = () => {
         );
     }
 
-    // Показываем loading только пока грузятся данные магазина
-    if (shopLoading) {
+    // Показываем loading пока грузятся данные магазина ИЛИ план владельца
+    if (shopLoading || !isOwnerPlanLoaded) {
         return <StatusCard type="loading" />;
     }
 
