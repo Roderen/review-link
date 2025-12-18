@@ -27,7 +27,6 @@ const Dashboard = () => {
                 skipPagination: true
             })
                 .then(reviewsShop => {
-                    console.log(reviewsShop)
                     // С skipPagination: true функция возвращает массив
                     if (Array.isArray(reviewsShop)) {
                         setReviews(reviewsShop as DashboardReview[])

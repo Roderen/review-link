@@ -10,11 +10,11 @@ export const ReviewsFooter = () => {
                         <MessageSquare className="w-4 h-4 text-white"/>
                     </div>
                     <span className="font-semibold text-white">
-                        ReviewLink
+                        ReviewInBio
                     </span>
                 </div>
                 <p className="text-sm text-gray-500">
-                    Красивые отзывы для Instagram магазинов • reviewlink.com
+                    Красивые отзывы для Instagram магазинов • reviewinbio.com
                 </p>
             </div>
         </footer>

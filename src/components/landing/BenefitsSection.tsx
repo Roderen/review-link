@@ -5,23 +5,23 @@ export const BenefitsSection = () => {
     return (
         <section className="py-16 px-4">
             <div className="container mx-auto max-w-4xl text-center">
-                <h2 className="text-3xl font-bold mb-12 text-white">Почему ReviewLink?</h2>
+                <h2 className="text-3xl font-bold mb-12 text-white">Чому ми?</h2>
 
                 <div className="grid md:grid-cols-3 gap-8">
                     <BenefitCard
-                        icon={Zap}
-                        title="Быстро"
-                        description="Регистрация за 30 секунд, получение отзывов сразу после запуска"
+                        icon={Shield}
+                        title="Безпечно"
+                        description="Лише власник може сгенерувати посилання та надіслати його покупцю"
                     />
                     <BenefitCard
-                        icon={Shield}
-                        title="Безопасно"
-                        description="Только владелец может генерировать ссылки, полный контроль отзывов"
+                        icon={Zap}
+                        title="Довіра"
+                        description="Підвищуйте довіру клієнтів за допомогою реальних відгуків"
                     />
                     <BenefitCard
                         icon={MessageSquare}
-                        title="Профессионально"
-                        description="Современный дизайн, который украсит ваш Instagram профиль"
+                        title="Практично"
+                        description="Усі відгуки зберігаються на персональній сторінці, яку можна вставити в біо"
                     />
                 </div>
             </div>

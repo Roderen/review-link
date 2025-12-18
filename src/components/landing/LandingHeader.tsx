@@ -17,7 +17,7 @@ export const LandingHeader = ({onLogin, onPricingClick, isLoading}: LandingHeade
                         <MessageSquare className="w-5 h-5 text-white"/>
                     </div>
                     <span className="text-xl font-bold text-white">
-                        ReviewLink
+                        ReviewInBio
                     </span>
                 </div>
                 <div className="flex items-center space-x-4">
@@ -26,11 +26,11 @@ export const LandingHeader = ({onLogin, onPricingClick, isLoading}: LandingHeade
                         onClick={onPricingClick}
                         className="text-gray-300 hover:text-white"
                     >
-                        Тарифы
+                        Тарифи
                     </Button>
                     <Button onClick={onLogin} disabled={isLoading}
                             className="bg-white text-gray-900 hover:bg-gray-100">
-                        {isLoading ? 'Входим...' : 'Войти'}
+                        {isLoading ? 'Входимо...' : 'Увійти'}
                     </Button>
                 </div>
             </div>

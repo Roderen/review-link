@@ -577,7 +577,7 @@ https://search.google.com/search-console
 
 ```
 ✅ review-link.com.ua      (лучший вариант для MVP)
-✅ reviewlink.com.ua
+✅ reviewinbio.com.ua
 ✅ review-link.ua
 ⚠️ review-link.com         (дороже, но престижнее)
 ⚠️ review-link.app         (для SaaS, но дорого)
