@@ -10,7 +10,7 @@ const plans: PlanFeature[] = [
     {
         name: 'Free',
         price: '0$',
-        period: 'назавжди',
+        period: '',
         features: [
             'До 10 відгуків',
             'Публічна сторінка відгуків',
