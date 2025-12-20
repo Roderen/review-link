@@ -13,6 +13,8 @@ interface PlanUsageCardProps {
     onChangePlan: () => void;
 }
 
+const SHOW_BUTTON = false;
+
 export const PlanUsageCard = ({
                                    currentPlan,
                                    reviewsCount,
@@ -41,18 +43,20 @@ export const PlanUsageCard = ({
                                 />
                             ) : (
                                 currentPlan.reviews === Infinity
-                                    ? `${reviewsCount} отзывов (безлимит)`
-                                    : `${reviewsCount} из ${currentPlan.reviews} отзывов`
+                                    ? `${reviewsCount} відгуків (безліміт)`
+                                    : `${reviewsCount} з ${currentPlan.reviews} відгуків`
                             )}
                         </p>
                     </div>
-                    <Button
-                        variant="outline"
-                        onClick={onChangePlan}
-                        className="border-gray-600 text-gray-300 hover:bg-gray-800"
-                    >
-                        Изменить тариф
-                    </Button>
+                    {SHOW_BUTTON && (
+                        <Button
+                            variant="outline"
+                            onClick={onChangePlan}
+                            className="border-gray-600 text-gray-300 hover:bg-gray-800"
+                        >
+                            Изменить тариф
+                        </Button>
+                    )}
                 </div>
 
                 {currentPlan.reviews !== Infinity && (

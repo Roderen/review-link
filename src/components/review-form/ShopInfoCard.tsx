@@ -21,7 +21,7 @@ export const ShopInfoCard = ({avatar, name, description, shopStats}: ShopInfoCar
                     </Avatar>
                     <div>
                         <h1 className="text-2xl font-bold text-white">{name || 'Магазин'}</h1>
-                        <p className="text-gray-400">{description || 'Описание отсутствует'}</p>
+                        <p className="text-gray-400">{description || 'Опис відсутній'}</p>
                         {shopStats && (
                             <div className="flex items-center space-x-2 mt-1">
                                 <div className="flex space-x-1">
@@ -37,7 +37,7 @@ export const ShopInfoCard = ({avatar, name, description, shopStats}: ShopInfoCar
                                     ))}
                                 </div>
                                 <span className="text-sm text-gray-400">
-                                    {shopStats.averageRating.toFixed(1)} ({shopStats.totalCount} {shopStats.totalCount === 1 ? 'отзыв' : shopStats.totalCount < 5 ? 'отзыва' : 'отзывов'})
+                                    {shopStats.averageRating.toFixed(1)} ({shopStats.totalCount} {shopStats.totalCount === 1 ? 'відгук' : shopStats.totalCount < 5 ? 'відгуки' : 'відгуків'})
                                 </span>
                             </div>
                         )}

@@ -11,6 +11,7 @@ import {StatsCard} from '@/components/dashboard/StatsCard';
 import {LinksCard} from '@/components/dashboard/LinksCard';
 import {ReviewsList} from '@/components/dashboard/ReviewsList';
 import {DashboardReview, PlanLimits} from '@/types/dashboard';
+import {LandingFooter} from "@/components/landing/LandingFooter.tsx";
 
 const Dashboard = () => {
     const {user, logout} = useAuth();
@@ -115,25 +116,25 @@ const Dashboard = () => {
                 {/* Stats Overview */}
                 <div className="grid md:grid-cols-4 gap-6 mb-8">
                     <StatsCard
-                        title="Всего отзывов"
+                        title="Всього відгуків"
                         value={reviewsCount}
                         icon={<MessageSquare className="w-8 h-8 text-gray-500"/>}
                         loading={loading}
                     />
                     <StatsCard
-                        title="Средний рейтинг"
+                        title="Середній рейтинг"
                         value={averageRating}
                         icon={<Star className="w-8 h-8 text-yellow-500"/>}
                         loading={loading}
                     />
                     <StatsCard
-                        title="5-звездочных"
+                        title="5-зіркових"
                         value={reviews.filter(r => r.rating === 5).length}
                         icon={<TrendingUp className="w-8 h-8 text-green-500"/>}
                         loading={loading}
                     />
                     <StatsCard
-                        title="С медиа"
+                        title="З медіа"
                         value={reviews.filter(r => r.media && r.media.length > 0).length}
                         icon={<Eye className="w-8 h-8 text-blue-500"/>}
                         loading={loading}
@@ -160,6 +161,8 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
+
+            <LandingFooter />
         </div>
     );
 };

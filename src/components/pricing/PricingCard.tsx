@@ -23,7 +23,7 @@ export const PricingCard = ({plan, onSelect, isLoading}: PricingCardProps) => {
         >
             {plan.popular && (
                 <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-white text-gray-900">
-                    Популярный
+                    Популярний
                 </Badge>
             )}
 

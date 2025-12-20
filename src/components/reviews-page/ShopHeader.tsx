@@ -60,7 +60,7 @@ export const ShopHeader = ({avatar, name, description, instagram, stats, loading
                                     style={{display: 'inline-block'}}
                                 />
                             ) : (
-                                description || 'Нет описания'
+                                description || 'Немає опису'
                             )}
                         </p>
                         <div className="flex items-center space-x-4">
@@ -104,7 +104,7 @@ export const ShopHeader = ({avatar, name, description, instagram, stats, loading
                                             ))}
                                         </div>
                                         <span className="text-lg font-semibold text-white">{averageRating}</span>
-                                        <span className="text-gray-400">({stats.totalCount} отзывов)</span>
+                                        <span className="text-gray-400">({stats.totalCount} відгуків)</span>
                                     </>
                                 )}
                             </div>

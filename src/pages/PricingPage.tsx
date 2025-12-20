@@ -46,60 +46,60 @@ const PricingPage = () => {
 
     const plans: PlanFeature[] = [
         {
-            name: 'Бесплатный',
+            name: 'Free',
             price: '0$',
-            period: 'навсегда',
+            period: '',
             features: [
-                'До 10 отзывов',
-                'Публичная страница отзывов',
-                'Статистика отзывов'
+                'До 10 відгуків',
+                'Публічна сторінка відгуків',
+                'Статистика відгуків'
             ],
             popular: false,
-            buttonText: isPaidPlan ? 'Связаться с нами' : 'Попробовать бесплатно',
+            buttonText: isPaidPlan ? 'Связаться с нами' : 'Спробувати безкоштовно',
             buttonVariant: 'outline' as const
         },
         {
-            name: 'Про',
+            name: 'Pro',
             price: `${calculatePrice(basePrices.pro)}$`,
-            period: billingPeriod === 'monthly' ? '/месяц' : '/год',
+            period: billingPeriod === 'monthly' ? '/місяць' : '/рік',
             features: [
-                'До 100 отзывов',
-                'Загрузка фото (до 3 на отзыв)',
-                'Статистика отзывов',
-                'Email поддержка'
-            ],
-            popular: true,
-            buttonText: 'Начать сейчас',
-            buttonVariant: 'default' as const,
-            savings: billingPeriod === 'yearly' ? '20% экономия' : undefined
-        },
-        {
-            name: 'Бизнес',
-            price: `${calculatePrice(basePrices.business)}$`,
-            period: billingPeriod === 'monthly' ? '/месяц' : '/год',
-            features: [
-                'Безлимитные отзывы',
-                'Загрузка фото и видео (до 5 на отзыв)',
-                'Статистика отзывов',
-                'Приоритетная поддержка'
+                'До 100 відгуків',
+                'Завантаження фото (до 3 на відгук)',
+                'Статистика відгуків',
+                'E-mail Підтримка'
             ],
             popular: false,
-            buttonText: 'Начать сейчас',
+            buttonText: 'Почати зараз',
+            buttonVariant: 'default' as const,
+            savings: billingPeriod === 'yearly' ? '20% економія' : undefined
+        },
+        {
+            name: 'Business',
+            price: `${calculatePrice(basePrices.business)}$`,
+            period: billingPeriod === 'monthly' ? '/місяць' : '/рік',
+            features: [
+                'Безлімітні відгуки',
+                'Завантаження фото та відео (до 5 на відгук)',
+                'Статистика отзывов',
+                'Пріоритетна підтримка'
+            ],
+            popular: false,
+            buttonText: 'Почати зараз',
             buttonVariant: 'outline' as const,
-            savings: billingPeriod === 'yearly' ? '20% экономия' : undefined
+            savings: billingPeriod === 'yearly' ? '20% економія' : undefined
         }
     ];
 
     const planIds: Record<string, string> = {
-        'Бесплатный': 'free',
-        'Про': 'pro',
-        'Бизнес': 'business'
+        'Free': 'free',
+        'Pro': 'pro',
+        'Business': 'business'
     };
 
     // Функция открытия мессенджера
     const openMessenger = (messenger: 'whatsapp' | 'telegram') => {
         const currentPlan = user?.plan ? (user.plan as string).toUpperCase() : 'FREE';
-        const message = `Здравствуйте! Я хочу перейти на бесплатный тариф с тарифа ${currentPlan}.`;
+        const message = `Доброго дня! Я хочу перейти на безкоштовний тариф з тарифу ${currentPlan}.`;
 
         if (messenger === 'whatsapp') {
             const encodedMessage = encodeURIComponent(message);
@@ -119,7 +119,7 @@ const PricingPage = () => {
         const planId = planIds[planName];
 
         if (!planId) {
-            toast.error('Неверный план');
+            toast.error('Невірний план');
             return;
         }
 
@@ -164,21 +164,18 @@ const PricingPage = () => {
     return (
         <div className="min-h-screen bg-gray-950">
             <Helmet>
-                <title>Тарифы и цены - Instagram Reviews</title>
-                <meta name="description" content="Выберите подходящий тариф для вашего бизнеса. От бесплатного плана до безлимитных отзывов. Начните собирать отзывы уже сегодня!" />
+                <title>Тарифи та ціни</title>
+                <meta name="description" content="Виберіть відповідний тариф для вашого бізнесу. Від безкоштовного плану до безлімітних відгуків. Почніть збирати відгуки вже сьогодні!" />
 
                 {/* Open Graph / Facebook */}
                 <meta property="og:type" content="website" />
-                <meta property="og:title" content="Тарифы и цены - Instagram Reviews" />
-                <meta property="og:description" content="Выберите подходящий тариф для вашего бизнеса. От бесплатного плана до безлимитных отзывов. Начните собирать отзывы уже сегодня!" />
+                <meta property="og:title" content="Тарифи та ціни" />
+                <meta property="og:description" content="Виберіть відповідний тариф для вашого бізнесу. Від безкоштовного плану до безлімітних відгуків. Почніть збирати відгуки вже сьогодні!" />
 
                 {/* Twitter */}
                 <meta name="twitter:card" content="summary_large_image" />
-                <meta name="twitter:title" content="Тарифы и цены - Instagram Reviews" />
-                <meta name="twitter:description" content="Выберите подходящий тариф для вашего бизнеса. От бесплатного плана до безлимитных отзывов. Начните собирать отзывы уже сегодня!" />
-
-                {/* Keywords */}
-                <meta name="keywords" content="pricing, тарифы, цены, отзывы, instagram, подписка, бесплатно" />
+                <meta name="twitter:title" content="Тарифи та ціни" />
+                <meta name="twitter:description" content="Виберіть відповідний тариф для вашого бізнесу. Від безкоштовного плану до безлімітних відгуків. Почніть збирати відгуки вже сьогодні!" />
             </Helmet>
 
             <PricingHeader
@@ -201,7 +198,7 @@ const PricingPage = () => {
                                         : 'text-gray-400 hover:text-white'
                                 }`}
                             >
-                                На месяц
+                                На місяць
                             </button>
                             <button
                                 onClick={() => setBillingPeriod('yearly')}
@@ -211,7 +208,7 @@ const PricingPage = () => {
                                         : 'text-gray-400 hover:text-white'
                                 }`}
                             >
-                                На год
+                                На рік
                                 <span className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-0.5 rounded-full">
                                     -20%
                                 </span>
@@ -222,7 +219,7 @@ const PricingPage = () => {
             </section>
 
             {/* Pricing Cards */}
-            <section className="py-0 px-4">
+            <section className="px-4 pb-8">
                 <div className="container mx-auto max-w-7xl">
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {plans.map((plan, index) => (

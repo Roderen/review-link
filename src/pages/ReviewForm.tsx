@@ -122,7 +122,7 @@ const ReviewForm = () => {
                     <CardHeader>
                         <CardTitle className="flex items-center text-white">
                             <MessageSquare className="w-5 h-5 mr-2" />
-                            Оставить отзыв
+                            Залишити відгук
                         </CardTitle>
                     </CardHeader>
                     <CardContent>

@@ -16,27 +16,13 @@ export const MediaUploadSection = ({media, isUploading, onMediaUpload, onRemoveM
     };
 
     // Если фото недоступны (FREE план)
-    if (maxMediaCount === 0) {
-        return (
-            <div>
-                <Label className="text-base font-medium text-gray-400">Фото (недоступно)</Label>
-                <p className="text-sm text-gray-500 mb-3">
-                    Загрузка фото доступна на платных тарифах
-                </p>
-                <div className="border-2 border-dashed border-gray-700 rounded-lg p-6 text-center bg-gray-800/50">
-                    <span className="text-gray-500">
-                        Обновите тариф для добавления фото к отзывам
-                    </span>
-                </div>
-            </div>
-        );
-    }
+    if (maxMediaCount === 0) return;
 
     return (
         <div>
-            <Label className="text-base font-medium text-white">Фото (необязательно)</Label>
+            <Label className="text-base font-medium text-white">Фото (не обов'язково)</Label>
             <p className="text-sm text-gray-400 mb-3">
-                Добавьте фото товара, чтобы помочь другим покупателям (до {maxMediaCount} фото)
+                Додайте фото товару, щоб допомогти іншим покупцям (до {maxMediaCount} фото)
             </p>
 
             {media.length > 0 && (
@@ -90,16 +76,13 @@ export const MediaUploadSection = ({media, isUploading, onMediaUpload, onRemoveM
                             <Upload className="w-6 h-6"/>
                         </div>
                         <span className="text-gray-400">
-                            {isUploading ? 'Загрузка...' : 'Нажмите для загрузки фото'}
+                            {isUploading ? 'Завантаження...' : 'Натисніть для завантаження фото'}
                         </span>
                         <span className="text-xs text-gray-500">
-                            Максимум {maxMediaCount} {maxMediaCount === 1 ? 'фото' : 'фото'}, до 30 МБ каждый
+                            Максимум {maxMediaCount} {maxMediaCount === 1 ? 'фото' : 'фото'}, до 30 МБ кожне
                         </span>
                         <span className="text-xs text-gray-600">
                             JPG, PNG, GIF, WebP
-                        </span>
-                        <span className="text-xs text-gray-500 italic">
-                            Видео временно недоступно
                         </span>
                     </label>
                 </div>

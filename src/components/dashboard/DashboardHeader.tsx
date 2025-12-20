@@ -16,7 +16,7 @@ export const DashboardHeader = ({userName, userAvatar, currentPlan, onLogout, sh
         <header className="border-b border-gray-800 bg-gray-900/50 backdrop-blur-sm sticky top-0 z-50">
             <div className="container mx-auto px-4 py-4 flex justify-between items-center">
                 <h1 className="text-2xl font-bold text-white">
-                    Панель управления
+                    Панель управління
                 </h1>
                 <div className="flex items-center space-x-4">
                     <Avatar>
@@ -33,7 +33,7 @@ export const DashboardHeader = ({userName, userAvatar, currentPlan, onLogout, sh
                     <Button variant="outline" size="sm" onClick={onLogout}
                             className="border-gray-600 text-gray-300 hover:bg-gray-800">
                         <LogOut className="w-4 h-4 mr-2"/>
-                        Выйти
+                        Вийти
                     </Button>
                 </div>
             </div>

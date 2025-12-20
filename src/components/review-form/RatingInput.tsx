@@ -9,17 +9,17 @@ interface RatingInputProps {
 }
 
 const ratingMessages: Record<number, string> = {
-    5: 'Отлично! ⭐',
-    4: 'Хорошо! 👍',
+    5: 'Відмінно! ⭐',
+    4: 'Добре! 👍',
     3: 'Нормально 👌',
-    2: 'Не очень 👎',
-    1: 'Плохо 😞'
+    2: 'Не дуже 👎',
+    1: 'Погано 😞'
 };
 
 export const RatingInput = ({rating, hoverRating, onRatingChange, onHoverChange}: RatingInputProps) => {
     return (
         <div>
-            <Label className="text-base font-medium text-white">Ваша оценка *</Label>
+            <Label className="text-base font-medium text-white">Ваша оцінка *</Label>
             <div className="flex space-x-1 mt-2">
                 {[1, 2, 3, 4, 5].map((star) => (
                     <button
