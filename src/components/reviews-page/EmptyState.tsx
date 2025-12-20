@@ -12,8 +12,8 @@ export const EmptyState = ({filterRating}: EmptyStateProps) => {
                 <MessageSquare className="w-12 h-12 text-gray-600 mx-auto mb-4"/>
                 <p className="text-gray-400">
                     {filterRating
-                        ? `Нет отзывов с оценкой ${filterRating} звезд`
-                        : 'Пока нет отзывов'
+                        ? `Немає відгуків з оцінкою ${filterRating} зірок`
+                        : 'Поки немає відгуків'
                     }
                 </p>
             </CardContent>

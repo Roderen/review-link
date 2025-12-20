@@ -7,44 +7,41 @@ export const HowItWorksSection = () => {
         <section className="py-16 px-4 bg-gray-900/30">
             <div className="container mx-auto max-w-6xl">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold mb-4 text-white">Как это работает</h2>
-                    <p className="text-gray-400 max-w-2xl mx-auto">
-                        Простой процесс в три шага для сбора и отображения отзывов
-                    </p>
+                    <h2 className="text-3xl font-bold mb-4 text-white">Як це працює?</h2>
                 </div>
 
                 <div className="grid md:grid-cols-3 gap-8 mb-16">
                     <StepCard
                         icon={Link}
                         step="1"
-                        title="Получите ссылку"
-                        description="После регистрации вы получите персональную ссылку для отзывов"
+                        title="Отримайте посилання"
+                        description="Після реєстрації в особистому кабінеті ви отримаєте персональне посилання для збору відгуків"
                     />
                     <StepCard
                         icon={Users}
                         step="2"
-                        title="Делитесь с клиентами"
-                        description="Отправляйте ссылку покупателям для оставления отзывов"
+                        title="Діліться з клієнтами"
+                        description="Надсилайте посилання покупцям для залишення відгуків (кожне посилання унікальне і не може використоватись більше одного разу)"
                     />
                     <StepCard
                         icon={Star}
                         step="3"
-                        title="Собирайте отзывы"
-                        description="Все отзывы собираются на публичной странице"
+                        title="Публічна сторінка"
+                        description="Всі відгуки збираються на публічній сторінці - посилання можна вставити в біо"
                     />
                 </div>
 
                 {/* Preview Cards */}
                 <div className="grid md:grid-cols-2 gap-12 items-center">
                     <FeaturePreviewCard
-                        title="Форма отзыва"
-                        description="Ваши клиенты легко оставляют отзывы с фото"
+                        title="Форма відгуку"
+                        description=""
                         imageUrl="/src/images/review-form.png"
                         imageAlt="Скриншот формы для оставления отзыва"
                     />
                     <FeaturePreviewCard
-                        title="Публичная страница"
-                        description="Красивая витрина всех ваших отзывов для демонстрации клиентам"
+                        title="Публічна сторінка"
+                        description=""
                         imageUrl="/src/images/review-page.png"
                         imageAlt="Скриншот публичной страницы с отзывами"
                     />

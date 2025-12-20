@@ -19,7 +19,7 @@ export const ReviewsList = ({reviews, reviewsCount, loading, publicUrl}: Reviews
                 <CardTitle className="flex items-center justify-between text-white">
                     <div className="flex items-center">
                         <Star className="w-5 h-5 mr-2"/>
-                        Последние отзывы
+                        Останні відгуки
                     </div>
                     <Button
                         variant="outline"
@@ -28,7 +28,7 @@ export const ReviewsList = ({reviews, reviewsCount, loading, publicUrl}: Reviews
                         className="border-gray-600 text-gray-300 hover:bg-gray-800"
                     >
                         <Eye className="w-4 h-4 mr-2"/>
-                        Посмотреть все
+                        Переглянути все
                     </Button>
                 </CardTitle>
             </CardHeader>
@@ -36,9 +36,9 @@ export const ReviewsList = ({reviews, reviewsCount, loading, publicUrl}: Reviews
                 {reviewsCount === 0 && !loading ? (
                     <div className="text-center py-12">
                         <MessageSquare className="w-12 h-12 text-gray-600 mx-auto mb-4"/>
-                        <p className="text-gray-400 mb-4">Пока нет отзывов</p>
+                        <p className="text-gray-400 mb-4">Поки немає відгуків</p>
                         <p className="text-sm text-gray-500">
-                            Поделитесь ссылкой с клиентами, чтобы получить первые отзывы
+                            Поділіться посиланням з клієнтами, щоб отримати перші відгуки
                         </p>
                     </div>
                 ) : loading ? (
@@ -100,7 +100,7 @@ export const ReviewsList = ({reviews, reviewsCount, loading, publicUrl}: Reviews
                                     onClick={() => window.open(publicUrl, '_blank')}
                                     className="border-gray-600 text-gray-300 hover:bg-gray-800"
                                 >
-                                    Посмотреть все {reviewsCount} отзывов
+                                    Переглянути всі {reviewsCount} відгуків
                                 </Button>
                             </div>
                         )}

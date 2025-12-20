@@ -19,8 +19,8 @@ export const ReviewsListHeader = ({filterRating, loading}: ReviewsListHeaderProp
                     />
                 ) : (
                     filterRating
-                        ? `Отзывы с оценкой ${filterRating} звезд`
-                        : `Все отзывы`
+                        ? `Відгуки з оцінкою ${filterRating} зірок`
+                        : `Всі відгуки`
                 )}
             </h2>
         </div>

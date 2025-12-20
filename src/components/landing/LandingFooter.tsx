@@ -10,18 +10,18 @@ export const LandingFooter = () => {
                         <MessageSquare className="w-5 h-5 text-white"/>
                     </div>
                     <span className="text-xl font-bold text-white">
-                        ReviewLink
+                        ReviewInBio
                     </span>
                 </div>
 
                 <div className="flex justify-center space-x-8 text-sm text-gray-400 mb-6">
-                    <a href="#" className="hover:text-white transition-colors">support@reviewlink.com</a>
-                    <a href="#" className="hover:text-white transition-colors">Пользовательское соглашение</a>
-                    <a href="#" className="hover:text-white transition-colors">Политика конфиденциальности</a>
+                    <a href="#" className="hover:text-white transition-colors">support@reviewinbio.com</a>
+                    <a href="#" className="hover:text-white transition-colors">Угода користувача</a>
+                    <a href="#" className="hover:text-white transition-colors">Політика конфіденційності</a>
                 </div>
 
                 <p className="text-xs text-gray-500">
-                    © 2025 ReviewLink. Сделано с ❤️ для Instagram предпринимателей.
+                    © 2025 ReviewInBio. Усі права захищені
                 </p>
             </div>
         </footer>

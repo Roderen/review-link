@@ -24,7 +24,7 @@ export const PricingHeader = ({onBack, onLogin, isLoading = false, showLoginButt
                 </div>
                 {showLoginButton && onLogin && (
                     <Button onClick={onLogin} disabled={isLoading} className="bg-white text-gray-900 hover:bg-gray-100">
-                        {isLoading ? 'Входим...' : 'Войти'}
+                        {isLoading ? 'Входимо...' : 'Увійти'}
                     </Button>
                 )}
             </div>

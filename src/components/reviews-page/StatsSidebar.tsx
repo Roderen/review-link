@@ -12,9 +12,9 @@ interface StatsSidebarProps {
 }
 
 const sortOptions: {value: SortOption; label: string}[] = [
-    {value: 'newest', label: 'Сначала новые'},
-    {value: 'rating', label: 'По рейтингу'},
-    {value: 'oldest', label: 'Сначала старые'}
+    {value: 'newest', label: 'Спочатку нові'},
+    {value: 'rating', label: 'За рейтингом'},
+    {value: 'oldest', label: 'Спочатку старі'}
 ];
 
 export const StatsSidebar = ({
@@ -29,7 +29,7 @@ export const StatsSidebar = ({
             <CardContent className="p-6">
                 <h3 className="font-semibold mb-4 flex items-center text-white">
                     <MessageSquare className="w-5 h-5 mr-2"/>
-                    Статистика отзывов
+                    Статистика
                 </h3>
 
                 {/* Rating Distribution */}
@@ -62,7 +62,7 @@ export const StatsSidebar = ({
                 <div className="border-t border-gray-700 pt-4">
                     <h4 className="font-medium mb-3 flex items-center text-white">
                         <Filter className="w-4 h-4 mr-2"/>
-                        Сортировка
+                        Сортування
                     </h4>
                     <div className="space-y-2">
                         {sortOptions.map(option => (
@@ -89,7 +89,7 @@ export const StatsSidebar = ({
                             onClick={() => onFilterChange(null)}
                             className="w-full border-gray-600 text-gray-300 hover:bg-gray-800"
                         >
-                            Сбросить фильтр
+                            Скинути фільтр
                         </Button>
                     </div>
                 )}

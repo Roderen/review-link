@@ -9,12 +9,12 @@ export const ReviewsFooter = () => {
                         className="w-6 h-6 bg-gradient-to-r from-gray-600 to-gray-700 rounded flex items-center justify-center">
                         <MessageSquare className="w-4 h-4 text-white"/>
                     </div>
-                    <span className="font-semibold text-white">
-                        ReviewLink
-                    </span>
+                    <a href="/" className="font-semibold text-white">
+                        ReviewInBio
+                    </a>
                 </div>
-                <p className="text-sm text-gray-500">
-                    Красивые отзывы для Instagram магазинов • reviewlink.com
+                <p className="text-xs text-gray-500">
+                    © 2025 ReviewInBio. Усі права захищені
                 </p>
             </div>
         </footer>

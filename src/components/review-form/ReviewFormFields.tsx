@@ -14,12 +14,12 @@ export const ReviewFormFields = ({name, reviewText, onNameChange, onReviewTextCh
         <>
             {/* Name */}
             <div>
-                <Label htmlFor="name" className="text-base font-medium text-white">Ваше имя *</Label>
+                <Label htmlFor="name" className="text-base font-medium text-white">Ваше ім'я *</Label>
                 <Input
                     id="name"
                     value={name}
                     onChange={(e) => onNameChange(e.target.value)}
-                    placeholder="Как к вам обращаться?"
+                    placeholder="Ваше імʼя"
                     className="mt-2 bg-gray-800 border-gray-600 text-white placeholder-gray-400"
                 />
             </div>
@@ -31,7 +31,7 @@ export const ReviewFormFields = ({name, reviewText, onNameChange, onReviewTextCh
                     id="review"
                     value={reviewText}
                     onChange={(e) => onReviewTextChange(e.target.value)}
-                    placeholder="Расскажите о своем опыте покупки. Что вам понравилось? Качество товара, доставка, общение с продавцом..."
+                    placeholder="Розкажіть про свій досвід покупки. Що вам сподобалося? Якість товару, доставка, спілкування з продавцем..."
                     className="mt-2 min-h-32 bg-gray-800 border-gray-600 text-white placeholder-gray-400"
                 />
             </div>

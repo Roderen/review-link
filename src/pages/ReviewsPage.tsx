@@ -1,21 +1,21 @@
-import { useCallback, useMemo } from 'react';
-import { useParams, Navigate } from 'react-router-dom';
-import { deleteDoc, doc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import { useAuth } from '@/contexts/AuthContext.tsx';
-import { useShopData } from '@/hooks/useShopData';
-import { useReviewsFilter } from '@/hooks/useReviewsFilter';
-import { useReviewsPagination } from '@/hooks/useReviewsPagination';
-import { useReviewsStats } from '@/hooks/useReviewsStats';
-import { ShopHeader } from '@/components/reviews-page/ShopHeader';
-import { StatsSidebar } from '@/components/reviews-page/StatsSidebar';
-import { ReviewCard } from '@/components/reviews-page/ReviewCard';
-import { EmptyState } from '@/components/reviews-page/EmptyState';
-import { LoadingSkeleton } from '@/components/reviews-page/LoadingSkeleton';
-import { Pagination } from '@/components/reviews-page/Pagination';
-import { ReviewsFooter } from '@/components/reviews-page/ReviewsFooter';
-import { ReviewsListHeader } from '@/components/reviews-page/ReviewsListHeader';
-import { Review } from '@/types/reviews-page';
+import {useCallback, useMemo} from 'react';
+import {useParams, Navigate} from 'react-router-dom';
+import {deleteDoc, doc} from 'firebase/firestore';
+import {db} from '@/lib/firebase';
+import {useAuth} from '@/contexts/AuthContext.tsx';
+import {useShopData} from '@/hooks/useShopData';
+import {useReviewsFilter} from '@/hooks/useReviewsFilter';
+import {useReviewsPagination} from '@/hooks/useReviewsPagination';
+import {useReviewsStats} from '@/hooks/useReviewsStats';
+import {ShopHeader} from '@/components/reviews-page/ShopHeader';
+import {StatsSidebar} from '@/components/reviews-page/StatsSidebar';
+import {ReviewCard} from '@/components/reviews-page/ReviewCard';
+import {EmptyState} from '@/components/reviews-page/EmptyState';
+import {LoadingSkeleton} from '@/components/reviews-page/LoadingSkeleton';
+import {Pagination} from '@/components/reviews-page/Pagination';
+import {ReviewsFooter} from '@/components/reviews-page/ReviewsFooter';
+import {ReviewsListHeader} from '@/components/reviews-page/ReviewsListHeader';
+import {Review} from '@/types/reviews-page';
 
 /**
  * Публичная страница отзывов магазина
@@ -24,12 +24,12 @@ import { Review } from '@/types/reviews-page';
 const PublicReviewsPage = () => {
     const params = useParams();
     const shopId = params.username;
-    const { user } = useAuth();
+    const {user} = useAuth();
 
     // Custom hooks для управления состоянием
-    const { shop, loading: shopLoading, shopNotFound } = useShopData(shopId);
-    const { sortBy, filterRating, handleFilterChange, handleSortChange } = useReviewsFilter();
-    const { stats, reviewsCount } = useReviewsStats(shopId);
+    const {shop, loading: shopLoading, shopNotFound} = useShopData(shopId);
+    const {sortBy, filterRating, handleFilterChange, handleSortChange} = useReviewsFilter();
+    const {stats, reviewsCount} = useReviewsStats(shopId);
 
     const {
         loadedReviews,
@@ -118,7 +118,7 @@ const PublicReviewsPage = () => {
 
     // Guard clauses для early returns
     if (shopNotFound) {
-        return <Navigate to="/404" replace />;
+        return <Navigate to="/404" replace/>;
     }
 
     if (!shopId) {
@@ -135,7 +135,7 @@ const PublicReviewsPage = () => {
     const loading = reviewsLoading;
 
     return (
-        <div className="min-h-screen bg-gray-950">
+        <div className="min-h-screen bg-gray-950 flex flex-col">
             <ShopHeader
                 avatar={shop?.avatar}
                 name={shop?.name}
@@ -145,7 +145,7 @@ const PublicReviewsPage = () => {
                 loading={shopLoading}
             />
 
-            <div className="max-w-4xl mx-auto px-4 py-8">
+            <div className="max-w-4xl mx-auto px-4 py-8 flex-1">
                 <div className="grid lg:grid-cols-4 gap-8">
                     {/* Sidebar with Stats */}
                     <div className="lg:col-span-1">
@@ -166,9 +166,9 @@ const PublicReviewsPage = () => {
                         />
 
                         {currentReviews.length === 0 && !loading ? (
-                            <EmptyState filterRating={filterRating} />
+                            <EmptyState filterRating={filterRating}/>
                         ) : loading && currentReviews.length === 0 ? (
-                            <LoadingSkeleton />
+                            <LoadingSkeleton/>
                         ) : (
                             <>
                                 <div className="space-y-6">
@@ -201,8 +201,8 @@ const PublicReviewsPage = () => {
                                             {reviewsCount || loadedReviews.length} отзывов)
                                             {isLoadingMore && (
                                                 <span className="ml-2 text-gray-500">
-                                                    (загрузка...)
-                                                </span>
+                                                (загрузка...)
+                                            </span>
                                             )}
                                         </div>
                                     </>
@@ -213,7 +213,7 @@ const PublicReviewsPage = () => {
                 </div>
             </div>
 
-            <ReviewsFooter />
+            <ReviewsFooter/>
         </div>
     );
 };

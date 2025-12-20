@@ -1,6 +1,5 @@
 import {Card, CardHeader, CardTitle, CardContent} from '@/components/ui/card';
 import {Button} from '@/components/ui/button';
-import {Badge} from '@/components/ui/badge';
 import {Users, Copy, ExternalLink} from 'lucide-react';
 
 interface LinksCardProps {
@@ -30,16 +29,14 @@ export const LinksCard = ({reviewUrl, publicUrl, onCopy, onGenerateNewLink}: Lin
             <CardHeader>
                 <CardTitle className="flex items-center text-white">
                     <Users className="w-5 h-5 mr-2"/>
-                    Ваши ссылки
+                    Ваші посилання
                 </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
                 {/* Review Link */}
                 <div className="p-4 bg-gray-800 rounded-lg border border-gray-700">
                     <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-medium text-white">Ссылка для отзывов</h4>
-                        <Badge variant="secondary"
-                               className="bg-green-900 text-green-300">Одноразовая</Badge>
+                        <h4 className="font-medium text-white">Посилання для відгуків</h4>
                     </div>
                     <p className="text-sm text-gray-400 mb-3 break-all font-mono bg-gray-700 p-2 rounded">
                         {reviewUrl}
@@ -48,10 +45,10 @@ export const LinksCard = ({reviewUrl, publicUrl, onCopy, onGenerateNewLink}: Lin
                         <Button
                             size="sm"
                             onClick={handleCopyReviewLink}
-                            className="flex-1 bg-gray-700 hover:bg-gray-600"
+                            className="flex-1 bg-blue-700 hover:bg-blue-600 text-white"
                         >
-                            <Copy className="w-4 h-4 mr-2"/>
-                            Копировать
+                            <Copy className="w-4 h-4 mr-2 text-white"/>
+                            Копіювати
                         </Button>
                         <Button
                             size="sm"
@@ -67,9 +64,7 @@ export const LinksCard = ({reviewUrl, publicUrl, onCopy, onGenerateNewLink}: Lin
                 {/* Public Page Link */}
                 <div className="p-4 bg-gray-800 rounded-lg border border-gray-700">
                     <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-medium text-white">Публичная страница</h4>
-                        <Badge variant="secondary"
-                               className="bg-blue-900 text-blue-300">Доступна</Badge>
+                        <h4 className="font-medium text-white">Публічна сторінка</h4>
                     </div>
                     <p className="text-sm text-gray-400 mb-3 break-all font-mono bg-gray-700 p-2 rounded">
                         {publicUrl}
@@ -78,10 +73,10 @@ export const LinksCard = ({reviewUrl, publicUrl, onCopy, onGenerateNewLink}: Lin
                         <Button
                             size="sm"
                             onClick={() => onCopy(publicUrl, 'Ссылка на публичную страницу скопирована!')}
-                            className="flex-1 bg-gray-700 hover:bg-gray-600"
+                            className="flex-1 bg-blue-700 hover:bg-blue-600 text-white"
                         >
-                            <Copy className="w-4 h-4 mr-2"/>
-                            Копировать
+                            <Copy className="w-4 h-4 mr-2 text-white"/>
+                            Копіювати
                         </Button>
                         <Button
                             size="sm"
@@ -95,12 +90,11 @@ export const LinksCard = ({reviewUrl, publicUrl, onCopy, onGenerateNewLink}: Lin
                 </div>
 
                 <div className="text-xs text-gray-500 bg-gray-800 p-3 rounded border border-gray-700">
-                    <strong className="text-gray-400">Как использовать:</strong><br/>
-                    • Ссылка для отзывов <strong className="text-yellow-400">одноразовая</strong><br/>
-                    • При копировании или открытии автоматически генерируется новая ссылка<br/>
-                    • После отправки отзыва ссылка становится неактивной<br/>
-                    • Делитесь публичной страницей в Instagram<br/>
-                    • Используйте публичную ссылку в био профиля
+                    <strong className="text-gray-400">Як використовувати:</strong><br/>
+                    • Посилання для відгуків <strong className="underline">одноразове</strong><br/>
+                    • При копіюванні або відкритті автоматично генерується нове посилання<br/>
+                    • Після відправлення відгуку посилання стає неактивним<br/>
+                    • Використовуйте публічне посилання в біо Instagram профілю
                 </div>
             </CardContent>
         </Card>

@@ -10,6 +10,8 @@ interface PricingCardProps {
     isLoading: boolean;
 }
 
+const SHOW_BUTTON = false;
+
 export const PricingCard = ({plan, onSelect, isLoading}: PricingCardProps) => {
     return (
         <Card
@@ -21,7 +23,7 @@ export const PricingCard = ({plan, onSelect, isLoading}: PricingCardProps) => {
         >
             {plan.popular && (
                 <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-white text-gray-900">
-                    Популярный
+                    Популярний
                 </Badge>
             )}
 
@@ -48,18 +50,20 @@ export const PricingCard = ({plan, onSelect, isLoading}: PricingCardProps) => {
                     ))}
                 </ul>
 
-                <Button
-                    className={`w-full mt-6 ${
-                        plan.popular
-                            ? 'bg-white text-gray-900 hover:bg-gray-100'
-                            : 'bg-gray-700 text-white hover:bg-gray-600'
-                    }`}
-                    variant={plan.buttonVariant}
-                    onClick={onSelect}
-                    disabled={isLoading}
-                >
-                    {plan.buttonText}
-                </Button>
+                {SHOW_BUTTON && (
+                    <Button
+                        className={`w-full mt-6 ${
+                            plan.popular
+                                ? 'bg-white text-gray-900 hover:bg-gray-100'
+                                : 'bg-gray-700 text-white hover:bg-gray-600'
+                        }`}
+                        variant={plan.buttonVariant}
+                        onClick={onSelect}
+                        disabled={isLoading}
+                    >
+                        {plan.buttonText}
+                    </Button>
+                )}
             </CardContent>
         </Card>
     );

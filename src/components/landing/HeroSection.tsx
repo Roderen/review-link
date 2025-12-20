@@ -8,21 +8,21 @@ interface HeroSectionProps {
     isLoading: boolean;
 }
 
-export const HeroSection = ({onLogin, onPricingClick, isLoading}: HeroSectionProps) => {
+export const HeroSection = ({onLogin, isLoading}: HeroSectionProps) => {
     return (
         <section className="py-20 px-4">
             <div className="container mx-auto text-center max-w-4xl">
                 <Badge variant="secondary" className="mb-6 px-4 py-2 bg-gray-800 text-gray-300 border-gray-700">
                     <Instagram className="w-4 h-4 mr-2"/>
-                    Для Instagram магазинов
+                    Для Instagram-магазинів
                 </Badge>
 
                 <h1 className="text-5xl md:text-6xl font-bold mb-6 text-white leading-tight">
-                    Красивые отзывы о вашем магазине — по одной ссылке
+                    Усі відгуки про ваш магазин в одному посиланні
                 </h1>
 
                 <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto leading-relaxed">
-                    Без скринов, без сторис. Просто делитесь ссылкой — и собирайте реальные отзывы от клиентов.
+                    Мінімум дій, просто надсилайте посилання та збирайте відгуки клієнтів.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -42,15 +42,7 @@ export const HeroSection = ({onLogin, onPricingClick, isLoading}: HeroSectionPro
                             <path fill="currentColor"
                                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
                         </svg>
-                        {isLoading ? 'Входим через Google...' : 'Войти через Google'}
-                    </Button>
-                    <Button
-                        size="lg"
-                        variant="outline"
-                        onClick={onPricingClick}
-                        className="text-lg px-8 py-6 border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white"
-                    >
-                        Посмотреть тарифы
+                        {isLoading ? 'Входимо' : 'Спробувати'}
                     </Button>
                 </div>
             </div>

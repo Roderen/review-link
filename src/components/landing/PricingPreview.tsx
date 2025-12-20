@@ -8,44 +8,44 @@ interface PricingPreviewProps {
 
 const plans: PlanFeature[] = [
     {
-        name: 'Бесплатный',
+        name: 'Free',
         price: '0$',
-        period: 'навсегда',
+        period: '',
         features: [
-            'До 10 отзывов',
-            'Публичная страница отзывов',
-            'Статистика отзывов'
+            'До 10 відгуків',
+            'Публічна сторінка відгуків',
+            'Статистика відгуків'
         ],
         popular: false,
-        buttonText: 'Начать бесплатно',
+        buttonText: 'Почати безкоштовно',
         buttonVariant: 'outline' as const
     },
     {
-        name: 'Про',
+        name: 'Pro',
         price: '7.99$',
-        period: '/месяц',
+        period: '/місяць',
         features: [
-            'До 100 отзывов',
-            'Загрузка фото (до 3 на отзыв)',
-            'Статистика отзывов',
-            'Email поддержка'
+            'До 100 відгуків',
+            'Завантаження фото (до 3 на відгук)',
+            'Статистика відгуків',
+            'Email-підтримка'
         ],
-        popular: true,
-        buttonText: 'Начать сейчас',
+        popular: false,
+        buttonText: 'Почати зараз',
         buttonVariant: 'default' as const
     },
     {
-        name: 'Бизнес',
+        name: 'Business',
         price: '14.99$',
-        period: '/месяц',
+        period: '/місяць',
         features: [
-            'Безлимитные отзывы',
-            'Загрузка фото и видео (до 5 на отзыв)',
-            'Статистика отзывов',
-            'Приоритетная поддержка'
+            'Безлімітні відгуки',
+            'Завантаження фото (до 5 на відгук)',
+            'Статистика відгуків',
+            'Пріоритетна підтримка через месенджери'
         ],
         popular: false,
-        buttonText: 'Начать сейчас',
+        buttonText: 'Почати зараз',
         buttonVariant: 'outline' as const
     }
 ];
@@ -56,10 +56,10 @@ export const PricingPreview = ({onLogin, isLoading}: PricingPreviewProps) => {
             <div className="container mx-auto max-w-7xl">
                 <div className="text-center mb-12">
                     <h2 className="text-3xl font-bold mb-4 text-white">
-                        Начните бесплатно
+                        Почніть безкоштовно
                     </h2>
                     <p className="text-gray-400">
-                        Выберите тариф, который подходит вашему бизнесу
+                        Оберіть тариф, який вам підходить
                     </p>
                 </div>
 
