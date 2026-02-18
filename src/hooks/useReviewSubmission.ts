@@ -153,10 +153,10 @@ export const useReviewSubmission = ({
             });
 
             setIsSubmitted(true);
-            toast.success('Спасибо за ваш отзыв!');
+            toast.success('Дякуємо за ваш відгук!');
         } catch (error) {
             console.error('Ошибка при отправке отзыва:', error);
-            toast.error('Ошибка при отправке отзыва');
+            toast.error('Помилка під час надсилання відгуку');
         } finally {
             setIsSubmitting(false);
         }

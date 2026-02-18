@@ -78,15 +78,15 @@ export const StatusCard = ({type, shopName, onClose}: StatusCardProps) => {
                         <div className="w-16 h-16 bg-red-900 rounded-full flex items-center justify-center mx-auto mb-4">
                             <X className="w-8 h-8 text-red-400"/>
                         </div>
-                        <h2 className="text-2xl font-bold mb-2 text-white">Лимит отзывов достигнут</h2>
+                        <h2 className="text-2xl font-bold mb-2 text-white">Ліміт відгуків досягнуто</h2>
                         <p className="text-gray-400 mb-6">
-                            К сожалению, для магазина {shopName || 'данного магазина'} достигнут лимит по количеству отзывов.
+                            На жаль, для магазину {shopName || 'данного магазина'} досягнуто ліміт за кількістю відгуків.
                         </p>
                         <Button
                             onClick={onClose}
                             className="w-full bg-gray-700 hover:bg-gray-600"
                         >
-                            Закрыть
+                            Закрити
                         </Button>
                     </CardContent>
                 </Card>
@@ -104,14 +104,14 @@ export const StatusCard = ({type, shopName, onClose}: StatusCardProps) => {
                         </div>
                         <h2 className="text-2xl font-bold mb-2 text-white">Отзыв уже отправлен</h2>
                         <p className="text-gray-400 mb-6">
-                            Вы уже оставили отзыв о магазине {shopName || 'данном магазине'}.
-                            Для предотвращения спама можно оставить только один отзыв с одного устройства.
+                            Ви вже залишили відгук про магазин {shopName || 'данном магазине'}.
+                            Для запобігання спаму можна залишити тільки один відгук з одного пристрою.
                         </p>
                         <Button
                             onClick={onClose}
                             className="w-full bg-gray-700 hover:bg-gray-600"
                         >
-                            Закрыть
+                            Закрити
                         </Button>
                     </CardContent>
                 </Card>
@@ -128,16 +128,16 @@ export const StatusCard = ({type, shopName, onClose}: StatusCardProps) => {
                         className="w-16 h-16 bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
                         <Check className="w-8 h-8 text-green-400"/>
                     </div>
-                    <h2 className="text-2xl font-bold mb-2 text-white">Отзыв отправлен!</h2>
+                    <h2 className="text-2xl font-bold mb-2 text-white">Відгук надіслано!</h2>
                     <p className="text-gray-400 mb-6">
-                        Спасибо за ваш отзыв о магазине {shopName || 'магазина'}.
-                        Он поможет другим покупателям сделать правильный выбор.
+                        Дякуємо за ваш відгук про магазин {shopName || 'магазина'}.
+                        Він допоможе іншим покупцям зробити правильний вибір.
                     </p>
                     <Button
                         onClick={onClose}
                         className="w-full bg-gray-700 hover:bg-gray-600"
                     >
-                        Закрыть
+                        Закрити
                     </Button>
                 </CardContent>
             </Card>

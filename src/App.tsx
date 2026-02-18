@@ -13,16 +13,17 @@ import TestPage from "./pages/TestPage";
 import PaymentSuccessPage from './pages/PaymentSuccessPage';
 import PaymentCancelPage from './pages/PaymentCancelPage';
 import PendingApprovalPage from './pages/PendingApprovalPage';
+import PrivacyPolicy from "@/pages/PrivacyPolicy.tsx";
+
+import LoadingSpinner from "@/components/LoadingSpinner";
+import TermsOfUse from "@/pages/TermsOfUse.tsx";
+import ScrollToTop from "@/components/ScrollToTop.tsx";
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { user, isLoading } = useAuth();
 
     if (isLoading) {
-        return (
-            <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-                <div className="text-white">Загрузка...</div>
-            </div>
-        );
+        return <LoadingSpinner />
     }
 
     if (!user) {
@@ -41,11 +42,7 @@ const PendingRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     const { user, isLoading } = useAuth();
 
     if (isLoading) {
-        return (
-            <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-                <div className="text-white">Загрузка...</div>
-            </div>
-        );
+        return <LoadingSpinner />
     }
 
     if (!user) {
@@ -64,25 +61,21 @@ const AppContent: React.FC = () => {
     const { isLoading } = useAuth();
 
     if (isLoading) {
-        return (
-            <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-                <div className="text-white text-xl">Загрузка...</div>
-            </div>
-        );
+        return <LoadingSpinner />
     }
 
     return (
         <div className="min-h-screen bg-gray-950">
             <Routes>
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/pricing" element={<PricingPage />} />
-                <Route path="/payment/success" element={<PaymentSuccessPage />} />
-                <Route path="/payment/cancel" element={<PaymentCancelPage />} />
+                <Route path="/" element={<LandingPage/>}/>
+                <Route path="/pricing" element={<PricingPage/>}/>
+                <Route path="/payment/success" element={<PaymentSuccessPage/>}/>
+                <Route path="/payment/cancel" element={<PaymentCancelPage/>}/>
                 <Route
                     path="/pending"
                     element={
                         <PendingRoute>
-                            <PendingApprovalPage />
+                            <PendingApprovalPage/>
                         </PendingRoute>
                     }
                 />
@@ -90,15 +83,18 @@ const AppContent: React.FC = () => {
                     path="/dashboard"
                     element={
                         <ProtectedRoute>
-                            <Dashboard />
+                            <Dashboard/>
                         </ProtectedRoute>
                     }
                 />
-                <Route path="/review/:username" element={<ReviewForm />} />
-                <Route path="/u/:username" element={<ReviewsPage />} />
-                <Route path="/test" element={<TestPage />} />
+                <Route path="/review/:username" element={<ReviewForm/>}/>
+                <Route path="/u/:username" element={<ReviewsPage/>}/>
+                <Route path="/test" element={<TestPage/>}/>
+
+                <Route path="/privacy-policy" element={<PrivacyPolicy/>}/>
+                <Route path="/terms-of-use" element={<TermsOfUse/>}/>
             </Routes>
-            <Toaster theme="dark" />
+            <Toaster theme="dark"/>
         </div>
     );
 };
@@ -108,7 +104,8 @@ function App() {
         <HelmetProvider>
             <AuthProvider>
                 <Router basename={import.meta.env.VITE_BASE_URL || '/'}>
-                    <AppContent /> {}
+                    <ScrollToTop />
+                    <AppContent/> {}
                 </Router>
             </AuthProvider>
         </HelmetProvider>

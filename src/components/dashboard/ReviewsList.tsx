@@ -28,7 +28,7 @@ export const ReviewsList = ({reviews, reviewsCount, loading, publicUrl}: Reviews
                         className="border-gray-600 text-gray-300 hover:bg-gray-800"
                     >
                         <Eye className="w-4 h-4 mr-2"/>
-                        Переглянути все
+                        Всі відгуки
                     </Button>
                 </CardTitle>
             </CardHeader>
@@ -46,13 +46,6 @@ export const ReviewsList = ({reviews, reviewsCount, loading, publicUrl}: Reviews
                         {[...Array(3)].map((_, index) => (
                             <div key={index} className="border border-gray-700 rounded-lg p-4">
                                 <div className="flex items-start space-x-3">
-                                    <Skeleton
-                                        circle
-                                        width={40}
-                                        height={40}
-                                        baseColor="#2d2d2d"
-                                        highlightColor="#3d3d3d"
-                                    />
                                     <div className="flex-1">
                                         <div className="flex items-center justify-between mb-2">
                                             <div>

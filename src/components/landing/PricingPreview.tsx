@@ -14,7 +14,8 @@ const plans: PlanFeature[] = [
         features: [
             'До 10 відгуків',
             'Публічна сторінка відгуків',
-            'Статистика відгуків'
+            'Статистика відгуків',
+            'Email-підтримка'
         ],
         popular: false,
         buttonText: 'Почати безкоштовно',
@@ -56,11 +57,8 @@ export const PricingPreview = ({onLogin, isLoading}: PricingPreviewProps) => {
             <div className="container mx-auto max-w-7xl">
                 <div className="text-center mb-12">
                     <h2 className="text-3xl font-bold mb-4 text-white">
-                        Почніть безкоштовно
+                        Тарифні плани
                     </h2>
-                    <p className="text-gray-400">
-                        Оберіть тариф, який вам підходить
-                    </p>
                 </div>
 
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">

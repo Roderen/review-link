@@ -27,7 +27,7 @@ const PendingApprovalPage = () => {
 
     return (
         <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4">
-            <Card className="max-w-2xl w-full bg-gray-900 border-gray-800 p-8">
+            <Card className="max-w-2xl w-full bg-gray-900 border-gray-800 p-4 sm:p-6">
                 <div className="flex flex-col items-center text-center space-y-6">
                     {/* Icon */}
                     <div className="relative">
@@ -39,14 +39,14 @@ const PendingApprovalPage = () => {
                     {/* Title */}
                     <div className="space-y-2">
                         <h1 className="text-3xl font-bold text-white">
-                            Спасибо за регистрацию!
+                            Дякуємо за реєстрацію!
                         </h1>
                     </div>
 
                     {/* Message */}
                     <div className="space-y-4 text-gray-300 max-w-md">
                         <p className="text-base">
-                            Ваш аккаунт находится на рассмотрении. <br></br> Мы проверим вашу заявку <span className="font-semibold text-white"> в течение 48 часов</span>.
+                            Ваш обліковий запис знаходиться на розгляді. Ми перевіримо вашу заявку <span className="font-semibold text-white">протягом 24 годин</span>.
                         </p>
                     </div>
 
@@ -73,7 +73,7 @@ const PendingApprovalPage = () => {
                                 className="text-gray-400 hover:text-white"
                             >
                                 <LogOut className="w-4 h-4 mr-2" />
-                                Выйти
+                                Вийти
                             </Button>
                         </div>
                     </div>

@@ -15,7 +15,7 @@ const SHOW_BUTTON = false;
 export const PricingCard = ({plan, onSelect, isLoading}: PricingCardProps) => {
     return (
         <Card
-            className={`relative p-6 transition-all hover:scale-105 ${
+            className={`relative sx:p-3 md:p-6 transition-all hover:scale-105 ${
                 plan.popular
                     ? 'bg-gray-800 border-gray-600 shadow-xl'
                     : 'bg-gray-900 border-gray-700 hover:border-gray-600'

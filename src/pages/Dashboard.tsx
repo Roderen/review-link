@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {Star, TrendingUp, Eye, MessageSquare} from 'lucide-react';
+import {useQuery} from '@tanstack/react-query';
 import {useAuth} from '@/contexts/AuthContext.tsx';
 import {toast} from 'sonner';
 import {getReviewsCount, getReviewsForShop} from "@/lib/firebase/services/reviews";
@@ -12,41 +13,38 @@ import {LinksCard} from '@/components/dashboard/LinksCard';
 import {ReviewsList} from '@/components/dashboard/ReviewsList';
 import {DashboardReview, PlanLimits} from '@/types/dashboard';
 import {LandingFooter} from "@/components/landing/LandingFooter.tsx";
+import SEO from "@/components/SEO.tsx";
 
 const Dashboard = () => {
     const {user, logout} = useAuth();
     const navigate = useNavigate();
-    const [reviews, setReviews] = useState<DashboardReview[]>([]);
-    const [reviewsCount, setReviewsCount] = useState<number>(0);
-    const [loading, setLoading] = useState(true);
     const [reviewLinkId, setReviewLinkId] = useState<string>(() => generateReviewLinkId());
 
-    useEffect(() => {
-        if (user?.id) {
-            getReviewsForShop(user.id, {
+    // React Query для отзывов
+    const { data: reviews = [], isLoading: reviewsLoading } = useQuery({
+        queryKey: ['reviews', user?.id],
+        queryFn: async () => {
+            if (!user?.id) return [];
+            const reviewsShop = await getReviewsForShop(user.id, {
                 limit: 10,
                 skipPagination: true
-            })
-                .then(reviewsShop => {
-                    // С skipPagination: true функция возвращает массив
-                    if (Array.isArray(reviewsShop)) {
-                        setReviews(reviewsShop as DashboardReview[])
-                    }
-                    setLoading(false);
-                })
-                .catch(error => {
-                    console.error('Ошибка:', error);
-                });
+            });
+            return Array.isArray(reviewsShop) ? reviewsShop as DashboardReview[] : [];
+        },
+        enabled: !!user?.id,
+    });
 
-            getReviewsCount(user.id)
-                .then(count => {
-                    setReviewsCount(count);
-                })
-                .catch(error => {
-                    console.error(error);
-                })
-        }
-    }, [user?.id]);
+    // React Query для количества отзывов
+    const { data: reviewsCount = 0, isLoading: countLoading } = useQuery({
+        queryKey: ['reviewsCount', user?.id],
+        queryFn: async () => {
+            if (!user?.id) return 0;
+            return await getReviewsCount(user.id);
+        },
+        enabled: !!user?.id,
+    });
+
+    const loading = reviewsLoading || countLoading;
 
     useEffect(() => {
         if (!user) {
@@ -86,7 +84,6 @@ const Dashboard = () => {
         BUSINESS: {reviews: Infinity, name: 'Бизнес'}
     };
 
-    // Normalize plan to uppercase to handle Firebase lowercase values
     const normalizedPlan = (user.plan as string).toUpperCase();
     const currentPlan = planLimits[normalizedPlan] || planLimits.FREE;
     const usagePercentage = currentPlan.reviews === Infinity
@@ -94,76 +91,83 @@ const Dashboard = () => {
         : Math.min((reviewsCount / currentPlan.reviews) * 100, 100);
 
     return (
-        <div className="min-h-screen bg-gray-950">
-            <DashboardHeader
-                userName={user.name}
-                userAvatar={user.avatar}
-                currentPlan={currentPlan}
-                onLogout={handleLogout}
-                showCrown={normalizedPlan !== 'FREE'}
+        <>
+            <SEO
+                title="Панель управління"
+                description="Керуйте своїми посиланнями, переглядайте статистику та налаштовуйте профіль"
             />
 
-            <div className="container mx-auto px-4 py-8 max-w-6xl">
-                <PlanUsageCard
+            <div className="min-h-screen bg-gray-950">
+                <DashboardHeader
+                    userName={user.name}
+                    userAvatar={user.avatar}
                     currentPlan={currentPlan}
-                    reviewsCount={reviewsCount}
-                    usagePercentage={usagePercentage}
-                    loading={loading}
+                    onLogout={handleLogout}
                     showCrown={normalizedPlan !== 'FREE'}
-                    onChangePlan={() => navigate('/pricing')}
                 />
 
-                {/* Stats Overview */}
-                <div className="grid md:grid-cols-4 gap-6 mb-8">
-                    <StatsCard
-                        title="Всього відгуків"
-                        value={reviewsCount}
-                        icon={<MessageSquare className="w-8 h-8 text-gray-500"/>}
+                <div className="container mx-auto px-4 py-8 max-w-6xl">
+                    <PlanUsageCard
+                        currentPlan={currentPlan}
+                        reviewsCount={reviewsCount}
+                        usagePercentage={usagePercentage}
                         loading={loading}
+                        showCrown={normalizedPlan !== 'FREE'}
+                        onChangePlan={() => navigate('/pricing')}
                     />
-                    <StatsCard
-                        title="Середній рейтинг"
-                        value={averageRating}
-                        icon={<Star className="w-8 h-8 text-yellow-500"/>}
-                        loading={loading}
-                    />
-                    <StatsCard
-                        title="5-зіркових"
-                        value={reviews.filter(r => r.rating === 5).length}
-                        icon={<TrendingUp className="w-8 h-8 text-green-500"/>}
-                        loading={loading}
-                    />
-                    <StatsCard
-                        title="З медіа"
-                        value={reviews.filter(r => r.media && r.media.length > 0).length}
-                        icon={<Eye className="w-8 h-8 text-blue-500"/>}
-                        loading={loading}
-                    />
-                </div>
 
-                <div className="grid lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-1">
-                        <LinksCard
-                            reviewUrl={reviewUrl}
-                            publicUrl={publicUrl}
-                            onCopy={copyToClipboard}
-                            onGenerateNewLink={generateNewReviewLink}
-                        />
-                    </div>
-
-                    <div className="lg:col-span-2">
-                        <ReviewsList
-                            reviews={reviews}
-                            reviewsCount={reviewsCount}
+                    {/* Stats Overview */}
+                    <div className="grid md:grid-cols-4 gap-6 mb-8">
+                        <StatsCard
+                            title="Всього відгуків"
+                            value={reviewsCount}
+                            icon={<MessageSquare className="w-8 h-8 text-gray-500"/>}
                             loading={loading}
-                            publicUrl={publicUrl}
+                        />
+                        <StatsCard
+                            title="Середній рейтинг"
+                            value={averageRating}
+                            icon={<Star className="w-8 h-8 text-yellow-500"/>}
+                            loading={loading}
+                        />
+                        <StatsCard
+                            title="5-зіркових"
+                            value={reviews.filter(r => r.rating === 5).length}
+                            icon={<TrendingUp className="w-8 h-8 text-green-500"/>}
+                            loading={loading}
+                        />
+                        <StatsCard
+                            title="З медіа"
+                            value={reviews.filter(r => r.media && r.media.length > 0).length}
+                            icon={<Eye className="w-8 h-8 text-blue-500"/>}
+                            loading={loading}
                         />
                     </div>
-                </div>
-            </div>
 
-            <LandingFooter />
-        </div>
+                    <div className="grid lg:grid-cols-3 gap-8">
+                        <div className="lg:col-span-1">
+                            <LinksCard
+                                reviewUrl={reviewUrl}
+                                publicUrl={publicUrl}
+                                onCopy={copyToClipboard}
+                                onGenerateNewLink={generateNewReviewLink}
+                            />
+                        </div>
+
+                        <div className="lg:col-span-2">
+                            <ReviewsList
+                                reviews={reviews}
+                                reviewsCount={reviewsCount}
+                                loading={loading}
+                                publicUrl={publicUrl}
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <LandingFooter/>
+            </div>
+        </>
     );
 };
 

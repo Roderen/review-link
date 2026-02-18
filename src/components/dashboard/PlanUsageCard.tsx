@@ -25,7 +25,7 @@ export const PlanUsageCard = ({
                                }: PlanUsageCardProps) => {
     return (
         <Card className="mb-8 bg-gray-900 border-gray-700">
-            <CardContent className="p-6">
+            <CardContent>
                 <div className="flex items-center justify-between mb-4">
                     <div>
                         <h3 className="text-lg font-semibold text-white flex items-center">

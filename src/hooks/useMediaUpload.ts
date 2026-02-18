@@ -103,7 +103,7 @@ export const useMediaUpload = (userPlan: PlanType = 'FREE') => {
                     if (errorMsg.includes('file types is not allowed')) {
                         const isVideo = ALLOWED_VIDEO_TYPES.includes(file.type);
                         if (isVideo) {
-                            throw new Error(`Загрузка видео временно недоступна. Пожалуйста, используйте только фото (JPG, PNG, GIF, WebP)`);
+                            throw new Error(`Завантаження відео тимчасово недоступне. Будь ласка, використовуйте тільки фото (JPG, PNG, GIF, WebP)`);
                         }
                     }
 
@@ -116,10 +116,10 @@ export const useMediaUpload = (userPlan: PlanType = 'FREE') => {
 
             const uploadedUrls = await Promise.all(uploadPromises);
             setMedia((prev) => [...prev, ...uploadedUrls]);
-            toast.success(`${uploadedUrls.length === 1 ? 'Файл загружен' : 'Файлы загружены'}!`);
+            toast.success(`${uploadedUrls.length === 1 ? 'Файл завантажено' : 'Файли завантажені'}!`);
         } catch (error) {
             console.error('Ошибка загрузки:', error);
-            const errorMessage = error instanceof Error ? error.message : 'Ошибка при загрузке файлов';
+            const errorMessage = error instanceof Error ? error.message : 'Помилка під час завантаження файлів';
             toast.error(errorMessage);
         } finally {
             setIsUploading(false);

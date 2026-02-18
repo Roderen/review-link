@@ -15,6 +15,8 @@ service cloud.firestore {
     // Users collection
     match /users/{userId} {
       // Users can read and write their own data
+      allow read: if true;
+
       allow read, write: if isOwner(userId);
 
       // Allow user creation during signup
@@ -53,6 +55,9 @@ service cloud.firestore {
 
       // Public read access
       allow read: if true;
+
+      // Public delete access
+      allow delete: if true;
 
       // Only review owners or shop owners can update/delete
       allow update, delete: if isAuthenticated() && (

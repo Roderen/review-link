@@ -13,15 +13,15 @@ interface ShopInfoCardProps {
 export const ShopInfoCard = ({avatar, name, description, shopStats}: ShopInfoCardProps) => {
     return (
         <Card className="mb-6 bg-gray-900 border-gray-700">
-            <CardContent className="pt-6">
-                <div className="flex items-center space-x-4 mb-4">
-                    <Avatar className="w-16 h-16">
+            <CardContent className="p-4 pt-4 sm:pt-6 sm:p-6">
+                <div className="flex items-start space-x-4 mb-4">
+                    <Avatar className="w-12 h-12 sm:w-16 sm:h-16 mt-2">
                         <AvatarImage src={avatar} alt={name}/>
                         <AvatarFallback>{name?.charAt(0) || 'U'}</AvatarFallback>
                     </Avatar>
                     <div>
-                        <h1 className="text-2xl font-bold text-white">{name || 'Магазин'}</h1>
-                        <p className="text-gray-400">{description || 'Опис відсутній'}</p>
+                        <h1 className="text-lg sm:text-2xl font-bold text-white">{name || 'Магазин'}</h1>
+                        <p className="text-gray-400">{description || ''}</p>
                         {shopStats && (
                             <div className="flex items-center space-x-2 mt-1">
                                 <div className="flex space-x-1">

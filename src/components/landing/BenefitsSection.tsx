@@ -7,11 +7,16 @@ export const BenefitsSection = () => {
             <div className="container mx-auto max-w-4xl text-center">
                 <h2 className="text-3xl font-bold mb-12 text-white">Чому ми?</h2>
 
-                <div className="grid md:grid-cols-3 gap-8">
+                <div className="
+                      grid grid-cols-1
+                      max-w-[300px] mx-auto
+                      md:max-w-none md:grid-cols-3
+                      gap-8
+                    ">
                     <BenefitCard
                         icon={Shield}
                         title="Безпечно"
-                        description="Лише власник може сгенерувати посилання та надіслати його покупцю"
+                        description="Лише власник може сгенерувати посилання для відгуку та надіслати його покупцю"
                     />
                     <BenefitCard
                         icon={Zap}
