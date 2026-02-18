@@ -1,5 +1,4 @@
 import {Card, CardContent} from '@/components/ui/card';
-import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar';
 import {Dialog, DialogContent, DialogTrigger} from '@/components/ui/dialog';
 import {Star, Play, ImageIcon, Trash2, Flag} from 'lucide-react';
 import {Review} from '@/types/reviews-page';
@@ -22,10 +21,6 @@ export const ReviewCard = ({review, showDeleteButton, onDelete, showReportButton
         <Card className="hover:shadow-md transition-shadow bg-gray-900 border-gray-700">
             <CardContent className="p-6">
                 <div className="flex items-start space-x-4">
-                    <Avatar className="w-12 h-12">
-                        <AvatarImage src={review.avatar} alt={review.name}/>
-                        <AvatarFallback>{review.name?.charAt(0)}</AvatarFallback>
-                    </Avatar>
                     <div className="flex-1">
                         <div className="flex items-center justify-between mb-2">
                             <div>

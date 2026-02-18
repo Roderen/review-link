@@ -1,6 +1,8 @@
 import {Link, Users, Star} from 'lucide-react';
 import {StepCard} from './StepCard';
 import {FeaturePreviewCard} from './FeaturePreviewCard';
+import reviewFormImage from '@/images/review-form.png';
+import reviewPageImage from '@/images/review-page.png';
 
 export const HowItWorksSection = () => {
     return (
@@ -36,13 +38,13 @@ export const HowItWorksSection = () => {
                     <FeaturePreviewCard
                         title="Форма відгуку"
                         description=""
-                        imageUrl="/src/images/review-form.png"
+                        imageUrl={reviewFormImage as string}
                         imageAlt="Скриншот формы для оставления отзыва"
                     />
                     <FeaturePreviewCard
                         title="Публічна сторінка"
                         description=""
-                        imageUrl="/src/images/review-page.png"
+                        imageUrl={reviewPageImage as string}
                         imageAlt="Скриншот публичной страницы с отзывами"
                     />
                 </div>

@@ -1,6 +1,4 @@
 import {Button} from '@/components/ui/button';
-import {Badge} from '@/components/ui/badge';
-import {Instagram} from 'lucide-react';
 
 interface HeroSectionProps {
     onLogin: () => void;
@@ -12,17 +10,12 @@ export const HeroSection = ({onLogin, isLoading}: HeroSectionProps) => {
     return (
         <section className="py-20 px-4">
             <div className="container mx-auto text-center max-w-4xl">
-                <Badge variant="secondary" className="mb-6 px-4 py-2 bg-gray-800 text-gray-300 border-gray-700">
-                    <Instagram className="w-4 h-4 mr-2"/>
-                    Для Instagram-магазинів
-                </Badge>
-
-                <h1 className="text-5xl md:text-6xl font-bold mb-6 text-white leading-tight">
+                <h1 className="sm:text-5xl md:text-6xl text-3xl font-bold mb-6 text-white leading-tight">
                     Усі відгуки про ваш магазин в одному посиланні
                 </h1>
 
                 <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto leading-relaxed">
-                    Мінімум дій, просто надсилайте посилання та збирайте відгуки клієнтів.
+                    Мінімум дій - економте свій час для збору відгуків клієнтів
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">

@@ -72,7 +72,7 @@ export const LinksCard = ({reviewUrl, publicUrl, onCopy, onGenerateNewLink}: Lin
                     <div className="flex space-x-2">
                         <Button
                             size="sm"
-                            onClick={() => onCopy(publicUrl, 'Ссылка на публичную страницу скопирована!')}
+                            onClick={() => onCopy(publicUrl, 'Посилання на публічну сторінку скопійовано!')}
                             className="flex-1 bg-blue-700 hover:bg-blue-600 text-white"
                         >
                             <Copy className="w-4 h-4 mr-2 text-white"/>

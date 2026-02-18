@@ -7,15 +7,16 @@ import {useShopData} from '@/hooks/useShopData';
 import {useReviewsFilter} from '@/hooks/useReviewsFilter';
 import {useReviewsPagination} from '@/hooks/useReviewsPagination';
 import {useReviewsStats} from '@/hooks/useReviewsStats';
-import {ShopHeader} from '@/components/reviews-page/ShopHeader';
 import {StatsSidebar} from '@/components/reviews-page/StatsSidebar';
 import {ReviewCard} from '@/components/reviews-page/ReviewCard';
 import {EmptyState} from '@/components/reviews-page/EmptyState';
 import {LoadingSkeleton} from '@/components/reviews-page/LoadingSkeleton';
 import {Pagination} from '@/components/reviews-page/Pagination';
-import {ReviewsFooter} from '@/components/reviews-page/ReviewsFooter';
 import {ReviewsListHeader} from '@/components/reviews-page/ReviewsListHeader';
 import {Review} from '@/types/reviews-page';
+import {ShopInfoCard} from "@/components/review-form/ShopInfoCard.tsx";
+import {LandingFooter} from "@/components/landing/LandingFooter.tsx";
+import SEO from "@/components/SEO.tsx";
 
 /**
  * Публичная страница отзывов магазина
@@ -27,7 +28,7 @@ const PublicReviewsPage = () => {
     const {user} = useAuth();
 
     // Custom hooks для управления состоянием
-    const {shop, loading: shopLoading, shopNotFound} = useShopData(shopId);
+    const {shop, shopNotFound} = useShopData(shopId);
     const {sortBy, filterRating, handleFilterChange, handleSortChange} = useReviewsFilter();
     const {stats, reviewsCount} = useReviewsStats(shopId);
 
@@ -135,86 +136,95 @@ const PublicReviewsPage = () => {
     const loading = reviewsLoading;
 
     return (
-        <div className="min-h-screen bg-gray-950 flex flex-col">
-            <ShopHeader
-                avatar={shop?.avatar}
-                name={shop?.name}
-                description={shop?.description}
-                instagram={shop?.instagram}
-                stats={stats}
-                loading={shopLoading}
+        <>
+            <SEO
+                title="Відгуки про магазин"
+                description="Читайте відгуки клієнтів про цей Instagram-магазин. Реальні враження та оцінки покупців"
             />
 
-            <div className="max-w-4xl mx-auto px-4 py-8 flex-1">
-                <div className="grid lg:grid-cols-4 gap-8">
-                    {/* Sidebar with Stats */}
-                    <div className="lg:col-span-1">
-                        <StatsSidebar
-                            ratingDistribution={ratingDistribution}
-                            filterRating={filterRating}
-                            sortBy={sortBy}
-                            onFilterChange={handleFilterChangeWithReset}
-                            onSortChange={handleSortChangeWithReset}
+            <div className="min-h-screen bg-gray-950 flex flex-col">
+                <div className="max-w-4xl mx-auto flex-grow w-full">
+                    <div className="p-4">
+                        <ShopInfoCard
+                            avatar={shop?.avatar}
+                            name={shop?.name}
+                            description={shop?.description}
+                            shopStats={stats}
                         />
                     </div>
 
-                    {/* Reviews List */}
-                    <div className="lg:col-span-3">
-                        <ReviewsListHeader
-                            filterRating={filterRating}
-                            loading={loading && currentReviews.length === 0}
-                        />
+                    <div className="p-4">
+                        <div className="grid lg:grid-cols-4 gap-8">
+                            {/* Sidebar with Stats */}
+                            <div className="lg:col-span-1">
+                                <StatsSidebar
+                                    ratingDistribution={ratingDistribution}
+                                    filterRating={filterRating}
+                                    sortBy={sortBy}
+                                    onFilterChange={handleFilterChangeWithReset}
+                                    onSortChange={handleSortChangeWithReset}
+                                />
+                            </div>
 
-                        {currentReviews.length === 0 && !loading ? (
-                            <EmptyState filterRating={filterRating}/>
-                        ) : loading && currentReviews.length === 0 ? (
-                            <LoadingSkeleton/>
-                        ) : (
-                            <>
-                                <div className="space-y-6">
-                                    {currentReviews.map((review) => (
-                                        <ReviewCard
-                                            key={review.id}
-                                            review={review}
-                                            showDeleteButton={user?.role === 'admin'}
-                                            onDelete={handleDeleteReview}
-                                            showReportButton={user?.id === shopId && user?.role === 'user'}
-                                            onReport={handleReportReview}
-                                        />
-                                    ))}
-                                </div>
+                            {/* Reviews List */}
+                            <div className="lg:col-span-3">
+                                <ReviewsListHeader
+                                    filterRating={filterRating}
+                                    loading={loading && currentReviews.length === 0}
+                                />
 
-                                {/* Pagination */}
-                                {totalPages > 1 && (
+                                {currentReviews.length === 0 && !loading ? (
+                                    <EmptyState filterRating={filterRating}/>
+                                ) : loading && currentReviews.length === 0 ? (
+                                    <LoadingSkeleton/>
+                                ) : (
                                     <>
-                                        <Pagination
-                                            currentPage={currentPage}
-                                            totalPages={totalPages}
-                                            onPageChange={handlePageChange}
-                                        />
-
-                                        {/* Page info */}
-                                        <div className="text-center mt-4 text-sm text-gray-400">
-                                            Страница {currentPage} из {totalPages} (
-                                            {startIndex + 1}-
-                                            {Math.min(endIndex, loadedReviews.length)} из{' '}
-                                            {reviewsCount || loadedReviews.length} отзывов)
-                                            {isLoadingMore && (
-                                                <span className="ml-2 text-gray-500">
-                                                (загрузка...)
-                                            </span>
-                                            )}
+                                        <div className="space-y-6">
+                                            {currentReviews.map((review) => (
+                                                <ReviewCard
+                                                    key={review.id}
+                                                    review={review}
+                                                    showDeleteButton={user?.role === 'admin'}
+                                                    onDelete={handleDeleteReview}
+                                                    showReportButton={user?.id === shopId && user?.role === 'user'}
+                                                    onReport={handleReportReview}
+                                                />
+                                            ))}
                                         </div>
+
+                                        {/* Pagination */}
+                                        {totalPages > 1 && (
+                                            <>
+                                                <Pagination
+                                                    currentPage={currentPage}
+                                                    totalPages={totalPages}
+                                                    onPageChange={handlePageChange}
+                                                />
+
+                                                {/* Page info */}
+                                                <div className="text-center mt-4 text-sm text-gray-400">
+                                                    Страница {currentPage} из {totalPages} (
+                                                    {startIndex + 1}-
+                                                    {Math.min(endIndex, loadedReviews.length)} из{' '}
+                                                    {reviewsCount || loadedReviews.length} отзывов)
+                                                    {isLoadingMore && (
+                                                        <span className="ml-2 text-gray-500">
+                                                    (загрузка...)
+                                                </span>
+                                                    )}
+                                                </div>
+                                            </>
+                                        )}
                                     </>
                                 )}
-                            </>
-                        )}
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <ReviewsFooter/>
-        </div>
+                <LandingFooter/>
+            </div>
+        </>
     );
 };
 

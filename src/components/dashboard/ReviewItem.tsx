@@ -1,4 +1,3 @@
-import {Avatar, AvatarFallback, AvatarImage} from '@/components/ui/avatar';
 import {Star} from 'lucide-react';
 import {DashboardReview} from '@/types/dashboard';
 
@@ -10,10 +9,6 @@ export const ReviewItem = ({review}: ReviewItemProps) => {
     return (
         <div className="border border-gray-700 rounded-lg p-4 hover:bg-gray-800/50 transition-colors">
             <div className="flex items-start space-x-3">
-                <Avatar className="w-10 h-10">
-                    <AvatarImage src={review.avatar} alt={review.name}/>
-                    <AvatarFallback>{review.name?.charAt(0)}</AvatarFallback>
-                </Avatar>
                 <div className="flex-1">
                     <div className="flex items-center justify-between mb-2">
                         <div>

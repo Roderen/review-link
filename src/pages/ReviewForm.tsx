@@ -1,6 +1,5 @@
 import { useParams, useSearchParams } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { MessageSquare } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 import { useFormValidation } from '@/hooks/useFormValidation';
 import { useMediaUpload } from '@/hooks/useMediaUpload';
 import { useReviewSubmission } from '@/hooks/useReviewSubmission';
@@ -13,6 +12,7 @@ import { FormDisclaimer } from '@/components/review-form/FormDisclaimer';
 import { StatusCard } from '@/components/review-form/StatusCard';
 import { useShopData } from '@/hooks/useShopData.ts';
 import { useReviewsStats } from '@/hooks/useReviewsStats.ts';
+import SEO from "@/components/SEO.tsx";
 
 /**
  * Форма для оставления отзыва клиентом
@@ -108,58 +108,59 @@ const ReviewForm = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-950 p-4">
-            <div className="max-w-2xl mx-auto">
-                <ShopInfoCard
-                    avatar={shop?.avatar}
-                    name={shop?.name}
-                    description={shop?.description}
-                    shopStats={stats}
-                />
+        <>
+            <SEO
+                title="Залишити відгук"
+                description="Поділіться своїм досвідом покупки. Залиште відгук про цей Instagram-магазин"
+            />
 
-                {/* Review Form */}
-                <Card className="bg-gray-900 border-gray-700">
-                    <CardHeader>
-                        <CardTitle className="flex items-center text-white">
-                            <MessageSquare className="w-5 h-5 mr-2" />
-                            Залишити відгук
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <form onSubmit={onSubmit} className="space-y-6">
-                            <RatingInput
-                                rating={rating}
-                                hoverRating={hoverRating}
-                                onRatingChange={setRating}
-                                onHoverChange={setHoverRating}
-                            />
+            <div className="min-h-screen bg-gray-950 p-4">
+                <div className="max-w-2xl mx-auto">
+                    <ShopInfoCard
+                        avatar={shop?.avatar}
+                        name={shop?.name}
+                        description={shop?.description}
+                        shopStats={stats}
+                    />
 
-                            <ReviewFormFields
-                                name={name}
-                                reviewText={reviewText}
-                                onNameChange={setName}
-                                onReviewTextChange={setReviewText}
-                            />
+                    {/* Review Form */}
+                    <Card className="bg-gray-900 border-gray-700">
+                        <CardContent>
+                            <form onSubmit={onSubmit} className="space-y-6">
+                                <RatingInput
+                                    rating={rating}
+                                    hoverRating={hoverRating}
+                                    onRatingChange={setRating}
+                                    onHoverChange={setHoverRating}
+                                />
 
-                            <MediaUploadSection
-                                media={media}
-                                isUploading={isUploading}
-                                onMediaUpload={handleMediaUpload}
-                                onRemoveMedia={removeMedia}
-                                maxMediaCount={maxMediaCount}
-                            />
+                                <ReviewFormFields
+                                    name={name}
+                                    reviewText={reviewText}
+                                    onNameChange={setName}
+                                    onReviewTextChange={setReviewText}
+                                />
 
-                            <SubmitButton
-                                isSubmitting={isSubmitting}
-                                disabled={isSubmitting || !isValid}
-                            />
-                        </form>
+                                <MediaUploadSection
+                                    media={media}
+                                    isUploading={isUploading}
+                                    onMediaUpload={handleMediaUpload}
+                                    onRemoveMedia={removeMedia}
+                                    maxMediaCount={maxMediaCount}
+                                />
 
-                        <FormDisclaimer />
-                    </CardContent>
-                </Card>
+                                <SubmitButton
+                                    isSubmitting={isSubmitting}
+                                    disabled={isSubmitting || !isValid}
+                                />
+                            </form>
+
+                            <FormDisclaimer/>
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 

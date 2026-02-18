@@ -26,7 +26,7 @@ export const StatsSidebar = ({
                               }: StatsSidebarProps) => {
     return (
         <Card className="sticky top-4 bg-gray-900 border-gray-700">
-            <CardContent className="p-6">
+            <CardContent>
                 <h3 className="font-semibold mb-4 flex items-center text-white">
                     <MessageSquare className="w-5 h-5 mr-2"/>
                     Статистика

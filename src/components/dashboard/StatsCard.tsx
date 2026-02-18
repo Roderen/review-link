@@ -5,7 +5,7 @@ import {StatsCardProps} from '@/types/dashboard';
 export const StatsCard = ({title, value, icon, loading = false}: StatsCardProps) => {
     return (
         <Card className="bg-gray-800 border-gray-700">
-            <CardContent className="p-6">
+            <CardContent>
                 <div className="flex items-center justify-between">
                     <div>
                         <p className="text-gray-400 text-sm">{title}</p>

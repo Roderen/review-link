@@ -46,7 +46,7 @@ export const getShopById = async (shopId: string): Promise<ShopPublicInfo> => {
         // Возвращаем только публичную информацию
         return {
             id: shopDoc.id,
-            name: data.username || '',
+            name: data.displayName || '',
             avatar: data.profilePicture || '',
             description: data.description || '',
             instagram: data.instagram || '',

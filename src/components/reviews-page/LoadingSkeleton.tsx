@@ -8,13 +8,6 @@ export const LoadingSkeleton = () => {
                 <Card key={index} className="bg-gray-900 border-gray-700">
                     <CardContent className="p-6">
                         <div className="flex items-start space-x-4">
-                            <Skeleton
-                                circle
-                                width={48}
-                                height={48}
-                                baseColor="#2d2d2d"
-                                highlightColor="#3d3d3d"
-                            />
                             <div className="flex-1">
                                 <div className="flex items-center justify-between mb-2">
                                     <div>
